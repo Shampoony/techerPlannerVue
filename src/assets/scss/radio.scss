@@ -24,7 +24,7 @@
   height: 100%;
 
   transition: 0.1s ease-in;
-
+  color: var(--black);
   background-color: var(--grey);
 }
 
@@ -41,7 +41,7 @@
 
 .custom-radio label:hover {
   background-color: rgba($color: #1d4ecc, $alpha: 0.3);
-  color: var(--white);
+  color: #fff;
 }
 
 .custom-radio input[type='radio']:disabled + label {

@@ -960,6 +960,8 @@ header {
     }
     .night__mode &.trial {
       background-color: #fdf2b9;
+      border: none;
+      color: var(--white);
     }
     &.break {
       background-color: transparent;

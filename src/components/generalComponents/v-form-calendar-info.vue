@@ -29,8 +29,20 @@
           <h4 class="periodicity__row-title">{{ item.text }}</h4>
           <div class="time">
             <div class="time__block modal-row__block">
-              <input type="time" class="time__picker" placeholder="Начало" />
-              <input type="time" class="time__picker" placeholder="Завершение" />
+              <input
+                type="time"
+                class="time__picker"
+                placeholder="Начало"
+                @input="changeTime"
+                v-model="timeInputs.start"
+              />
+              <input
+                type="time"
+                class="time__picker"
+                placeholder="Завершение"
+                @input="changeTime"
+                v-model="timeInputs.end"
+              />
             </div>
           </div>
         </div>
@@ -95,6 +107,11 @@ const periodicityDays = ref([
 
 const periodicityStack = ref([{ id: 4, text: 'ЧТ', active: true }])
 
+const timeInputs = ref({
+  start: '',
+  end: '',
+})
+
 const toggleRadio = (radio, value) => {
   const target = radio === 'reminder' ? reminder : break_group
   target.value = target.value === value ? null : value
@@ -114,6 +131,10 @@ const addDayToStack = (day) => {
     periodicityStack.value.sort((a, b) => a.id - b.id)
     day.active = true // Устанавливаем флаг активности
   }
+}
+
+const changeTime = () => {
+  console.log('Лала')
 }
 
 const props = defineProps({
