@@ -3,10 +3,16 @@
     <div class="v-calendar-menu__block">
       <div class="flex gap-2">
         <div class="v-calendar-menu__picker picker">
-          <router-link to="/calendar" class="v-calendar-menu__picker-item picker__item"
+          <router-link
+            :to="{ name: 'calendar-week' }"
+            class="v-calendar-menu__picker-item picker__item"
+            :class="{ active: type === 'week' }"
             >Неделя</router-link
           >
-          <router-link to="/calendar" class="v-calendar-menu__picker-item picker__item active"
+          <router-link
+            :to="{ name: 'home' }"
+            class="v-calendar-menu__picker-item picker__item"
+            :class="{ active: type === 'month' }"
             >Месяц</router-link
           >
         </div>
@@ -61,7 +67,12 @@
           </div>
         </div>
         <div class="v-calendar-menu__checkbox flex gap-2" v-if="isShowedBreak">
-          <input type="checkbox" class="custom-checkbox-input" id="break" v-model="showBreak" />
+          <input
+            type="checkbox"
+            class="custom-checkbox-input"
+            id="break"
+            v-model="showBreakInput"
+          />
           <label for="break" class="custom-checkbox-label">
             <span class="custom-checkbox"></span>
             <div class="v-calendar-menu__checkbox-subtitle">Показывать перерыв между занятиями</div>
@@ -99,7 +110,12 @@
         </div>
       </div>
       <div class="v-calendar-menu__checkbox flex gap-2 mob" v-if="isShowedBreak">
-        <input type="checkbox" class="custom-checkbox-input" id="mob-break" v-model="showBreak" />
+        <input
+          type="checkbox"
+          class="custom-checkbox-input"
+          id="mob-break"
+          v-model="showBreakInput"
+        />
         <label for="mob-break" class="custom-checkbox-label">
           <span class="custom-checkbox"></span>
           <div class="v-calendar-menu__checkbox-subtitle">Показывать перерыв между занятиями</div>
@@ -144,13 +160,18 @@
 import vTrialModal from '../modals/v-trial-modal.vue'
 import vLessonModal from '../modals/v-lesson-modal.vue'
 
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
-const showBreak = ref()
+const showBreakInput = ref()
+
 const props = defineProps({
   isShowedBreak: {
     type: Boolean,
     required: false,
+  },
+  type: {
+    type: String,
+    required: true,
   },
 })
 
@@ -163,4 +184,8 @@ const toggleModals = (modalName) => {
   console.log(modalName)
   modals.value[modalName] = !modals.value[modalName]
 }
+
+onMounted(() => {
+  console.log(props.type)
+})
 </script>

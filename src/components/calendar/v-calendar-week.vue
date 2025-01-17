@@ -3,9 +3,9 @@
     <v-header />
     <main class="v-calendar-month">
       <div class="v-calendar-month__container container">
-        <v-calendar-menu :type="'month'" />
+        <v-calendar-menu :is-showed-break="true" :type="'week'" />
         <div class="v-calendar-month__content scroll-container">
-          <table class="v-calendar-month__table calendar">
+          <table class="v-calendar-week__table calendar">
             <thead>
               <tr class="calendar-header">
                 <th class="calendar-header__item">пн</th>

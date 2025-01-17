@@ -28,20 +28,20 @@
         <div class="periodicity__row" v-for="item in periodicityStack" :key="item.id">
           <h4 class="periodicity__row-title">{{ item.text }}</h4>
           <div class="time">
-            <div class="time__block modal-row__block">
+            <div class="time__block modal-row__block" v-if="timeInputs[item.id]">
               <input
                 type="time"
                 class="time__picker"
                 placeholder="Начало"
-                @input="changeTime"
-                v-model="timeInputs.start"
+                @input="changeTime(item.id)"
+                v-model="timeInputs[item.id].start"
               />
               <input
                 type="time"
                 class="time__picker"
                 placeholder="Завершение"
-                @input="changeTime"
-                v-model="timeInputs.end"
+                @input="changeTime(item.id)"
+                v-model="timeInputs[item.id].end"
               />
             </div>
           </div>
@@ -96,21 +96,18 @@ const reminder = ref(null)
 const break_group = ref(null)
 
 const periodicityDays = ref([
-  { id: 1, text: 'ПН', active: false },
-  { id: 2, text: 'ВТ', active: false },
-  { id: 3, text: 'СР', active: false },
-  { id: 4, text: 'ЧТ', active: true },
-  { id: 5, text: 'ПТ', active: false },
-  { id: 6, text: 'СБ', active: false },
-  { id: 7, text: 'ВС', active: false },
+  { id: 1, text: 'ПН', active: false, day_of_week: 1 },
+  { id: 2, text: 'ВТ', active: false, day_of_week: 2 },
+  { id: 3, text: 'СР', active: false, day_of_week: 3 },
+  { id: 4, text: 'ЧТ', active: false, day_of_week: 4 },
+  { id: 5, text: 'ПТ', active: false, day_of_week: 5 },
+  { id: 6, text: 'СБ', active: false, day_of_week: 6 },
+  { id: 7, text: 'ВС', active: false, day_of_week: 7 },
 ])
 
-const periodicityStack = ref([{ id: 4, text: 'ЧТ', active: true }])
+const periodicityStack = ref([])
 
-const timeInputs = ref({
-  start: '',
-  end: '',
-})
+const timeInputs = ref({})
 
 const toggleRadio = (radio, value) => {
   const target = radio === 'reminder' ? reminder : break_group
@@ -123,18 +120,25 @@ const addDayToStack = (day) => {
     if (index !== -1) {
       periodicityStack.value.splice(index, 1)
     }
-    day.active = false // Снимаем флаг активности
+    day.active = false
+    delete timeInputs.value[day.id]
   } else {
     // Если день не активен, добавляем его в стек
     periodicityStack.value.push(day)
-    // Сортируем стек по id
+
     periodicityStack.value.sort((a, b) => a.id - b.id)
-    day.active = true // Устанавливаем флаг активности
+    day.active = true
+    timeInputs.value[day.id] = { start: '', end: '' }
   }
 }
 
-const changeTime = () => {
-  console.log('Лала')
+const changeTime = (id) => {
+  const currentTime = timeInputs.value[id].start.split(':')
+  const hour = parseInt(currentTime[0]) + 1
+  const minutes = currentTime[1]
+  const endTime = `${hour}:${minutes}`
+
+  timeInputs.value[id].end = endTime
 }
 
 const props = defineProps({

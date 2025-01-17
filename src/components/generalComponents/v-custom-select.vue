@@ -32,7 +32,9 @@ const props = defineProps({
 
 const isMenuOpen = ref(false)
 
-const setOption = (option) => (selected.value = option.text)
-console.log(props.options.options)
+const setOption = (option) => {
+  selected.value = option.text
+  isMenuOpen.value = false
+}
 const selected = ref(props.options.default)
 </script>

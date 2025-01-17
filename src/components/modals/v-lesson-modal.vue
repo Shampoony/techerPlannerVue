@@ -23,7 +23,82 @@
         <v-form-calendar-info />
       </div>
       <div class="stable" v-if="activeAdd == 'stable'">
-        <v-form-calendar-info :removeDate="true" />
+        <!-- <v-form-calendar-info :removeDate="true" /> -->
+        <div class="periodicity">
+          <h2 class="periodicity__title title">Периодичность</h2>
+          <ul class="periodicity__list">
+            <li
+              class="periodicity__list-item"
+              :class="{ active: day.active }"
+              v-for="day in periodicityDays"
+              :key="day.id"
+              @click="togglePeriodicity(day)"
+            >
+              {{ day.text }}
+            </li>
+          </ul>
+          <div class="periodicity__container">
+            <div class="periodicity__row" v-for="item in periodicityStack" :key="item.id">
+              <h4 class="periodicity__row-title">{{ item.text }}</h4>
+              <div class="time">
+                <div class="time__block modal-row__block" v-if="timeInputs[item.id]">
+                  <input
+                    type="time"
+                    class="time__picker"
+                    placeholder="Начало"
+                    @input="changeTime(item.id)"
+                    v-model="timeInputs[item.id].start"
+                  />
+                  <input
+                    type="time"
+                    class="time__picker"
+                    placeholder="Завершение"
+                    @input="changeTime(item.id)"
+                    v-model="timeInputs[item.id].end"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-row">
+          <div class="modal-row__title">Повторять до</div>
+          <input class="datepicker" type="date" placeholder="Начало" v-model="repeatUntill" />
+        </div>
+        <div class="modal-row">
+          <div class="modal-row__title">Напоминание за, минут</div>
+          <div class="modal-row__block">
+            <div class="custom-radio" v-for="value in [5, 10, 15]" :key="value">
+              <input
+                :id="'reminder-' + value"
+                type="radio"
+                name="reminder"
+                :value="value"
+                :checked="reminder === value"
+                @click="toggleRadio('reminder', value)"
+              />
+
+              <label :for="'reminder-' + value">{{ value }}</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-row">
+          <div class="modal-row__title">Перерыв после, минут</div>
+          <div class="modal-row__block">
+            <div class="custom-radio" v-for="value in [5, 10, 15]" :key="value">
+              <input
+                :id="'break-' + value"
+                type="radio"
+                name="break"
+                :value="value"
+                :checked="break_group === value"
+                @click="toggleRadio('break_group', value)"
+              />
+              <label :for="'break-' + value">{{ value }}</label>
+            </div>
+          </div>
+        </div>
+        <button class="blue-btn" type="submit">Добавить</button>
       </div>
     </div>
   </v-modal>
@@ -42,10 +117,88 @@ const setActiveAdd = (name) => {
   activeAdd.value = name
 }
 
+const reminder = ref(null)
+const break_group = ref(null)
+
+const repeatUntill = ref('')
+
+const periodicityDays = ref([
+  { id: 1, text: 'ПН', active: false, day_of_week: 1 },
+  { id: 2, text: 'ВТ', active: false, day_of_week: 2 },
+  { id: 3, text: 'СР', active: false, day_of_week: 3 },
+  { id: 4, text: 'ЧТ', active: false, day_of_week: 4 },
+  { id: 5, text: 'ПТ', active: false, day_of_week: 5 },
+  { id: 6, text: 'СБ', active: false, day_of_week: 6 },
+  { id: 7, text: 'ВС', active: false, day_of_week: 7 },
+])
+
+const periodicityStack = ref([])
+
+const timeInputs = ref({})
+
 const options = ref({
   student: {
     default: 'Ученик',
     options: [{ id: 1, text: 'Артур' }],
   },
 })
+
+let maxDate = null
+
+const toggleRadio = (radio, value) => {
+  const target = radio === 'reminder' ? reminder : break_group
+  target.value = target.value === value ? null : value
+}
+
+const togglePeriodicity = (day) => {
+  addDayToStack(day)
+  setDate(day)
+}
+
+const addDayToStack = (day) => {
+  if (day.active) {
+    // Если день уже активен, удаляем его из стека
+    const index = periodicityStack.value.findIndex((item) => item.id === day.id)
+    if (index !== -1) {
+      periodicityStack.value.splice(index, 1)
+    }
+    day.active = false
+    delete timeInputs.value[day.id]
+  } else {
+    // Если день не активен, добавляем его в стек
+    periodicityStack.value.push(day)
+
+    periodicityStack.value.sort((a, b) => a.id - b.id)
+    day.active = true
+    timeInputs.value[day.id] = { start: '', end: '' }
+  }
+}
+
+/* Добавляет 1 час к началу занятия и помещает в поле времени  конца занятия */
+const changeTime = (id) => {
+  const currentTime = timeInputs.value[id].start.split(':')
+  const hour = parseInt(currentTime[0]) + 1
+  const minutes = currentTime[1]
+  const endTime = `${hour}:${minutes}`
+
+  timeInputs.value[id].end = endTime
+}
+
+/* Устанавливает автоматически дату для поля "повторять до" */
+const setDate = (day) => {
+  const currentDate = new Date()
+  const dayOfWeek = currentDate.getDay()
+
+  const difference = day.day_of_week - dayOfWeek
+  if (difference > 0) {
+    currentDate.setDate(currentDate.getDate() + difference + 1)
+  } else {
+    currentDate.setDate(currentDate.getDate() + difference + 8)
+  }
+  const formattedDate = currentDate.toISOString().split('T')[0]
+  if (!maxDate || maxDate < formattedDate) {
+    repeatUntill.value = formattedDate
+    maxDate = formattedDate
+  }
+}
 </script>

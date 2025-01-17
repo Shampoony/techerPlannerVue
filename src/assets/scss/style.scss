@@ -1017,6 +1017,8 @@ header {
 }
 
 .v-custom-select {
+  position: relative;
+
   display: block;
   width: 100%;
   background-color: var(--grey);
@@ -1034,6 +1036,8 @@ header {
   }
 
   &__list {
+    position: absolute;
+
     width: 100%;
     background-color: var(--grey);
     border-radius: 0 0 10px 10px;
@@ -1085,6 +1089,9 @@ header {
   display: flex;
   flex-direction: column;
   margin-bottom: 16px;
+  .time__block {
+    width: 100% !important;
+  }
   &__title {
     margin-bottom: 16px;
   }
@@ -1125,6 +1132,11 @@ header {
     &-item.active {
       background-color: transparent;
     }
+  }
+  &__container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
   &__row {
     display: flex;
