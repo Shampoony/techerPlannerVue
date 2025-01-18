@@ -4,6 +4,7 @@
     <main class="v-calendar-month">
       <div class="v-calendar-month__container container">
         <v-calendar-menu :type="'month'" />
+        <input type="month" placeholder="lol" />
         <div class="v-calendar-month__content scroll-container">
           <table class="v-calendar-month__table calendar">
             <thead>

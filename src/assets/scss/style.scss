@@ -853,35 +853,16 @@ header {
   }
 }
 
-#modal__mob-menu .navbar-nav {
-  padding: 0 20px;
-  display: flex;
-  width: 100%;
-  border-radius: 8px;
-  background-color: var(--white);
-
-  margin-top: 20px;
-}
-#modal__mob-menu .nav-link {
-  color: var(--black);
-}
-#modal__mob-menu .nav-link.active {
-  background-color: transparent;
-  color: var(--blue);
-}
-
-#modal__mob-menu .modal-content {
-  background-color: transparent;
-  width: 95%;
-  position: absolute;
-  padding: 0;
-  top: -10px;
-}
-
 .v-calendar-month {
   margin-bottom: 60px;
   &__content {
     overflow-x: auto;
+  }
+  &__table {
+    border-collapse: collapse; // Убираем двойные линии между ячейками
+    border: none; // Убираем внешние границы таблицы
+
+    background-color: var(--white);
   }
 }
 
@@ -919,12 +900,6 @@ header {
       color: var(--black);
     }
   }
-}
-.v-calendar-month__table {
-  border-collapse: collapse; // Убираем двойные линии между ячейками
-  border: none; // Убираем внешние границы таблицы
-
-  background-color: var(--white);
 }
 
 .calendar-card {
@@ -967,6 +942,39 @@ header {
       background-color: transparent;
       border: 1px dashed var(--blue);
       color: var(--black);
+    }
+  }
+}
+
+.v-calendar-week {
+  &__container {
+    height: 730px;
+  }
+  .calendar {
+    height: 100%;
+    &-card {
+      height: 100%;
+      &__content {
+        justify-content: start;
+        gap: 0;
+        height: auto;
+      }
+      &__lesson {
+        font-size: 16px;
+        font-weight: 500;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+      }
+      &__break {
+        border: 1px dashed var(--blue);
+        color: var(--blue);
+        width: 100%;
+        border-radius: 8px;
+        text-align: center;
+      }
     }
   }
 }
