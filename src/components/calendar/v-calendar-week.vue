@@ -24,7 +24,44 @@
                     <div class="calendar-card__content" v-for="lesson in lessons" :key="lesson.id">
                       <div
                         class="calendar-card__lesson"
-                        :style="{ height: `${baseHeight * lesson.duration}px` }"
+                        :style="{
+                          height: `${baseHeight * lesson.duration}px`,
+                          gap: `${baseGap * lesson.duration}px`,
+                        }"
+                      >
+                        <p>{{ lesson.time_start }} - {{ lesson.time_end }}</p>
+                        <p>{{ lesson.student_name }}</p>
+                      </div>
+                      <div class="calendar-card__break">{{ lesson.break }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="calendar-row__item">
+                  <div class="calendar-row__item-content calendar-card">
+                    <div class="calendar-card__content" v-for="lesson in lessons" :key="lesson.id">
+                      <div
+                        class="calendar-card__lesson"
+                        :style="{
+                          height: `${baseHeight * lesson.duration}px`,
+                          gap: `${baseGap * lesson.duration}px`,
+                        }"
+                      >
+                        <p>{{ lesson.time_start }} - {{ lesson.time_end }}</p>
+                        <p>{{ lesson.student_name }}</p>
+                      </div>
+                      <div class="calendar-card__break">{{ lesson.break }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td class="calendar-row__item">
+                  <div class="calendar-row__item-content calendar-card">
+                    <div class="calendar-card__content" v-for="lesson in lessons" :key="lesson.id">
+                      <div
+                        class="calendar-card__lesson"
+                        :style="{
+                          height: `${baseHeight * lesson.duration}px`,
+                          gap: `${baseGap * lesson.duration}px`,
+                        }"
                       >
                         <p>{{ lesson.time_start }} - {{ lesson.time_end }}</p>
                         <p>{{ lesson.student_name }}</p>
@@ -66,35 +103,10 @@
                     <div class="calendar-card__content" v-for="lesson in lessons" :key="lesson.id">
                       <div
                         class="calendar-card__lesson"
-                        :style="{ height: `${baseHeight * lesson.duration}px` }"
-                      >
-                        <p>{{ lesson.time_start }} - {{ lesson.time_end }}</p>
-                        <p>{{ lesson.student_name }}</p>
-                      </div>
-                      <div class="calendar-card__break">{{ lesson.break }}</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__content" v-for="lesson in lessons" :key="lesson.id">
-                      <div
-                        class="calendar-card__lesson"
-                        :style="{ height: `${baseHeight * lesson.duration}px` }"
-                      >
-                        <p>{{ lesson.time_start }} - {{ lesson.time_end }}</p>
-                        <p>{{ lesson.student_name }}</p>
-                      </div>
-                      <div class="calendar-card__break">{{ lesson.break }}</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__content" v-for="lesson in lessons" :key="lesson.id">
-                      <div
-                        class="calendar-card__lesson"
-                        :style="{ height: `${baseHeight * lesson.duration}px` }"
+                        :style="{
+                          height: `${baseHeight * lesson.duration}px`,
+                          gap: `${baseGap * lesson.duration}px`,
+                        }"
                       >
                         <p>{{ lesson.time_start }} - {{ lesson.time_end }}</p>
                         <p>{{ lesson.student_name }}</p>
@@ -135,7 +147,7 @@ import VHeader from '../generalComponents/v-header.vue'
 import { ref } from 'vue'
 
 const baseHeight = 90
-
+const baseGap = 10
 const lessons = ref([
   {
     id: 1,
@@ -148,10 +160,10 @@ const lessons = ref([
   {
     id: 2,
     time_start: '14:00',
-    time_end: '14:45',
+    time_end: '14:15',
     student_name: 'Даниил',
     break: '15 минут',
-    duration: 0.75,
+    duration: 0.5,
   },
   {
     id: 3,
