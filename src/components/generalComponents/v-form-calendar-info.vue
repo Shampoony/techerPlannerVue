@@ -3,8 +3,19 @@
     <div class="modal-row time" v-if="!removeDate">
       <div class="modal-row__title">Время занятия</div>
       <div class="time__block modal-row__block">
-        <input type="time" class="time__picker" placeholder="Начало" />
-        <input type="time" class="time__picker" placeholder="Завершение" />
+        <input
+          type="time"
+          class="time__picker"
+          placeholder="Начало"
+          v-model="timeInputs[1].start"
+          @input="changeTime(1, timeInputs)"
+        />
+        <input
+          type="time"
+          class="time__picker"
+          placeholder="Завершение"
+          v-model="timeInputs[1].end"
+        />
       </div>
     </div>
     <div class="modal-row" v-if="!removeDate">
@@ -24,29 +35,6 @@
           {{ day.text }}
         </li>
       </ul>
-      <div class="periodicity__container">
-        <div class="periodicity__row" v-for="item in periodicityStack" :key="item.id">
-          <h4 class="periodicity__row-title">{{ item.text }}</h4>
-          <div class="time">
-            <div class="time__block modal-row__block" v-if="timeInputs[item.id]">
-              <input
-                type="time"
-                class="time__picker"
-                placeholder="Начало"
-                @input="changeTime(item.id)"
-                v-model="timeInputs[item.id].start"
-              />
-              <input
-                type="time"
-                class="time__picker"
-                placeholder="Завершение"
-                @input="changeTime(item.id)"
-                v-model="timeInputs[item.id].end"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
     <div class="modal-row" v-if="removeDate">
       <div class="modal-row__title">Повторять до</div>
@@ -90,6 +78,7 @@
 </template>
 
 <script setup>
+import { changeTime } from '@/utils'
 import { onMounted, ref } from 'vue'
 
 const reminder = ref(null)
@@ -105,40 +94,16 @@ const periodicityDays = ref([
   { id: 7, text: 'ВС', active: false, day_of_week: 7 },
 ])
 
-const periodicityStack = ref([])
-
-const timeInputs = ref({})
+const timeInputs = ref({
+  1: {
+    start: '',
+    end: '',
+  },
+})
 
 const toggleRadio = (radio, value) => {
   const target = radio === 'reminder' ? reminder : break_group
   target.value = target.value === value ? null : value
-}
-const addDayToStack = (day) => {
-  if (day.active) {
-    // Если день уже активен, удаляем его из стека
-    const index = periodicityStack.value.findIndex((item) => item.id === day.id)
-    if (index !== -1) {
-      periodicityStack.value.splice(index, 1)
-    }
-    day.active = false
-    delete timeInputs.value[day.id]
-  } else {
-    // Если день не активен, добавляем его в стек
-    periodicityStack.value.push(day)
-
-    periodicityStack.value.sort((a, b) => a.id - b.id)
-    day.active = true
-    timeInputs.value[day.id] = { start: '', end: '' }
-  }
-}
-
-const changeTime = (id) => {
-  const currentTime = timeInputs.value[id].start.split(':')
-  const hour = parseInt(currentTime[0]) + 1
-  const minutes = currentTime[1]
-  const endTime = `${hour}:${minutes}`
-
-  timeInputs.value[id].end = endTime
 }
 
 const props = defineProps({

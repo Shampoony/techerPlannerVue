@@ -1,0 +1,49 @@
+.month-picker {
+  &__container {
+    color: var(--black) !important;
+    background-color: var(--white) !important;
+    width: 290px !important;
+  }
+  &__month {
+    background-color: var(--white) !important;
+    border-color: var(--grey) !important;
+  }
+  .night__mode &__month {
+    border-color: #202020 !important;
+  }
+  &__year {
+    background-color: var(--white) !important;
+    p {
+      color: var(--black) !important;
+    }
+    button {
+      height: 2rem !important;
+      font-size: 24px !important;
+    }
+  }
+  &__month {
+    color: var(--black) !important;
+  }
+  &-input-container {
+    width: 100% !important;
+    height: 100% !important;
+  }
+  &-input {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 20px 0 0 20px !important;
+    background-color: var(--white);
+    padding-left: 20px !important;
+    cursor: pointer;
+  }
+}
+
+.month-picker__month.selected {
+  background-color: var(--blue) !important;
+  color: var(--white) !important;
+}
+
+.month-picker__year button {
+  background-color: var(--blue) !important;
+  color: var(--white) !important;
+}

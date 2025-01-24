@@ -1,12 +1,22 @@
 <template>
-  <div class="modal-overlay" @click="close">
+  <div
+    class="modal-overlay"
+    @click="close"
+    :class="{ unActive: isSecondOrMoreModal && index == store.modals_count }"
+  >
     <div class="modal-content" @click.stop>
       <slot></slot>
     </div>
   </div>
 </template>
+
 <script setup>
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, onMounted, computed } from 'vue'
+import { useModalsStore } from '@/stores/modalsStore'
+
+const store = useModalsStore()
+
+const index = store.modals_count
 
 const props = defineProps({
   show: {
@@ -20,9 +30,18 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
+// Вычисляем, является ли эта модалка второй или последующей
+const isSecondOrMoreModal = computed(() => store.modals_count > 1)
+
 const close = () => {
   emit('close', props.id)
+  store.decrement()
 }
+
+onMounted(() => {
+  store.increment()
+  console.log(store.modals_count)
+})
 </script>
 
 <style scoped>
@@ -37,13 +56,17 @@ const close = () => {
   align-items: center;
   justify-content: center;
   z-index: 1030;
-  /* opacity: 0; */
   transition: opacity 0.3s ease;
+}
+
+.modal-overlay.unActive {
+  background: transparent;
 }
 
 .modal-overlay:has(.top) {
   align-items: start;
 }
+
 .modal-content {
   border-radius: 8px;
   padding: 20px;
@@ -53,12 +76,13 @@ const close = () => {
   padding: 25px;
 }
 
-/* Переходы для плавного появления */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active в Vue 2 */ {
+
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
 </style>

@@ -20,9 +20,22 @@
         <div class="v-calendar-menu__select">
           <div class="v-calendar-menu__select-buttons">
             <div class="v-calendar-menu__select-button">
-              <p>Январь 2025</p>
-              <img src="../../assets/images/arrow-down.svg" class="day-el" alt="" />
-              <img src="../../assets/images/arrow-down-night.svg" class="night-el" alt="" />
+              <month-picker-input v-if="type === 'month'" :no-default="false" :lang="'ru'">
+              </month-picker-input>
+              <VueDatePicker
+                v-if="type === 'week'"
+                week-picker
+                :format="formatWeek"
+                :locale="'ru-ru'"
+                v-model="date"
+                @update:model-value="onWeekSelect"
+              >
+                <template #clear-icon="{ clear }"> </template>
+              </VueDatePicker>
+              <div class="v-calendar-menu__select-button-image">
+                <img class="" src="../../assets/images/arrow-down.svg" alt="" />
+                <img class="" src="../../assets/images/arrow-down-night.svg" alt="" />
+              </div>
             </div>
             <div class="v-calendar-menu__select-button">
               <svg
@@ -95,9 +108,11 @@
       <div class="v-calendar-menu__select mob">
         <div class="v-calendar-menu__select-buttons">
           <div class="v-calendar-menu__select-button">
-            <p>Январь 2025</p>
-            <img src="../../assets/images/arrow-down.svg" class="day-el" alt="" />
-            <img src="../../assets/images/arrow-down-night.svg" class="night-el" alt="" />
+            <month-picker-input :no-default="false" :lang="'ru'"> </month-picker-input>
+            <div class="v-calendar-menu__select-button-image">
+              <img src="../../assets/images/arrow-down.svg" class="day-el" alt="" />
+              <img src="../../assets/images/arrow-down-night.svg" class="night-el" alt="" />
+            </div>
           </div>
           <div class="v-calendar-menu__select-button">
             <img src="../../assets/images/arrow-left.svg" class="day-el" alt="" />
@@ -123,34 +138,49 @@
       </div>
     </div>
   </div>
+  <div class="v-calendar-menu mob">
+    <div class="v-calendar-menu__block">
+      <div class="flex gap-2 items-center justify-center">
+        <div class="v-calendar-menu__picker picker">
+          <router-link
+            :to="{ name: 'calendar-week' }"
+            class="v-calendar-menu__picker-item picker__item"
+            :class="{ active: type === 'week' }"
+            >Неделя</router-link
+          >
+          <router-link
+            :to="{ name: 'home' }"
+            class="v-calendar-menu__picker-item picker__item"
+            :class="{ active: type === 'month' }"
+            >Месяц</router-link
+          >
+        </div>
+      </div>
+      <div class="v-calendar-menu__date flex items-center justify-center">
+        <a class="v-calendar-menu__date-back" href="">
+          <img src="../../assets/images/arrowRightCalendar.svg" class="day-el" alt="" />
+          <img src="../../assets/images/arrowRightCalendarNight.svg" class="night-el" alt="" />
+        </a>
+        <h3 class="v-calendar-menu__date-text">31 января - 5 февраля</h3>
+        <a class="v-calendar-menu__date-next" href="">
+          <img src="../../assets/images/arrowRightCalendar.svg" class="day-el" alt="" />
+          <img src="../../assets/images/arrowRightCalendarNight.svg" class="night-el" alt="" />
+        </a>
+      </div>
+      <div class="v-calendar-menu__buttons flex">
+        <div class="v-calendar-menu__button trial" @click="toggleModals('trial_lesson')">
+          <div class="button-plus">+</div>
+          Пробное занятие
+        </div>
+        <div class="v-calendar-menu__button blue-btn" @click="toggleModals('lessons')">
+          <div class="button-plus">+</div>
+          Занятие
+        </div>
+      </div>
+    </div>
+  </div>
   <transition name="fade">
     <v-lesson-modal v-if="modals.lessons" @close="toggleModals('lessons')" />
-    <!--   <v-modal v-if="modals.lessons" @close="toggleModals('lessons')">
-      <div class="modal-add">
-        <div class="modal-title">Добавление занятия</div>
-        <div class="picker modal-add__picker">
-          <div
-            class="picker__item"
-            :class="{ active: activeAdd == 'single' }"
-            @click="setActiveAdd('single')"
-          >
-            Разовое занятие
-          </div>
-          <div
-            class="picker__item"
-            :class="{ active: activeAdd == 'stable' }"
-            @click="setActiveAdd('stable')"
-          >
-            Постоянные занятия
-          </div>
-        </div>
-        <v-custom-select :options="options.student" />
-        <div class="single" v-if="activeAdd == 'single'">
-          <v-form-calendar-info />
-        </div>
-        <div class="stable" v-if="activeAdd == 'stable'"></div>
-      </div>
-    </v-modal> -->
   </transition>
   <transition name="fade">
     <v-trial-modal v-if="modals.trial_lesson" @close="toggleModals('trial_lesson')" />
@@ -160,9 +190,19 @@
 import vTrialModal from '../modals/v-trial-modal.vue'
 import vLessonModal from '../modals/v-lesson-modal.vue'
 
-import { onMounted, ref } from 'vue'
+import { format, startOfWeek, endOfWeek } from 'date-fns'
+import { ru } from 'date-fns/locale'
+
+import VueDatePicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
+
+import { MonthPickerInput } from 'vue-month-picker'
+
+import { ref } from 'vue'
 
 const showBreakInput = ref()
+
+const date = ref({})
 
 const props = defineProps({
   isShowedBreak: {
@@ -184,8 +224,20 @@ const toggleModals = (modalName) => {
   console.log(modalName)
   modals.value[modalName] = !modals.value[modalName]
 }
+const formatWeek = (date) => {
+  if (!date) return ''
 
-onMounted(() => {
-  console.log(props.type)
-})
+  // Определяем начало и конец недели
+  const start = startOfWeek(date, { weekStartsOn: 1 }) // Неделя начинается с понедельника
+  const end = endOfWeek(date, { weekStartsOn: 1 })
+
+  // Форматируем даты вручную
+  const startFormatted = format(start, 'd MMM', { locale: ru })
+  const endFormatted = format(end, 'd MMM', { locale: ru })
+
+  return `${startFormatted} - ${endFormatted}`
+}
+const onWeekSelect = (modelData) => {
+  console.log('Йоу', modelData)
+}
 </script>

@@ -4,7 +4,6 @@
     <main class="v-calendar-month">
       <div class="v-calendar-month__container container">
         <v-calendar-menu :type="'month'" />
-        <input type="month" placeholder="lol" />
         <div class="v-calendar-month__content scroll-container">
           <table class="v-calendar-month__table calendar">
             <thead>
@@ -32,250 +31,46 @@
                     </div>
                   </div>
                 </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
               </tr>
               <tr class="calendar-row">
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson break">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
               </tr>
               <tr class="calendar-row">
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson break">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
               </tr>
               <tr class="calendar-row">
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson break">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
-                <td class="calendar-row__item">
-                  <div class="calendar-row__item-content calendar-card">
-                    <div class="calendar-card__num">1</div>
-                    <div class="calendar-card__content">
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                      <div class="calendar-card__lesson trial">14:00 - 15:00 Даниил</div>
-                    </div>
-                  </div>
-                </td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
+                <td class="calendar-row__item"></td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
     </main>
+
     <v-footer />
   </div>
 </template>

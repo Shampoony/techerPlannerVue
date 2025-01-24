@@ -11,10 +11,14 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@daypilot/daypilot-lite-vue": "^3.31.0",
+    "@vuepic/vue-datepicker": "^11.0.1",
+    "date-fns": "^4.1.0",
     "pinia": "^2.3.0",
     "sass-embedded": "^1.83.1",
     "swiper": "^11.2.1",
     "vue": "^3.5.13",
+    "vue-month-picker": "^1.7.2",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
