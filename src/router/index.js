@@ -1,3 +1,4 @@
+import Test from '@/components/calendar/test.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const vCalendarMonth = () => import('@/components/calendar/v-calendar-month.vue')
@@ -8,21 +9,25 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '/calendar/',
       name: 'home',
       component: vCalendarMonth,
     },
     {
-      path: '/day',
+      path: '/calendar/test',
+      name: 'test',
+      component: Test,
+    },
+    {
+      path: '/calendar/day',
       name: 'calendar-day',
       component: VCalendarDay,
     },
     {
-      path: '/week',
+      path: '/calendar/week',
       name: 'calendar-week',
       component: VCalendarWeek,
     },
-    {},
   ],
 })
 

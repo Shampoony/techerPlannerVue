@@ -2,9 +2,9 @@
   <div
     class="modal-overlay"
     @click="close"
-    :class="{ unActive: isSecondOrMoreModal && index == store.modals_count }"
+    :class="{ unActive: isSecondOrMoreModal && index + 1 == store.modals_count }"
   >
-    <div class="modal-content" @click.stop>
+    <div @click.stop class="modal-inner">
       <slot></slot>
     </div>
   </div>
@@ -40,7 +40,7 @@ const close = () => {
 
 onMounted(() => {
   store.increment()
-  console.log(store.modals_count)
+  console.log(store.modals_count, index)
 })
 </script>
 
@@ -52,11 +52,17 @@ onMounted(() => {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
+  z-index: 1030;
+  transition: opacity 0.3s ease;
+
+  padding: 10px 30px;
+
+  height: 100%;
+  overflow-y: auto;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1030;
-  transition: opacity 0.3s ease;
 }
 
 .modal-overlay.unActive {
@@ -65,15 +71,6 @@ onMounted(() => {
 
 .modal-overlay:has(.top) {
   align-items: start;
-}
-
-.modal-content {
-  border-radius: 8px;
-  padding: 20px;
-}
-
-.modal-content > * {
-  padding: 25px;
 }
 
 .fade-enter-active,

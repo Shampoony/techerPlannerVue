@@ -3,19 +3,13 @@
     <div class="modal-row time" v-if="!removeDate">
       <div class="modal-row__title">Время занятия</div>
       <div class="time__block modal-row__block">
-        <input
-          type="time"
-          class="time__picker"
-          placeholder="Начало"
+        <VueTimepicker
+          @update:modelValue="handleTimeUpdate"
           v-model="timeInputs[1].start"
-          @input="changeTime(1, timeInputs)"
+          placeholder="--:--"
+          :clearable="false"
         />
-        <input
-          type="time"
-          class="time__picker"
-          placeholder="Завершение"
-          v-model="timeInputs[1].end"
-        />
+        <VueTimepicker v-model="timeInputs[1].end" placeholder="--:--" :clearable="false" />
       </div>
     </div>
     <div class="modal-row" v-if="!removeDate">
@@ -79,7 +73,11 @@
 
 <script setup>
 import { changeTime } from '@/utils'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, reactive } from 'vue'
+
+/* timepicker */
+import VueTimepicker from 'vue3-timepicker'
+import 'vue3-timepicker/dist/VueTimepicker.css'
 
 const reminder = ref(null)
 const break_group = ref(null)
@@ -104,6 +102,13 @@ const timeInputs = ref({
 const toggleRadio = (radio, value) => {
   const target = radio === 'reminder' ? reminder : break_group
   target.value = target.value === value ? null : value
+}
+
+const handleTimeUpdate = (newValue) => {
+  timeInputs.value[1].start = newValue
+  timeInputs.value[1].end = newValue
+  console.log(timeInputs.value)
+  changeTime(1, timeInputs.value) // Не забудьте добавить .value для ref
 }
 
 const props = defineProps({

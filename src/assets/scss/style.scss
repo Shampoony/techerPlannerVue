@@ -3,10 +3,16 @@
 @import url(../scss/radio.scss);
 @import url(../scss/variables.scss);
 @import url(../scss/weekPicker.scss);
+@import url(../scss/timePicker.scss);
 @import url('https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 body {
   background-color: red;
+}
+
+body:has(.modal-overlay) {
+  overflow: hidden;
 }
 
 .night__mode {
@@ -15,6 +21,7 @@ body {
   --black: #fff;
   --grey: #4c4c4c;
   --dark-white: #ffff;
+  --grey-dark: #202020;
 }
 
 .night__mode .white__plus__icon svg path {
@@ -80,6 +87,9 @@ body {
   flex-direction: column;
 }
 
+.wrapper:has(.mob-page) {
+  background-color: var(--white);
+}
 .night__mode .wrapper {
   background-color: #202020;
 }
@@ -109,6 +119,7 @@ label,
 span {
   margin: 0;
   text-decoration: none;
+  font-size: 14px;
   line-height: 1.2;
   font-family: 'Arvo', sans-serif;
 }
@@ -142,7 +153,7 @@ circle {
 }
 
 .text-subtitle {
-  font-size: 18px;
+  font-size: clamp(0.875rem, 0.765rem + 0.49vw, 1rem);
   font-weight: 700;
   line-height: 22px;
   color: var(--black);
@@ -171,7 +182,7 @@ circle {
   padding: 22px;
   border-radius: 10px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: clamp(0.875rem, 0.654rem + 0.98vw, 1.125rem);
   /*  font-weight: 700; */
   line-height: 22px;
   color: var(--white) !important;
@@ -196,7 +207,7 @@ circle {
   width: 100%;
   padding: 16px;
 
-  background-color: var(--grey);
+  background-color: var(--grey-dark);
   border-radius: 10px;
   margin-bottom: 10px;
 }
@@ -239,6 +250,18 @@ circle {
 input {
   outline: none; // Убирает обводку при фокусе и в обычном состоянии
 }
+
+.datepicker .dp__input {
+  text-align: center;
+  height: 100%;
+  background-color: var(--grey) !important;
+}
+
+.datepicker > div,
+.dp__input_wrap {
+  height: 100%;
+}
+
 .white-btn:hover {
   color: var(--black);
 }
@@ -263,7 +286,9 @@ input {
   display: flex;
   align-items: center;
 }
-
+.scroll-container {
+  overflow: auto;
+}
 .scroll-container::-webkit-scrollbar {
   width: 4px;
   height: 4px;
@@ -277,6 +302,7 @@ input {
 .scroll-container::-webkit-scrollbar-track {
   background-color: var(--white);
 }
+
 .picker {
   background-color: var(--white);
 
@@ -301,6 +327,10 @@ input {
       padding: 10px;
       font-size: 14px;
     }
+
+    @media (max-width: 360px) {
+      font-size: 12px;
+    }
   }
   &__item.active {
     background-color: var(--grey);
@@ -315,19 +345,19 @@ input {
 }
 
 .modal {
-  &-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  &-inner {
     width: 100%;
-  }
-  &-content > * {
-    background-color: var(--white);
-    border-radius: 8px;
+    max-width: 648px;
 
-    .night__mode & {
-      background-color: #202020;
-    }
+    margin: auto;
+  }
+  &-inner > div {
+    background-color: var(--white);
+    border-radius: 20px;
+    padding: 20px;
+  }
+  .night__mode &-inner > div {
+    background-color: #202020;
   }
   &-title {
     font-size: 18px;
@@ -646,6 +676,10 @@ header {
   }
 
   &.mob {
+    display: none;
+    @media (max-width: 480px) {
+      display: block;
+    }
     .v-calendar-menu {
       &__picker {
         border: 1px solid var(--grey) !important;
@@ -809,26 +843,43 @@ header {
     cursor: pointer;
 
     width: 100% !important;
+  }
+}
 
-    .night__mode &.trial {
-      background-color: #fdf2b9;
-      color: var(--white);
-      border: none;
+.trial-btn {
+  display: flex;
+  background-color: #e2ffe7;
+  border: 1px solid #8cef8a;
+  color: #258d50;
+  align-items: center;
+  gap: 12px;
 
-      .button-plus {
-        background-color: var(--white);
-        color: var(--black);
-      }
+  padding: 0 10px;
+  border-radius: 10px;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  width: 100% !important;
+
+  .button-plus {
+    color: #fff;
+    background-color: #42b773;
+  }
+
+  .night__mode & {
+    background-color: #fdf2b9;
+    color: var(--white);
+    border: none;
+
+    .button-plus {
+      background-color: var(--white);
     }
-    &.trial {
-      background-color: #e2ffe7;
-      border: 1px solid #8cef8a;
-      color: #258d50;
-    }
-    &.trial .button-plus {
-      background-color: #42b773;
-      color: var(--white);
-    }
+  }
+  &.trial .button-plus {
+    background-color: #42b773;
+    color: var(--white);
   }
 }
 
@@ -921,8 +972,8 @@ header {
     overflow-x: auto;
   }
   &__table {
-    border-collapse: collapse; // Убираем двойные линии между ячейками
-    border: none; // Убираем внешние границы таблицы
+    border-collapse: collapse;
+    border: none;
 
     background-color: var(--white);
   }
@@ -940,6 +991,82 @@ header {
     &__lesson {
       font-size: clamp(0.625rem, 0.196rem + 0.67vw, 1rem);
     }
+  }
+}
+
+.v-calendar-month-mob {
+  .calendar {
+    min-width: 100%;
+    &-header__item {
+      border: 0;
+      font-size: 10px;
+      color: #202020;
+      font-weight: 500;
+      text-align: center;
+
+      max-width: 62px;
+      height: 46px;
+      padding: 0;
+    }
+    &-header__item + &-header__item {
+      border-left: 0 !important;
+    }
+    td {
+      border: 0 !important;
+      padding: 5px 2px;
+    }
+
+    &-row {
+      height: 100%;
+      &__item {
+        min-height: 100% !important;
+      }
+
+      &__item.active {
+        background-color: #eaf0ff;
+        border-radius: 8px;
+      }
+      &__item-content {
+        min-height: 100% !important;
+      }
+    }
+    &-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      min-height: 56px;
+
+      &__content {
+        justify-content: flex-start;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        gap: 2px;
+      }
+      &__content.completed {
+        opacity: 0.6;
+      }
+      &__num {
+        font-size: 14px;
+      }
+
+      &__lesson {
+        border-radius: 50%;
+        width: 6px;
+        height: 6px;
+
+        padding: 0;
+      }
+
+      &__lesson.break {
+        border: none;
+        background-color: #48ad72;
+      }
+    }
+  }
+  .calendar-header__item + .calendar-header__item {
+    border: 0;
   }
 }
 
@@ -1075,11 +1202,8 @@ header {
 
   color: var(--black);
 
-  width: 648px;
+  max-width: 648px;
 
-  @media (max-width: 768px) {
-    width: clamp(20rem, 5.357rem + 73.21vw, 40.5rem);
-  }
   .modal-title {
     margin-bottom: 32px;
   }
@@ -1104,6 +1228,15 @@ header {
         text-align: center;
       }
     }
+  }
+}
+
+.modal-transfer {
+  &__block {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 }
 
@@ -1228,6 +1361,9 @@ header {
     &-item.active {
       background-color: transparent;
     }
+    .night__mode &-item.active {
+      background-color: #202020;
+    }
   }
   &__container {
     display: flex;
@@ -1327,6 +1463,8 @@ header {
     font-size: 18px;
 
     padding: 0 10px;
+
+    cursor: pointer;
   }
 
   .white-btn {
@@ -1338,8 +1476,13 @@ header {
     background-color: var(--white);
   }
 }
-.wrapper {
-  background-color: var(--white);
+
+.v-buttons-modal {
+  &__container {
+    @media (max-width: 480px) {
+      flex-direction: column;
+    }
+  }
 }
 
 .v-calendar-week-mob {
@@ -1357,6 +1500,7 @@ header {
 
 .day {
   box-shadow: 0px 2px 5px 0px #132c6a26;
+
   padding: 20px 10px 0;
   border-radius: 8px;
 
@@ -1435,5 +1579,42 @@ header {
         }
       }
     }
+  }
+}
+
+.v-calendar-day {
+  main {
+    padding-top: 24px;
+  }
+  &__buttons {
+    display: flex;
+    gap: 8px;
+    @media (max-width: 400px) {
+      flex-direction: column;
+    }
+  }
+
+  &__button {
+    padding: 15px 10px;
+    font-size: 12px;
+    justify-content: center;
+    @media (max-width: 400px) {
+      font-size: 14px;
+    }
+  }
+
+  &__back {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    cursor: pointer;
+  }
+
+  &__date {
+    font-size: 18px;
+    font-weight: 500;
+    color: #202020;
+    margin: 16px 0 24px;
   }
 }

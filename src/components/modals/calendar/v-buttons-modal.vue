@@ -3,9 +3,18 @@
     <div class="v-buttons-modal">
       <div class="modal-title">Занятие</div>
       <div class="v-buttons-modal__container">
-        <div class="v-buttons-modal__button white-btn" @click="toggleLessonModals">Удалить</div>
-        <div class="v-buttons-modal__button blue-btn">Редакиировать</div>
-        <div class="v-buttons-modal__button blue-btn">Перенести</div>
+        <div class="v-buttons-modal__button white-btn" @click="toggleLessonModals('delete_lesson')">
+          Удалить
+        </div>
+        <div class="v-buttons-modal__button blue-btn" @click="toggleLessonModals('change_lesson')">
+          Редакиировать
+        </div>
+        <div
+          class="v-buttons-modal__button blue-btn"
+          @click="toggleLessonModals('transfer_lesson')"
+        >
+          Перенести
+        </div>
       </div>
     </div>
   </v-modal>
@@ -17,8 +26,7 @@ import { defineEmits } from 'vue'
 
 const emit = defineEmits(['toggleLessonModals'])
 
-const toggleLessonModals = () => {
-  emit('toggleLessonModals', 'delete_lesson')
-  console.log(emit)
+const toggleLessonModals = (name) => {
+  emit('toggleLessonModals', name)
 }
 </script>

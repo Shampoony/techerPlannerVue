@@ -84,6 +84,7 @@
             type="checkbox"
             class="custom-checkbox-input"
             id="break"
+            @change="emit('toggleBreakMode')"
             v-model="showBreakInput"
           />
           <label for="break" class="custom-checkbox-label">
@@ -94,7 +95,7 @@
       </div>
       <!-- /* toggleModals('trial_lesson') */ -->
       <div class="v-calendar-menu__buttons flex">
-        <div class="v-calendar-menu__button trial" @click="toggleModals('trial_lesson')">
+        <div class="v-calendar-menu__button trial-btn" @click="toggleModals('trial_lesson')">
           <div class="button-plus">+</div>
           Пробное занятие
         </div>
@@ -129,6 +130,7 @@
           type="checkbox"
           class="custom-checkbox-input"
           id="mob-break"
+          @change="emit('toggleBreakMode')"
           v-model="showBreakInput"
         />
         <label for="mob-break" class="custom-checkbox-label">
@@ -168,7 +170,7 @@
         </a>
       </div>
       <div class="v-calendar-menu__buttons flex">
-        <div class="v-calendar-menu__button trial" @click="toggleModals('trial_lesson')">
+        <div class="v-calendar-menu__button trial-btn" @click="toggleModals('trial_lesson')">
           <div class="button-plus">+</div>
           Пробное занятие
         </div>
@@ -193,14 +195,16 @@ import vLessonModal from '../modals/v-lesson-modal.vue'
 import { format, startOfWeek, endOfWeek } from 'date-fns'
 import { ru } from 'date-fns/locale'
 
-import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import VueDatePicker from '@vuepic/vue-datepicker'
 
 import { MonthPickerInput } from 'vue-month-picker'
 
-import { ref } from 'vue'
+import { ref, defineEmits } from 'vue'
 
-const showBreakInput = ref()
+const emit = defineEmits(['toggleBreakMode'])
+
+const showBreakInput = ref(localStorage.getItem('breakMode'))
 
 const date = ref({})
 

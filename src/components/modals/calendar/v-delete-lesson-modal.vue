@@ -11,4 +11,17 @@
 </template>
 <script setup>
 import vModal from '../../generalComponents/v-modal.vue'
+
+import { defineProps, onMounted } from 'vue'
+
+const props = defineProps({
+  lesson: {
+    type: Object,
+    require: true,
+  },
+})
+
+onMounted(() => {
+  console.log('Выбранный урок - ', props.lesson)
+})
 </script>

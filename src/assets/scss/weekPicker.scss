@@ -50,3 +50,12 @@
 .dp__input_icon {
   display: none !important;
 }
+
+.dp__today {
+  border-color: var(--blue) !important;
+}
+
+.dp__range_between_week,
+.dp__calendar_row {
+  border: 0 !important;
+}

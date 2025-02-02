@@ -1,8 +1,8 @@
 .calendar_default_main {
+  width: 400px;
 }
-.calendar_default_corner,
-.calendar_default_colheader {
-  display: none;
+.calendar_default_main > div:nth-child(2) {
+  height: 400px !important;
 }
 .daypilot-row-header .daypilot-hour {
   display: none; /* Убираем промежуточные строки */
@@ -62,7 +62,7 @@
   display: none !important;
 }
 .calendar_default_event_inner {
-  background: #ecf0fa !important;
+  background: rgba($color: #1d4ecc, $alpha: 0.1) !important;
 }
 
 .calendar_default_main {
@@ -91,4 +91,16 @@
   margin-top: 5px;
   background-color: transparent !important;
   border: 1px dashed var(--blue) !important;
+}
+
+.calendar_default_shadow_inner {
+  border: 0 !important;
+}
+
+.calendar_default_shadow {
+  box-shadow: 0;
+}
+
+div.calendar_default_main tr:nth-child(2n) {
+  border-top: none !important; /* Убираем разделитель между получасовыми слотами */
 }
