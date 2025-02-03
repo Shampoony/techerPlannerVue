@@ -1,8 +1,8 @@
 <template>
   <div class="wrapper">
     <v-header />
-    <main v-if="!isMobile">
-      <section class="v-calendar-week">
+    <main>
+      <section class="v-calendar-week" v-if="!isMobile">
         <div class="v-calendar-week__container container">
           <v-calendar-menu
             :is-showed-break="true"
@@ -78,6 +78,66 @@
               </template>
             </DayPilotCalendar>
           </div>
+        </div>
+      </section>
+      <section class="v-calendar-menu-mob-week" v-else>
+        <div class="v-calendar-menu-mob-week__container">
+          <v-calendar-menu
+            :is-showed-break="true"
+            :type="'week'"
+            @setWeek="setLessonsOnWeek"
+            @toggleBreakMode="toggleBreakMode"
+          />
+          <ul class="v-calendar-menu-mob-week__list">
+            <li
+              class="v-calendar-menu-mob-week__list-item day"
+              v-for="day in dayOfTheWeek.week.lessons"
+              :key="day.id"
+            >
+              <div class="day__header">
+                <p class="day__date">{{ activeDayLessons.day }}</p>
+                <img src="../../assets/images/arrowRightCalendar.svg" class="day-el" alt="" />
+                <img
+                  src="../../assets/images/arrowRightCalendarNight.svg"
+                  class="night-el"
+                  alt=""
+                />
+              </div>
+              <div class="day__content" v-for="lesson in day.lessons" :key="lesson.id">
+                <div class="day__lesson">
+                  <div class="day__lesson-time">
+                    <div class="day__lesson-circle"></div>
+                    <p>{{ lesson.start_time }}</p>
+                    <p>-</p>
+                    <p>{{ lesson.end_time }}</p>
+                  </div>
+                  <div class="day__lesson-name">{{ lesson.student_name }}</div>
+                </div>
+                <div
+                  class="day__lesson break"
+                  v-if="activeDayLessons.breaks && activeDayLessons.breaks[lesson.lesson_id]"
+                >
+                  <div class="day__lesson-block">
+                    <img src="../../assets/images/button_add_calendar.svg" class="day-el" alt="" />
+                    <img
+                      src="../../assets/images/button_add_calendar_night.svg"
+                      class="night-el"
+                      alt=""
+                    />
+                    <div class="day__lesson-time">
+                      <p>{{ activeDayLessons.breaks[lesson.lesson_id].start_time }}</p>
+                      <p>-</p>
+                      <p>{{ activeDayLessons.breaks[lesson.lesson_id].end_time }}</p>
+                    </div>
+                  </div>
+                  <div class="day__lesson-name">Перерыв</div>
+                </div>
+              </div>
+              <div v-if="!activeDayLessons.lessons.length">
+                <h2 class="title pb-7">В этот день у вас нет уроков</h2>
+              </div>
+            </li>
+          </ul>
         </div>
       </section>
     </main>
