@@ -9,7 +9,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/calendar/',
+      path: '/',
       name: 'home',
       component: vCalendarMonth,
     },
@@ -19,12 +19,12 @@ const router = createRouter({
       component: Test,
     },
     {
-      path: '/calendar/day',
+      path: '/day',
       name: 'calendar-day',
       component: VCalendarDay,
     },
     {
-      path: '/calendar/week',
+      path: '/week',
       name: 'calendar-week',
       component: VCalendarWeek,
     },
