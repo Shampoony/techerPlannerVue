@@ -33,6 +33,7 @@
                 week-picker
                 :format="formatWeek"
                 :locale="'ru-ru'"
+                :auto-apply="true"
                 v-model="date"
                 @update:model-value="onWeekSelect"
               >
