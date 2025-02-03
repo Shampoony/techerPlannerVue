@@ -15,15 +15,23 @@
 
         <div class="modal-transfer__block">
           <h3 class="text-subtitle">на</h3>
-          <input type="date" class="styled-input" :v-model="changedData.date" />
+          <VueDatePicker
+            class="datepicker"
+            :format="formatDay"
+            :locale="'ru-ru'"
+            v-model="changedData.date"
+            :auto-apply="true"
+          >
+            <template #clear-icon="{ clear }"> </template>
+          </VueDatePicker>
           <div class="flex gap-2">
-            <input
-              type="time"
-              class="styled-input"
-              @input="changeTime(1, changedData.time)"
-              :v-model="changedData.time.start"
+            <VueTimepicker
+              @update:modelValue="changeTime(1, changedData.time)"
+              v-model="changedData.time.start"
+              placeholder="--:--"
+              :clearable="false"
             />
-            <input type="time" class="styled-input" :v-model="changedData.time.end" />
+            <VueTimepicker v-model="changedData.time.end" placeholder="--:--" :clearable="false" />
           </div>
         </div>
       </div>
@@ -33,9 +41,17 @@
 
 <script setup>
 import vModal from '../generalComponents/v-modal.vue'
-import { ref, defineProps, onMounted } from 'vue'
 
-import {} from 'vue'
+/* datepicker */
+import '@vuepic/vue-datepicker/dist/main.css'
+import VueDatePicker from '@vuepic/vue-datepicker'
+
+/* timepicker */
+import VueTimepicker from 'vue3-timepicker'
+import 'vue3-timepicker/dist/VueTimepicker.css'
+
+import { formatDay, changeTime } from '@/utils'
+import { ref, defineProps, onMounted } from 'vue'
 
 const props = defineProps({
   lesson: {
@@ -45,10 +61,9 @@ const props = defineProps({
 })
 
 const changedData = ref({
-  date: '',
+  date: new Date(),
   time: {
-    start: '',
-    end: '',
+    1: { start: '', end: '' },
   },
 })
 

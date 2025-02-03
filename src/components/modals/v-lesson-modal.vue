@@ -51,7 +51,7 @@
                   <VueTimepicker
                     v-model="timeInputs[item.id].end"
                     @update:modelValue="
-                      (modelValue) => ((timeInputs[item.id].end = modelValue), console.log(''))
+                      (modelValue) => ((timeInputs[item.id].end = modelValue), console.log('ляля'))
                     "
                     placeholder="--:--"
                     :clearable="false"

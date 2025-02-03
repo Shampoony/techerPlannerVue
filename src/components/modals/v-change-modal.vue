@@ -120,6 +120,7 @@ import vModal from '../generalComponents/v-modal.vue'
 import vCustomSelect from '../generalComponents/v-custom-select.vue'
 import vFormCalendarInfo from '../generalComponents/v-form-calendar-info.vue'
 
+import { formatDay } from '@/utils'
 import { ref, defineProps, onMounted } from 'vue'
 
 /* datepicker */
