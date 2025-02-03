@@ -160,33 +160,9 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.event {
-  position: absolute;
-  inset: 0 0 0 5px;
-  padding: 5px;
-}
-
-.event-header {
-  display: flex;
-  align-items: center;
-}
-
-.event-text {
-  flex-grow: 1;
-}
-
-.break {
-  background-color: #ffcccc; /* Можно изменить стиль для перерывов */
-  color: #ff0000; /* Например, красный цвет для событий перерыва */
-}
-
-.event-text {
-  font-weight: bold;
-}
-
+<style>
 .calendar_default_corner,
 .calendar_default_colheader {
-  display: none;
+  display: none !important;
 }
 </style>

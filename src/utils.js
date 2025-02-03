@@ -1,3 +1,5 @@
+import { format } from 'date-fns'
+import { ru } from 'date-fns/locale'
 export function changeTime(id, timeInputs) {
   /* Добавляет 1 час к началу занятия и помещает в поле времени конца занятия */
   const currentTime = timeInputs[id].start.split(':')
@@ -31,4 +33,11 @@ export function getAccessToken() {
   const match = document.cookie.match(/(^| )access_token=([^;]+)/)
   console.log(document.cookie)
   return match ? match[2] : null
+}
+
+export function formatDay(date) {
+  if (!date) return ''
+  const formattedDate = format(date, 'd MMMM yyyy', { locale: ru })
+
+  return formattedDate
 }

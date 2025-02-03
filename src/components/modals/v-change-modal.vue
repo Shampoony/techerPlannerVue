@@ -120,8 +120,6 @@ import vModal from '../generalComponents/v-modal.vue'
 import vCustomSelect from '../generalComponents/v-custom-select.vue'
 import vFormCalendarInfo from '../generalComponents/v-form-calendar-info.vue'
 
-import { format } from 'date-fns'
-import { ru } from 'date-fns/locale'
 import { ref, defineProps, onMounted } from 'vue'
 
 /* datepicker */
@@ -177,13 +175,6 @@ const toggleRadio = (radio, value) => {
 const togglePeriodicity = (day) => {
   addDayToStack(day)
   setDate(day)
-}
-
-const formatDay = (date) => {
-  if (!date) return ''
-  const formattedDate = format(date, 'd MMMM yyyy', { locale: ru })
-
-  return formattedDate
 }
 
 const setActiveAdd = (name) => {

@@ -42,19 +42,19 @@
               <h4 class="periodicity__row-title">{{ item.text }}</h4>
               <div class="time">
                 <div class="time__block modal-row__block" v-if="timeInputs[item.id]">
-                  <input
-                    type="time"
-                    class="time__picker"
-                    placeholder="Начало"
-                    @input="changeTime(item.id)"
+                  <VueTimepicker
+                    @update:modelValue="(modelValue) => handleTime(modelValue, item.id)"
                     v-model="timeInputs[item.id].start"
+                    placeholder="--:--"
+                    :clearable="false"
                   />
-                  <input
-                    type="time"
-                    class="time__picker"
-                    placeholder="Завершение"
-                    @input="changeTime(item.id)"
+                  <VueTimepicker
                     v-model="timeInputs[item.id].end"
+                    @update:modelValue="
+                      (modelValue) => ((timeInputs[item.id].end = modelValue), console.log(''))
+                    "
+                    placeholder="--:--"
+                    :clearable="false"
                   />
                 </div>
               </div>
@@ -63,7 +63,17 @@
         </div>
         <div class="modal-row">
           <div class="modal-row__title">Повторять до</div>
-          <input class="datepicker" type="date" placeholder="Начало" v-model="repeatUntill" />
+          <div class="modal-row__block">
+            <VueDatePicker
+              class="datepicker"
+              :format="formatDay"
+              :locale="'ru-ru'"
+              v-model="repeatUntill"
+              :auto-apply="true"
+            >
+              <template #clear-icon="{ clear }"> </template>
+            </VueDatePicker>
+          </div>
         </div>
         <div class="modal-row">
           <div class="modal-row__title">Напоминание за, минут</div>
@@ -109,6 +119,16 @@ import vModal from '../generalComponents/v-modal.vue'
 import vCustomSelect from '../generalComponents/v-custom-select.vue'
 import vFormCalendarInfo from '../generalComponents/v-form-calendar-info.vue'
 
+/* timepicker */
+import VueTimepicker from 'vue3-timepicker'
+import 'vue3-timepicker/dist/VueTimepicker.css'
+
+/* datepicker */
+import '@vuepic/vue-datepicker/dist/main.css'
+import VueDatePicker from '@vuepic/vue-datepicker'
+
+import { formatDay } from '@/utils'
+
 import { ref } from 'vue'
 
 const activeAdd = ref('single')
@@ -119,8 +139,7 @@ const setActiveAdd = (name) => {
 
 const reminder = ref(null)
 const break_group = ref(null)
-
-const repeatUntill = ref('')
+const repeatUntill = ref(new Date())
 
 const periodicityDays = ref([
   { id: 1, text: 'ПН', active: false, day_of_week: 1 },
@@ -174,14 +193,19 @@ const addDayToStack = (day) => {
   }
 }
 
-/* Добавляет 1 час к началу занятия и помещает в поле времени  конца занятия */
 const changeTime = (id) => {
   const currentTime = timeInputs.value[id].start.split(':')
   const hour = parseInt(currentTime[0]) + 1
   const minutes = currentTime[1]
   const endTime = `${hour}:${minutes}`
-
   timeInputs.value[id].end = endTime
+  console.log(endTime, timeInputs.value[id])
+}
+
+const handleTime = (modelValue, id) => {
+  timeInputs.value[id].start = modelValue
+  console.log('Лала', timeInputs.value)
+  changeTime(id)
 }
 
 /* Устанавливает автоматически дату для поля "повторять до" */

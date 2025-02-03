@@ -20,7 +20,13 @@
         <div class="v-calendar-menu__select">
           <div class="v-calendar-menu__select-buttons">
             <div class="v-calendar-menu__select-button">
-              <month-picker-input v-if="type === 'month'" :no-default="false" :lang="'ru'">
+              <month-picker-input
+                v-if="type === 'month'"
+                :no-default="false"
+                :lang="'ru'"
+                v-model="selectedMonth"
+                @change="onMonthSelect"
+              >
               </month-picker-input>
               <VueDatePicker
                 v-if="type === 'week'"
@@ -109,7 +115,24 @@
       <div class="v-calendar-menu__select mob">
         <div class="v-calendar-menu__select-buttons">
           <div class="v-calendar-menu__select-button">
-            <month-picker-input :no-default="false" :lang="'ru'"> </month-picker-input>
+            <month-picker-input
+              v-if="type === 'month'"
+              :no-default="false"
+              :lang="'ru'"
+              v-model="selectedMonth"
+              @change="onMonthSelect"
+            >
+            </month-picker-input>
+            <VueDatePicker
+              v-if="type === 'week'"
+              week-picker
+              :format="formatWeek"
+              :locale="'ru-ru'"
+              v-model="date"
+              @update:model-value="onWeekSelect"
+            >
+              <template #clear-icon="{ clear }"> </template>
+            </VueDatePicker>
             <div class="v-calendar-menu__select-button-image">
               <img src="../../assets/images/arrow-down.svg" class="day-el" alt="" />
               <img src="../../assets/images/arrow-down-night.svg" class="night-el" alt="" />
@@ -202,11 +225,12 @@ import { MonthPickerInput } from 'vue-month-picker'
 
 import { ref, defineEmits } from 'vue'
 
-const emit = defineEmits(['toggleBreakMode'])
+const emit = defineEmits(['toggleBreakMode', 'setMonth', 'setWeek'])
 
 const showBreakInput = ref(localStorage.getItem('breakMode'))
 
 const date = ref({})
+const selectedMonth = ref()
 
 const props = defineProps({
   isShowedBreak: {
@@ -242,6 +266,10 @@ const formatWeek = (date) => {
   return `${startFormatted} - ${endFormatted}`
 }
 const onWeekSelect = (modelData) => {
-  console.log('Йоу', modelData)
+  emit('setWeek', modelData[0].getDate())
+}
+
+const onMonthSelect = (modelData) => {
+  emit('setMonth', modelData.monthIndex)
 }
 </script>

@@ -81,34 +81,8 @@
       </section>
     </main>
     <v-footer />
-    <transition name="fade">
-      <v-buttons-modal
-        v-if="modals.buttons"
-        @toggleLessonModals="toggleLessonModals"
-        @close="toggleButtonsModal"
-      />
-    </transition>
-    <transition name="fade">
-      <v-transfer-modal
-        v-if="modals.transfer_lesson"
-        @close="toggleLessonModals('transfer_lesson')"
-        :lesson="pickedLesson"
-      />
-    </transition>
-    <transition name="fade">
-      <v-change-modal
-        v-if="modals.change_lesson"
-        @close="toggleLessonModals('change_lesson')"
-        :lesson="pickedLesson"
-      />
-    </transition>
-    <transition name="fade">
-      <v-delete-lesson-modal
-        v-if="modals.delete_lesson"
-        @close="toggleLessonModals('delete_lesson')"
-        :lesson="pickedLesson"
-      />
-    </transition>
+
+    <v-modals-container ref="modalsContainer" />
   </div>
 </template>
 
@@ -116,12 +90,10 @@
 import vCalendarMenu from './v-calendar-menu.vue'
 import vFooter from '../generalComponents/v-footer.vue'
 import VHeader from '../generalComponents/v-header.vue'
-import vChangeModal from '../modals/v-change-modal.vue'
-import vTransferModal from '../modals/v-transfer-modal.vue'
-import vButtonsModal from '../modals/calendar/v-buttons-modal.vue'
-import vDeleteLessonModal from '../modals/calendar/v-delete-lesson-modal.vue'
 
-import { ref, onMounted } from 'vue'
+import vModalsContainer from '../generalComponents/v-modals-container.vue'
+
+import { ref, onMounted, useTemplateRef } from 'vue'
 import { useIsMobile } from '@/composables/useIsMobile'
 import { DayPilot, DayPilotCalendar } from '@daypilot/daypilot-lite-vue'
 
@@ -129,7 +101,6 @@ const { isMobile } = useIsMobile()
 const baseGap = 10
 const baseHeight = 90
 
-const pickedLesson = ref(null)
 const breakMode = ref(localStorage.getItem('breakMode') === 'true')
 const events = ref()
 
@@ -142,19 +113,6 @@ const config = {
   headerDateFormat: 'ddd, d',
   allowEventOverlap: false,
   touch: true,
-  onTimeRangeSelected: async (args) => {
-    const modal = await DayPilot.Modal.prompt('Create a new event:', 'Event 1')
-    if (modal.canceled) {
-      return
-    }
-    const newEvent = {
-      start: args.start,
-      end: args.end,
-      id: DayPilot.guid(),
-      text: modal.result,
-    }
-    events.value.push(newEvent)
-  },
 
   onEventMoved: (args) => {
     console.log('Event moved', args)
@@ -208,12 +166,7 @@ const weekDays = ref([
   { title: 'вс', number: 26 },
 ])
 
-const modals = ref({
-  buttons: false,
-  delete_lesson: false,
-  transfer_lesson: false,
-  change_lesson: false,
-})
+const modalsContainer = useTemplateRef('modalsContainer')
 
 const dayOfTheWeek = ref({
   week: {
@@ -360,21 +313,14 @@ const toggleBreakMode = () => {
   }
 }
 
-const toggleLessonModals = (modalName) => {
-  modals.value[modalName] = !modals.value[modalName]
-  console.log(modalName)
-}
-
 const toggleButtonsModal = (lesson) => {
-  toggleLessonModals('buttons')
-  pickedLesson.value = lesson
+  modalsContainer.value.toggleLessonModals('buttons', lesson)
 }
 
 const getHeight = (duration) => {
   return Math.max(baseHeight, baseHeight * duration)
 }
 onMounted(() => {
-  console.log(breakMode.value)
   if (breakMode.value) {
     loadEvents()
   }

@@ -592,10 +592,6 @@ video {
   position: fixed;
 }
 
-.absolute {
-  position: absolute;
-}
-
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -622,10 +618,6 @@ video {
 
 .table {
   display: table;
-}
-
-.flex-grow {
-  flex-grow: 1;
 }
 
 .rotate-180 {
@@ -671,6 +663,10 @@ video {
 
 .border {
   border-width: 1px;
+}
+
+.pb-7 {
+  padding-bottom: 1.75rem;
 }
 
 .text-base {

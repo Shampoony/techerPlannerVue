@@ -14,7 +14,17 @@
     </div>
     <div class="modal-row" v-if="!removeDate">
       <div class="modal-row__title">Дата</div>
-      <input class="datepicker" type="date" placeholder="Начало" />
+      <div class="modal-row__block">
+        <VueDatePicker
+          class="datepicker"
+          :format="formatDay"
+          :locale="'ru-ru'"
+          v-model="date"
+          :auto-apply="true"
+        >
+          <template #clear-icon="{ clear }"> </template>
+        </VueDatePicker>
+      </div>
     </div>
     <div class="periodicity" v-if="removeDate">
       <h2 class="periodicity__title title">Периодичность</h2>
@@ -32,7 +42,17 @@
     </div>
     <div class="modal-row" v-if="removeDate">
       <div class="modal-row__title">Повторять до</div>
-      <input class="datepicker" type="date" placeholder="Начало" />
+      <div class="modal-row__block">
+        <VueDatePicker
+          class="datepicker"
+          :format="formatDay"
+          :locale="'ru-ru'"
+          v-model="repeatUntill"
+          :auto-apply="true"
+        >
+          <template #clear-icon="{ clear }"> </template>
+        </VueDatePicker>
+      </div>
     </div>
     <div class="modal-row">
       <div class="modal-row__title">Напоминание за, минут</div>
@@ -72,16 +92,21 @@
 </template>
 
 <script setup>
-import { changeTime } from '@/utils'
-import { onMounted, ref, reactive } from 'vue'
+import { onMounted, ref } from 'vue'
+import { changeTime, formatDay } from '@/utils'
 
 /* timepicker */
 import VueTimepicker from 'vue3-timepicker'
 import 'vue3-timepicker/dist/VueTimepicker.css'
 
+/* datepicker */
+import '@vuepic/vue-datepicker/dist/main.css'
+import VueDatePicker from '@vuepic/vue-datepicker'
+
 const reminder = ref(null)
 const break_group = ref(null)
-
+const date = ref(new Date())
+const repeatUntill = ref(new Date())
 const periodicityDays = ref([
   { id: 1, text: 'ПН', active: false, day_of_week: 1 },
   { id: 2, text: 'ВТ', active: false, day_of_week: 2 },
