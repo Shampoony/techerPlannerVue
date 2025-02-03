@@ -97,6 +97,7 @@ import { ref, onMounted, useTemplateRef } from 'vue'
 import { useIsMobile } from '@/composables/useIsMobile'
 import { DayPilot, DayPilotCalendar } from '@daypilot/daypilot-lite-vue'
 
+import { getWeeks } from '@/api/requests'
 const { isMobile } = useIsMobile()
 const baseGap = 10
 const baseHeight = 90
@@ -320,6 +321,9 @@ const getHeight = (duration) => {
   return Math.max(baseHeight, baseHeight * duration)
 }
 onMounted(() => {
+  getWeeks().then((weeks) => {
+    console.log(weeks)
+  })
   if (breakMode.value) {
     loadEvents()
   }

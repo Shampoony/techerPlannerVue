@@ -33,7 +33,7 @@ export async function getWeeks() {
     }
 
     const responseData = await response.json()
-
+    console.log(responseData)
     return responseData
   } catch (error) {
     console.error('Произошла ошибки при получении недель', error)
