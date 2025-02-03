@@ -45,6 +45,9 @@
     border: none !important;
     cursor: pointer !important;
     font-size: 16px !important;
+    &::placeholder {
+      color: var(--black);
+    }
   }
 
   // Скрытие кнопки очистки

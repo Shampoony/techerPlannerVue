@@ -1,13 +1,9 @@
-const accessToken = ''
 const domain = 'https://api.teacherplanner.ru'
 
 export async function getTeacherById(teacherId) {
   try {
     const response = await fetch(`${domain}/api/teachers/${teacherId}`, {
       method: 'GET',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
     })
 
     if (!response.ok) {
@@ -26,6 +22,7 @@ export async function getWeeks() {
   try {
     const response = await fetch(`${domain}/api/weeks`, {
       method: 'GET',
+      credentials: 'include', // ВАЖНО!
     })
 
     if (!response.ok) {
@@ -40,13 +37,11 @@ export async function getWeeks() {
   }
 }
 
-export async function getLessonsOnMonth(teacherId, year, month) {
+export async function getLessonsOnMonth(year, month) {
   try {
-    const response = await fetch(`${domain}/api/teachers/${teacherId}/${year}/${month}`, {
+    const response = await fetch(`${domain}/api/lessons/${year}/${month}`, {
       method: 'GET',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      credentials: 'include', // ВАЖНО!
     })
 
     if (!response.ok) {
@@ -61,17 +56,12 @@ export async function getLessonsOnMonth(teacherId, year, month) {
   }
 }
 
-export async function getLessonsOnWeek(teacherId, startDate) {
+export async function getLessonsOnWeek(startDate) {
   try {
-    const response = await fetch(
-      `https://api.teacherplanner.ru/api/teachers/${teacherId}/${startDate}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    )
+    const response = await fetch(`${domain}/api/lessons/week/${startDate}`, {
+      method: 'GET',
+      credentials: 'include', // ВАЖНО!
+    })
     if (!response.ok) {
       throw new Error(`Код ошибки при запросе: ${response.status}`)
     }

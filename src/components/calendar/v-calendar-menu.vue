@@ -270,7 +270,8 @@ const formatWeek = (date) => {
   return `${startFormatted} - ${endFormatted}`
 }
 const onWeekSelect = (modelData) => {
-  emit('setWeek', modelData[0].getDate())
+  console.log(modelData[0].toLocaleDateString('ru-RU'))
+  emit('setWeek', modelData[0].toLocaleDateString('ru-RU'))
 }
 
 const changeBreakMode = () => {

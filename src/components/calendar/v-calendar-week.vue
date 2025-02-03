@@ -7,6 +7,7 @@
           <v-calendar-menu
             :is-showed-break="true"
             :type="'week'"
+            @setWeek="setLessonsOnWeek"
             @toggleBreakMode="toggleBreakMode"
           />
           <div class="v-calendar-week__content scroll-container" v-if="!breakMode">
@@ -19,7 +20,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr class="calendar-row">
+                <tr class="calendar-row" v-if="dayOfTheWeek.week">
                   <td
                     v-for="(day, columnIndex) in dayOfTheWeek.week.days"
                     :key="columnIndex"
@@ -90,14 +91,15 @@
 import vCalendarMenu from './v-calendar-menu.vue'
 import vFooter from '../generalComponents/v-footer.vue'
 import VHeader from '../generalComponents/v-header.vue'
-
 import vModalsContainer from '../generalComponents/v-modals-container.vue'
 
+import { useRouter } from 'vue-router'
 import { ref, onMounted, useTemplateRef } from 'vue'
+
 import { useIsMobile } from '@/composables/useIsMobile'
+import { getLessonsOnWeek } from '@/api/requests'
 import { DayPilot, DayPilotCalendar } from '@daypilot/daypilot-lite-vue'
 
-import { getWeeks } from '@/api/requests'
 const { isMobile } = useIsMobile()
 const baseGap = 10
 const baseHeight = 90
@@ -243,6 +245,8 @@ const dayOfTheWeek = ref({
   },
 })
 
+const router = useRouter()
+
 const draggedItem = ref({
   lesson: null,
   fromColumnIndex: null,
@@ -320,10 +324,15 @@ const toggleButtonsModal = (lesson) => {
 const getHeight = (duration) => {
   return Math.max(baseHeight, baseHeight * duration)
 }
+
+const setLessonsOnWeek = (startDate) => {
+  router.push({ query: { start_date: startDate } })
+  /* getLessonsOnWeek(startDate).then((lessons) => {
+    console.log(lessons)
+    dayOfTheWeek.value = lessons
+  }) */
+}
 onMounted(() => {
-  getWeeks().then((weeks) => {
-    console.log(weeks)
-  })
   if (breakMode.value) {
     loadEvents()
   }

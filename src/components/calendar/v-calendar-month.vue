@@ -72,7 +72,11 @@
                 </tr>
               </thead>
               <tbody>
-                <tr class="calendar-row" v-for="(week, weekIndex) of monthLessons" :key="weekIndex">
+                <tr
+                  class="calendar-row"
+                  v-for="(week, weekIndex) of monthLessons.weeks"
+                  :key="weekIndex"
+                >
                   <td
                     class="calendar-row__item"
                     :class="{ active: weekIndex == activeDay[0] && i == activeDay[1] }"
@@ -82,12 +86,12 @@
                   >
                     <div class="calendar-row__item-content calendar-card" v-if="week[i]">
                       <div class="calendar-card__num">{{ week[i].day }}</div>
-                      <div
-                        class="calendar-card__content"
-                        v-for="lesson in week[i].lessons"
-                        :key="lesson.lesson_id"
-                      >
-                        <div class="calendar-card__lesson"></div>
+                      <div class="calendar-card__content">
+                        <div
+                          class="calendar-card__lesson"
+                          v-for="lesson in week[i].lessons"
+                          :key="lesson.lesson_id"
+                        ></div>
                         <div
                           class="calendar-card__lesson break"
                           v-if="week[i].breaks && week[i].breaks[lesson.lesson_id]"
@@ -173,6 +177,7 @@ import vModalsContainer from '../generalComponents/v-modals-container.vue'
 
 import { useIsMobile } from '@/composables/useIsMobile'
 import { ref, onMounted, computed, useTemplateRef } from 'vue'
+import { getLessonsOnMonth } from '@/api/requests'
 
 /* Переменные */
 
@@ -235,7 +240,39 @@ const monthLessons = ref({
       1: { day: 3, lessons: [] },
       2: { day: 4, lessons: [] },
       3: { day: 5, lessons: [] },
-      4: { day: 6, lessons: [] },
+      4: {
+        day: 6,
+        lessons: [
+          {
+            lesson_id: 265,
+            student_name: 'Даниил',
+
+            start_time: '14:00',
+            end_time: '15:00',
+          },
+          {
+            lesson_id: 266,
+            student_name: 'Даниил',
+
+            start_time: '16:00',
+            end_time: '17:00',
+          },
+          {
+            lesson_id: 267,
+            student_name: 'Даниил',
+
+            start_time: '20:00',
+            end_time: '21:00',
+          },
+          {
+            lesson_id: 268,
+            student_name: 'Даниил',
+
+            start_time: '22:00',
+            end_time: '23:00',
+          },
+        ],
+      },
       5: { day: 7, lessons: [] },
       6: { day: 8, lessons: [] },
       7: { day: 9, lessons: [] },
@@ -273,7 +310,9 @@ const monthLessons = ref({
     },
   },
 })
-
+/*
+const monthLessons = ref({})
+ */
 const activeDay = ref([])
 
 const draggedItem = ref()
@@ -355,7 +394,10 @@ const toggleButtonsModal = (lesson) => {
 
 const activeDayLessons = computed(() => {
   if (activeDay.value.length) {
-    return monthLessons.value[activeDay.value[0]][activeDay.value[1]]
+    const value = monthLessons.value.weeks[activeDay.value[0]]
+    if (value) {
+      return value[activeDay.value[1]]
+    }
   }
   return null
 })
@@ -364,6 +406,6 @@ const activeDayLessons = computed(() => {
 
 onMounted(() => {
   activeDay.value = JSON.parse(localStorage.getItem('activeDay')) || []
-  console.log(isMobile.value)
+  console.log(activeDayLessons.value)
 })
 </script>

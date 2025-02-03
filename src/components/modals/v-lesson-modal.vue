@@ -50,10 +50,8 @@
                   />
                   <VueTimepicker
                     v-model="timeInputs[item.id].end"
-                    @update:modelValue="
-                      (modelValue) => ((timeInputs[item.id].end = modelValue), console.log('ляля'))
-                    "
-                    placeholder="--:--"
+                    @update:modelValue="(modelValue) => (timeInputs[item.id].end = modelValue)"
+                    :placeholder="timeInputs[item.id].end"
                     :clearable="false"
                   />
                 </div>
@@ -189,7 +187,7 @@ const addDayToStack = (day) => {
 
     periodicityStack.value.sort((a, b) => a.id - b.id)
     day.active = true
-    timeInputs.value[day.id] = { start: '', end: '' }
+    timeInputs.value[day.id] = { start: '--:--', end: '--:--' }
   }
 }
 

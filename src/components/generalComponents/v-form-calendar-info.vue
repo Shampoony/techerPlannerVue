@@ -9,7 +9,11 @@
           placeholder="--:--"
           :clearable="false"
         />
-        <VueTimepicker v-model="timeInputs[1].end" placeholder="--:--" :clearable="false" />
+        <VueTimepicker
+          v-model="timeInputs[1].end"
+          :placeholder="timeInputs[1].end"
+          :clearable="false"
+        />
       </div>
     </div>
     <div class="modal-row" v-if="!removeDate">
