@@ -90,7 +90,7 @@
             type="checkbox"
             class="custom-checkbox-input"
             id="break"
-            @change="emit('toggleBreakMode')"
+            @change="changeBreakMode"
             v-model="showBreakInput"
           />
           <label for="break" class="custom-checkbox-label">
@@ -224,6 +224,7 @@ import VueDatePicker from '@vuepic/vue-datepicker'
 import { MonthPickerInput } from 'vue-month-picker'
 
 import { ref, defineEmits } from 'vue'
+import { useRouter } from 'vue-router'
 
 const emit = defineEmits(['toggleBreakMode', 'setMonth', 'setWeek'])
 
@@ -231,6 +232,8 @@ const showBreakInput = ref(localStorage.getItem('breakMode'))
 
 const date = ref({})
 const selectedMonth = ref()
+
+const router = useRouter()
 
 const props = defineProps({
   isShowedBreak: {
@@ -267,6 +270,11 @@ const formatWeek = (date) => {
 }
 const onWeekSelect = (modelData) => {
   emit('setWeek', modelData[0].getDate())
+}
+
+const changeBreakMode = () => {
+  emit('toggleBreakMode')
+  router.go(0)
 }
 
 const onMonthSelect = (modelData) => {

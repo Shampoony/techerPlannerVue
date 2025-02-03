@@ -302,7 +302,6 @@ const handleDrop = (event, targetColumnIndex) => {
 }
 
 const toggleBreakMode = () => {
-  window.location.reload(true)
   breakMode.value = !breakMode.value
   localStorage.setItem('breakMode', breakMode.value)
 
