@@ -18,7 +18,7 @@
           Постоянные занятия
         </div>
       </div>
-      <v-custom-select :options="options.student" />
+      <v-custom-select :options="options.student" @valueSelected="setStudent" />
       <div class="single" v-if="activeAdd == 'single'">
         <v-form-calendar-info />
       </div>
@@ -106,7 +106,9 @@
             </div>
           </div>
         </div>
-        <button class="blue-btn" type="submit">Добавить</button>
+        <button class="blue-btn" type="button" @click.prevent="() => submitLesson('stable')">
+          Добавить
+        </button>
       </div>
     </div>
   </v-modal>
@@ -130,6 +132,13 @@ import { formatDay } from '@/utils'
 import { ref } from 'vue'
 
 const activeAdd = ref('single')
+const stableForm = ref({
+  student_id: null,
+  day_of_week: [],
+  start_times: [],
+  end_times: [],
+  repeat_until: null,
+})
 
 const setActiveAdd = (name) => {
   activeAdd.value = name
@@ -140,13 +149,13 @@ const break_group = ref(null)
 const repeatUntill = ref(new Date())
 
 const periodicityDays = ref([
-  { id: 1, text: 'ПН', active: false, day_of_week: 1 },
-  { id: 2, text: 'ВТ', active: false, day_of_week: 2 },
-  { id: 3, text: 'СР', active: false, day_of_week: 3 },
-  { id: 4, text: 'ЧТ', active: false, day_of_week: 4 },
-  { id: 5, text: 'ПТ', active: false, day_of_week: 5 },
-  { id: 6, text: 'СБ', active: false, day_of_week: 6 },
-  { id: 7, text: 'ВС', active: false, day_of_week: 7 },
+  { id: 1, text: 'ПН', active: false, day_of_week: 1, date: '2025-02-04' },
+  { id: 2, text: 'ВТ', active: false, day_of_week: 2, date: '2025-02-05' },
+  { id: 3, text: 'СР', active: false, day_of_week: 3, date: '2025-02-06' },
+  { id: 4, text: 'ЧТ', active: false, day_of_week: 4, date: '2025-02-07' },
+  { id: 5, text: 'ПТ', active: false, day_of_week: 5, date: '2025-02-08' },
+  { id: 6, text: 'СБ', active: false, day_of_week: 6, date: '2025-02-09' },
+  { id: 7, text: 'ВС', active: false, day_of_week: 7, date: '2025-02-10' },
 ])
 
 const periodicityStack = ref([])
@@ -170,6 +179,40 @@ const toggleRadio = (radio, value) => {
 const togglePeriodicity = (day) => {
   addDayToStack(day)
   setDate(day)
+}
+
+const submitLesson = (typeOflesson) => {
+  if (typeOflesson == 'stable') {
+    stableForm.value['day_of_week'] = []
+    stableForm.value['start_times'] = []
+    stableForm.value['end_times'] = []
+    periodicityStack.value.forEach((el) => {
+      stableForm.value['day_of_week'].push(el.id - 1)
+
+      const startTime = timeInputs.value[el.id].start
+      const endTime = timeInputs.value[el.id].end
+
+      // Добавляем ведущий ноль, если часы или минуты состоят из одной цифры
+      const formattedStartTime = startTime.split(':')
+      const formattedEndTime = endTime.split(':')
+
+      const formattedStart = `${String(formattedStartTime[0]).padStart(2, '0')}:${String(formattedStartTime[1]).padStart(2, '0')}`
+      const formattedEnd = `${String(formattedEndTime[0]).padStart(2, '0')}:${String(formattedEndTime[1]).padStart(2, '0')}`
+
+      // Создаем дату с правильным временем
+      const dateTimeStringStart = new Date(`${el.date}T${formattedStart}:00.000Z`)
+      const dateTimeStringEnd = new Date(`${el.date}T${formattedEnd}:00.000Z`)
+
+      stableForm.value['start_times'].push(dateTimeStringStart.toISOString())
+      stableForm.value['end_times'].push(dateTimeStringEnd.toISOString())
+    })
+    stableForm.value['repeat_until'] = repeatUntill.value
+  }
+  console.log(stableForm.value)
+}
+
+const setStudent = (student) => {
+  stableForm.value.student_id = student.id
 }
 
 const addDayToStack = (day) => {

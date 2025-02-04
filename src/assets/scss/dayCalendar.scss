@@ -81,6 +81,9 @@
   .event-text {
     color: #000 !important;
   }
+  .event.break .event-text {
+    color: #fff !important;
+  }
 }
 
 // Стили ячеек

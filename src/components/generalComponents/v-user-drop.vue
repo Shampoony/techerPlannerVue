@@ -16,7 +16,7 @@
           <img src="../../assets/images/user.svg" alt="" class="day-el" />
           <img src="../../assets/images/user-night.svg" alt="" class="night-el" />
         </span>
-        <span class="text">Имя пользователя</span>
+        <span class="text" v-if="userInfo">{{ userInfo.name }}</span>
       </a>
       <a class="v-user-drop__menu-item" href="subscribe.html">
         <span class="icon">
@@ -43,11 +43,20 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { getMyInfo } from '@/api/requests'
 
 const isDropdownopen = ref(false)
+
+const userInfo = ref()
 
 const closeMenu = () => {
   isDropdownopen.value = false
 }
+
+onMounted(() => {
+  getMyInfo().then((info) => {
+    userInfo.value = info
+  })
+})
 </script>

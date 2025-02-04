@@ -18,6 +18,8 @@ export async function getTeacherById(teacherId) {
   }
 }
 
+/*=================================================================== Календарь =============================================================== */
+
 export async function getWeeks() {
   try {
     const response = await fetch(`${domain}/api/weeks`, {
@@ -71,5 +73,57 @@ export async function getLessonsOnWeek(startDate) {
     return responseData
   } catch (error) {
     console.error('Произошла ошибки при получении уроков учителя на неделю', error)
+  }
+}
+
+export async function getMyInfo() {
+  try {
+    const response = await fetch(`${domain}/api/get-me-info`, {
+      method: 'GET',
+      credentials: 'include', // ВАЖНО!
+    })
+    if (!response.ok) {
+      throw new Error(`Код ошибки при запросе: ${response.status}`)
+    }
+
+    const responseData = await response.json()
+    console.log(responseData)
+    return responseData
+  } catch (error) {
+    console.error('Произошла ошибки при получении информации об учителе', error)
+  }
+}
+
+export async function deleteLessonById(lesson_id) {
+  try {
+    const response = await fetch(`${domain}/api/lessons/${lesson_id}`, {
+      method: 'DELETE',
+      credentials: 'include', // ВАЖНО!
+    })
+    if (!response.ok) {
+      throw new Error(`Код ошибки при запросе: ${response.status}`)
+    }
+    console.log(response)
+    return response
+  } catch (error) {
+    console.error('Произошла ошибки при удалении урока', error)
+  }
+}
+
+export async function transferLesson(lesson_id, data) {
+  console.log(JSON.stringify(data))
+  try {
+    const response = await fetch(`${domain}/api/lessons/${lesson_id}`, {
+      method: 'PUT',
+      credentials: 'include', // ВАЖНО
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) {
+      throw new Error(`Код ошибки при запросе: ${response.status}`)
+    }
+    console.log(response)
+    return response
+  } catch (error) {
+    console.error('Произошла ошибки при переносе урока', error)
   }
 }

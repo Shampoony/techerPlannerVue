@@ -345,11 +345,39 @@ input {
 }
 
 .modal {
+  &-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1030;
+    transition: opacity 0.3s ease;
+
+    padding: 10px 30px;
+
+    height: 100%;
+    overflow-y: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    @media (max-width: 480px) {
+      padding: 0;
+      align-items: end;
+    }
+  }
+
   &-inner {
     width: 100%;
     max-width: 648px;
 
     margin: auto;
+    @media (max-width: 480px) {
+      margin: 0;
+    }
   }
   &-inner > div {
     background-color: var(--white);
@@ -374,13 +402,14 @@ input {
     justify-content: space-between;
     gap: 10px;
 
-    margin-bottom: 16px;
-
     &__block {
       display: flex;
       justify-content: end;
       width: 65%;
     }
+  }
+  &-row + &-row {
+    margin-top: 16px;
   }
 }
 .datepicker {
@@ -737,6 +766,11 @@ header {
       font-size: 12px !important;
     }
   }
+  &__date-subtitle {
+    font-size: 12px;
+    color: var(--dark-white);
+    text-align: center;
+  }
 
   &__select {
     display: flex;
@@ -918,7 +952,7 @@ header {
   &::before {
     content: '';
     position: absolute;
-    width: 18px;
+    width: 14px;
     height: 20px;
     background-image: url(../images/check_mark.svg);
     background-size: cover;
@@ -1108,10 +1142,17 @@ header {
       background-color: #202020;
     }
     &__item.active {
-      background-color: var(--blue) !important;
+      background-color: #eaf0ff !important;
       & .calendar-card {
         color: var(--white) !important;
       }
+    }
+    &__item.active .calendar-card__num {
+      background-color: var(--blue) !important;
+      padding: 2px 5px;
+    }
+    .night__mode &__item.active {
+      background-color: #4c4c4c !important;
     }
     &__item-content {
       min-height: 188px;
@@ -1124,6 +1165,13 @@ header {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  &__num {
+    width: 24px;
+    height: 24px;
+    border-radius: 9px;
+    text-align: center;
+    margin-top: 12px;
+  }
   &__content {
     display: flex;
     height: 100%;
@@ -1325,6 +1373,9 @@ header {
 }
 .v-form-calendar-info {
   width: 100%;
+  .blue-btn {
+    margin-top: 16px;
+  }
 }
 
 .periodicity {
@@ -1502,10 +1553,9 @@ header {
   &__list {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 6px;
 
     &-item {
-      background-color: var(--white) !important;
       color: var(--black);
     }
   }
@@ -1514,6 +1564,7 @@ header {
 .day {
   background-color: var(--white) !important;
   box-shadow: 0px 2px 5px 0px #132c6a26;
+  background-color: var(--white) !important;
 
   padding: 20px 10px 0;
   border-radius: 8px;
@@ -1527,7 +1578,7 @@ header {
     display: flex;
     justify-content: space-between;
 
-    margin-bottom: 20px;
+    padding-bottom: 20px;
   }
   &__date {
     opacity: 0.4;
@@ -1634,5 +1685,29 @@ header {
     font-weight: 500;
     color: #202020;
     margin: 16px 0 24px;
+  }
+}
+
+.loader {
+  width: 50px;
+  padding: 8px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #25b09b;
+  --_m: conic-gradient(#0000 10%, #000), linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+  mask: var(--_m);
+  -webkit-mask-composite: source-out;
+  mask-composite: subtract;
+  animation: l3 1s infinite linear;
+  &-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+@keyframes l3 {
+  to {
+    transform: rotate(1turn);
   }
 }

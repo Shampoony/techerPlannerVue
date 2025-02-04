@@ -29,12 +29,13 @@ import { ref } from 'vue'
 const props = defineProps({
   options: Object,
 })
-
 const isMenuOpen = ref(false)
+const emit = defineEmits(['valueSelected'])
 
 const setOption = (option) => {
   selected.value = option.text
   isMenuOpen.value = false
+  emit('valueSelected', option)
 }
 const selected = ref(props.options.default)
 </script>

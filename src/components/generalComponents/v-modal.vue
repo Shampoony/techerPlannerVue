@@ -45,26 +45,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1030;
-  transition: opacity 0.3s ease;
-
-  padding: 10px 30px;
-
-  height: 100%;
-  overflow-y: auto;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .modal-overlay.unActive {
   background: transparent;
 }

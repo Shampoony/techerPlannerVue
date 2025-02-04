@@ -20,21 +20,32 @@
         <div class="v-calendar-menu__select">
           <div class="v-calendar-menu__select-buttons">
             <div class="v-calendar-menu__select-button">
-              <month-picker-input
+              <!--  <month-picker-input
                 v-if="type === 'month'"
                 :no-default="false"
                 :lang="'ru'"
-                v-model="selectedMonth"
-                @change="onMonthSelect"
+                v-model="monthInput"
+                @input="onMonthSelect"
               >
-              </month-picker-input>
+              </month-picker-input> -->
+              <VueDatePicker
+                v-if="type === 'month'"
+                month-picker
+                :locale="'ru-ru'"
+                :auto-apply="true"
+                :format="formatMonth"
+                v-model="monthInput"
+                @update:model-value="onMonthSelect"
+              >
+                <template #clear-icon="{ clear }"> </template>
+              </VueDatePicker>
               <VueDatePicker
                 v-if="type === 'week'"
                 week-picker
                 :format="formatWeek"
                 :locale="'ru-ru'"
                 :auto-apply="true"
-                v-model="date"
+                v-model="startDate"
                 @update:model-value="onWeekSelect"
               >
                 <template #clear-icon="{ clear }"> </template>
@@ -112,24 +123,24 @@
         </div>
       </div>
     </div>
-    <div class="flex justify-between">
+    <div class="flex justify-between" v-if="isTablet.isMobile">
       <div class="v-calendar-menu__select mob">
         <div class="v-calendar-menu__select-buttons">
           <div class="v-calendar-menu__select-button">
-            <month-picker-input
+            <!-- <month-picker-input
               v-if="type === 'month'"
               :no-default="false"
               :lang="'ru'"
-              v-model="selectedMonth"
-              @change="onMonthSelect"
+              v-model="monthInput"
+              @input="onMonthSelect"
             >
-            </month-picker-input>
+            </month-picker-input> -->
             <VueDatePicker
               v-if="type === 'week'"
               week-picker
               :format="formatWeek"
               :locale="'ru-ru'"
-              v-model="date"
+              v-model="startDate"
               @update:model-value="onWeekSelect"
             >
               <template #clear-icon="{ clear }"> </template>
@@ -164,7 +175,7 @@
       </div>
     </div>
   </div>
-  <div class="v-calendar-menu mob">
+  <div class="v-calendar-menu mob" v-if="isMobile.isMobile">
     <div class="v-calendar-menu__block">
       <div class="flex gap-2 items-center justify-center">
         <div class="v-calendar-menu__picker picker">
@@ -183,12 +194,18 @@
         </div>
       </div>
       <div class="v-calendar-menu__date flex items-center justify-center">
-        <a class="v-calendar-menu__date-back" href="">
+        <a class="v-calendar-menu__date-back" @click.prevent="prevMonth()">
           <img src="../../assets/images/arrowRightCalendar.svg" class="day-el" alt="" />
           <img src="../../assets/images/arrowRightCalendarNight.svg" class="night-el" alt="" />
         </a>
-        <h3 class="v-calendar-menu__date-text">31 января - 5 февраля</h3>
-        <a class="v-calendar-menu__date-next" href="">
+        <h3 class="v-calendar-menu__date-text" v-if="type == 'week'">
+          {{ weekStart }} - {{ weekEnd }}
+        </h3>
+        <div v-if="type == 'month'">
+          <h3 class="v-calendar-menu__date-text">{{ selectedMonthName }}</h3>
+          <p class="v-calendar-menu__date-subtitle">{{ selectedYear }}</p>
+        </div>
+        <a class="v-calendar-menu__date-next" @click.prevent="prevMonth()">
           <img src="../../assets/images/arrowRightCalendar.svg" class="day-el" alt="" />
           <img src="../../assets/images/arrowRightCalendarNight.svg" class="night-el" alt="" />
         </a>
@@ -212,29 +229,58 @@
     <v-trial-modal v-if="modals.trial_lesson" @close="toggleModals('trial_lesson')" />
   </transition>
 </template>
+
 <script setup>
 import vTrialModal from '../modals/v-trial-modal.vue'
 import vLessonModal from '../modals/v-lesson-modal.vue'
 
-import { format, startOfWeek, endOfWeek } from 'date-fns'
-import { ru } from 'date-fns/locale'
+import { formatWeek, formatMonth, getMonthByIndex } from '@/utils'
 
 import '@vuepic/vue-datepicker/dist/main.css'
 import VueDatePicker from '@vuepic/vue-datepicker'
 
 import { MonthPickerInput } from 'vue-month-picker'
 
-import { ref, defineEmits } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { ref, defineEmits, onMounted, computed } from 'vue'
+
+import { useIsMobile } from '@/composables/useIsMobile'
 
 const emit = defineEmits(['toggleBreakMode', 'setMonth', 'setWeek'])
-
 const showBreakInput = ref(localStorage.getItem('breakMode'))
 
-const date = ref({})
-const selectedMonth = ref()
+const startDate = ref({})
+
+const today = new Date()
+const selectedYear = ref(today.getFullYear())
+const selectedMonth = ref('2025-02')
+/* const selectedMonth = ref(`${selectedYear.value}-${String(today.getMonth() + 3).padStart(2, '0')}`) */
+const monthInput = ref()
+
+const selectedMonthName = ref()
+
+const isTablet = useIsMobile(768)
+const isMobile = useIsMobile(480)
+
+const nextDate = computed(() => {
+  let month = selectedMonth.value
+  let year = selectedYear.value
+
+  if (month + 1 > 12) {
+    month = 1
+    year += 1
+  } else {
+    month += 1
+  }
+
+  return `${month}.${year}`
+})
+
+const weekStart = ref()
+const weekEnd = ref()
 
 const router = useRouter()
+const route = useRoute()
 
 const props = defineProps({
   isShowedBreak: {
@@ -252,34 +298,142 @@ const modals = ref({
   trial_lesson: false,
 })
 
+const updateQueryParam = () => {
+  const query = { ...route.query, selected_date: `${selectedMonth.value}.${selectedYear.value}` }
+  router.push({ query })
+}
+
+const prevMonth = () => {
+  if (selectedMonth.value === 1) {
+    selectedMonth.value = 12
+    selectedYear.value -= 1
+  } else {
+    selectedMonth.value -= 1
+  }
+  updateQueryParam()
+}
+
+const nextMonth = () => {
+  if (selectedMonth.value === 12) {
+    selectedMonth.value = 1
+    selectedYear.value += 1
+  } else {
+    selectedMonth.value += 1
+  }
+  updateQueryParam()
+}
+
 const toggleModals = (modalName) => {
   console.log(modalName)
   modals.value[modalName] = !modals.value[modalName]
 }
-const formatWeek = (date) => {
-  if (!date) return ''
-
-  // Определяем начало и конец недели
-  const start = startOfWeek(date, { weekStartsOn: 1 }) // Неделя начинается с понедельника
-  const end = endOfWeek(date, { weekStartsOn: 1 })
-
-  // Форматируем даты вручную
-  const startFormatted = format(start, 'd MMM', { locale: ru })
-  const endFormatted = format(end, 'd MMM', { locale: ru })
-
-  return `${startFormatted} - ${endFormatted}`
-}
 const onWeekSelect = (modelData) => {
-  console.log(modelData[0].toLocaleDateString('ru-RU'))
+  startDate.value = modelData
+  console.log(startDate.value)
   emit('setWeek', modelData[0].toLocaleDateString('ru-RU'))
 }
 
 const changeBreakMode = () => {
   emit('toggleBreakMode')
-  router.go(0)
+}
+const onMonthSelect = (modelData) => {
+  console.log(modelData, monthInput.value)
+  /*  if (modelData) {
+    selectedMonth.value = modelData.monthIndex
+    selectedYear.value = modelData.year
+  }
+
+  // Обновляем название месяца после изменения индекса
+  selectedMonthName.value = new Date(
+    selectedYear.value,
+    selectedMonth.value.monthIndex,
+  ).toLocaleString('ru-RU', { month: 'long' }) */
+  monthInput.value = modelData
+
+  emit('setMonth', modelData)
+}
+onMounted(() => {
+  const params = new URLSearchParams(window.location.search)
+  const queryParams = Object.fromEntries(params.entries())
+  if ('start_date' in queryParams) {
+    const date = queryParams['start_date'].replace(/\./g, '-') // Меняем точки на дефисы для правильного парсинга
+    console.log(date)
+
+    // Форматируем строку в объект Date
+    const formattedDate = new Date(date.split('-').reverse().join('-'))
+    const options = { day: 'numeric', month: 'long' }
+
+    // Формируем дату начала недели
+    weekStart.value = formattedDate.toLocaleDateString('ru-RU', options)
+
+    // Добавляем 7 дней для вычисления даты конца недели
+    const endDate = new Date(formattedDate)
+    endDate.setDate(formattedDate.getDate() + 7)
+    weekEnd.value = endDate.toLocaleDateString('ru-RU', options)
+
+    // Устанавливаем startDate для выбора недели
+    startDate.value = [formattedDate, endDate]
+  }
+  if (route.query.selected_date) {
+    const [month, year] = route.query.selected_date.split('.').map(Number)
+    selectedMonthName.value = getMonthByIndex(month - 1)
+
+    if (!isNaN(month) && !isNaN(year)) {
+      monthInput.value = { month: month - 1, year: year }
+    }
+  }
+})
+</script>
+<!--
+<script setup>
+import { ref, defineProps, computed, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+
+const router = useRouter()
+const route = useRoute()
+
+const today = new Date()
+const selectedYear = ref(today.getFullYear())
+const selectedMonth = ref(today.getMonth() + 1)
+
+const selectedMonthName = computed(() =>
+  new Date(selectedYear.value, selectedMonth.value - 1).toLocaleString('ru-RU', { month: 'long' }),
+)
+
+const updateQueryParam = () => {
+  const query = { ...route.query, selected_date: `${selectedMonth.value}.${selectedYear.value}` }
+  router.push({ query })
 }
 
-const onMonthSelect = (modelData) => {
-  emit('setMonth', modelData.monthIndex)
+const prevMonth = () => {
+  if (selectedMonth.value === 1) {
+    selectedMonth.value = 12
+    selectedYear.value -= 1
+  } else {
+    selectedMonth.value -= 1
+  }
+  updateQueryParam()
 }
+
+const nextMonth = () => {
+  if (selectedMonth.value === 12) {
+    selectedMonth.value = 1
+    selectedYear.value += 1
+  } else {
+    selectedMonth.value += 1
+  }
+  updateQueryParam()
+}
+
+// Устанавливаем значение из URL при загрузке
+onMounted(() => {
+  if (route.query.selected_date) {
+    const [month, year] = route.query.selected_date.split('.').map(Number)
+    if (!isNaN(month) && !isNaN(year)) {
+      selectedMonth.value = month
+      selectedYear.value = year
+    }
+  }
+})
 </script>
+ -->

@@ -4,8 +4,11 @@
     <main>
       <section class="v-calendar-month" v-if="!isMobile">
         <div class="v-calendar-month__container container">
-          <v-calendar-menu :type="'month'" />
-          <div class="v-calendar-month__content scroll-container">
+          <v-calendar-menu :type="'month'" @setMonth="setMonth" />
+          <div
+            class="v-calendar-month__content scroll-container"
+            v-if="monthLessons.schedule && daysWeek"
+          >
             <table class="v-calendar-month__table calendar">
               <thead>
                 <tr class="calendar-header">
@@ -17,7 +20,7 @@
               <tbody>
                 <tr
                   class="calendar-row"
-                  v-for="(week, weekIndex) of monthLessons.weeks"
+                  v-for="(week, weekIndex) of monthLessons.schedule"
                   :key="weekIndex"
                 >
                   <td
@@ -57,6 +60,9 @@
               </tbody>
             </table>
           </div>
+          <div class="loader-container" v-else>
+            <div class="loader"></div>
+          </div>
         </div>
       </section>
       <section class="v-calendar-month-mob mob-page" v-else>
@@ -74,7 +80,7 @@
               <tbody>
                 <tr
                   class="calendar-row"
-                  v-for="(week, weekIndex) of monthLessons.weeks"
+                  v-for="(week, weekIndex) of monthLessons.schedule"
                   :key="weekIndex"
                 >
                   <td
@@ -178,6 +184,7 @@ import vModalsContainer from '../generalComponents/v-modals-container.vue'
 import { useIsMobile } from '@/composables/useIsMobile'
 import { ref, onMounted, computed, useTemplateRef } from 'vue'
 import { getLessonsOnMonth } from '@/api/requests'
+import { useRouter } from 'vue-router'
 
 /* Переменные */
 
@@ -212,7 +219,7 @@ const daysWeek = ref([
   },
 ])
 
-const monthLessons = ref({
+/* const monthLessons = ref({
   weeks: {
     1: {
       6: {
@@ -309,10 +316,17 @@ const monthLessons = ref({
       end_time: '15:30',
     },
   },
-})
-/*
+}) */
+
+const today = ref(new Date())
+
+const currentMonth = ref(today.value.getMonth() + 1)
+const currentYear = ref(today.value.getFullYear())
+
+const router = useRouter()
+
 const monthLessons = ref({})
- */
+
 const activeDay = ref([])
 
 const draggedItem = ref()
@@ -344,8 +358,8 @@ const handleDrop = (event, targetColumnIndex, targetRowIndex) => {
 
   if (fromColumnIndex !== targetColumnIndex || fromRowIndex !== targetRowIndex) {
     // Получаем список уроков из исходной и целевой ячеек
-    const sourceLessons = monthLessons.value.weeks[fromRowIndex][fromColumnIndex].lessons
-    const targetLessons = monthLessons.value.weeks[targetRowIndex][targetColumnIndex].lessons
+    const sourceLessons = monthLessons.value.schedule[fromRowIndex][fromColumnIndex].lessons
+    const targetLessons = monthLessons.value.schedule[targetRowIndex][targetColumnIndex].lessons
 
     // Преобразуем время в минуты
     const timeToMinutes = (time) => {
@@ -390,11 +404,36 @@ const toggleButtonsModal = (lesson) => {
   modalsContainer.value.toggleLessonModals('buttons', lesson)
 }
 
+const setMonth = (dateData) => {
+  router.push({
+    query: { selected_date: `${String(dateData.month + 1).padStart(2, '0')}.${dateData.year}` },
+  })
+  currentMonth.value = dateData.month
+  currentYear.value = dateData.year
+  console.log(dateData.year, dateData.month + 1)
+  getLessonsOnMonth(dateData.year, dateData.month + 1).then((lessons) => {
+    monthLessons.value = lessons
+  })
+}
+
+const setLessonsOnDate = () => {
+  const params = new URLSearchParams(window.location.search)
+  const queryParams = Object.fromEntries(params.entries())
+
+  if ('selected_date' in queryParams) {
+    currentMonth.value = queryParams['selected_date'].split('.')[0]
+    currentYear.value = queryParams['selected_date'].split('.')[1]
+  }
+  console.log(currentYear.value, parseInt(currentMonth.value))
+  getLessonsOnMonth(currentYear.value, parseInt(currentMonth.value)).then((lessons) => {
+    monthLessons.value = lessons
+  })
+}
 /* computed */
 
 const activeDayLessons = computed(() => {
-  if (activeDay.value.length) {
-    const value = monthLessons.value.weeks[activeDay.value[0]]
+  if (activeDay.value.length && monthLessons.value.schedule) {
+    const value = monthLessons.value.schedule[activeDay.value[0]]
     if (value) {
       return value[activeDay.value[1]]
     }
@@ -405,7 +444,7 @@ const activeDayLessons = computed(() => {
 /* Хуки */
 
 onMounted(() => {
+  setLessonsOnDate()
   activeDay.value = JSON.parse(localStorage.getItem('activeDay')) || []
-  console.log(activeDayLessons.value)
 })
 </script>

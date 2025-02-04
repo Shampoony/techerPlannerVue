@@ -1,5 +1,7 @@
 import { format } from 'date-fns'
 import { ru } from 'date-fns/locale'
+
+import { startOfWeek, endOfWeek } from 'date-fns'
 export function changeTime(id, timeInputs) {
   /* Добавляет 1 час к началу занятия и помещает в поле времени конца занятия */
   const currentTime = timeInputs[id].start.split(':')
@@ -40,4 +42,45 @@ export function formatDay(date) {
   const formattedDate = format(date, 'd MMMM yyyy', { locale: ru })
 
   return formattedDate
+}
+
+export function formatWeek(date) {
+  if (!date) return ''
+
+  // Определяем начало и конец недели
+  const start = startOfWeek(date, { weekStartsOn: 1 }) // Неделя начинается с понедельника
+  const end = endOfWeek(date, { weekStartsOn: 1 })
+
+  // Форматируем даты вручную
+  const startFormatted = format(start, 'd MMM', { locale: ru })
+  const endFormatted = format(end, 'd MMM', { locale: ru })
+
+  return `${startFormatted} - ${endFormatted}`
+}
+
+export function getMonthByIndex(monthIndex) {
+  const months = [
+    'Январь',
+    'Февраль',
+    'Март',
+    'Апрель',
+    'Май',
+    'Июнь',
+    'Июль',
+    'Август',
+    'Сентябрь',
+    'Октябрь',
+    'Ноябрь',
+    'Декабрь',
+  ]
+  return months[monthIndex]
+}
+export function formatMonth(date) {
+  const month = getMonthByIndex(date.getMonth())
+  const year = date.getFullYear()
+  return `${month}, ${year}`
+}
+export function transformDate(input) {
+  const output = input.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1T') + '00:00:00'
+  return output
 }

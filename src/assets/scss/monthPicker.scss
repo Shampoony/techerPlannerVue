@@ -48,3 +48,15 @@
   background-color: var(--blue) !important;
   color: var(--white) !important;
 }
+
+.dp__overlay_col .dp__overlay_cell_active {
+  background-color: var(--blue) !important;
+  color: var(--white) !important;
+}
+.dp__overlay_container {
+  background-color: var(--white) !important;
+}
+
+.dp__overlay_cell:hover {
+  background-color: var(--grey-dark) !important;
+}
