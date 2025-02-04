@@ -1107,6 +1107,9 @@ header {
 .calendar {
   width: 100%;
   min-width: 980px;
+  .mob-page & {
+    margin-bottom: 50px;
+  }
   th,
   td {
     background-color: var(--white);
@@ -1121,7 +1124,7 @@ header {
     width: clamp(5.75rem, -0.417rem + 12.85vw, 15rem);
   }
   &-header {
-    .night__mode &__item {
+    .night__mode .mob-page &__item {
       background-color: #202020;
     }
     &__item {
@@ -1138,7 +1141,7 @@ header {
     }
   }
   &-row {
-    .night__mode &__item {
+    .night__mode .mob-page &__item {
       background-color: #202020;
     }
     &__item.active {

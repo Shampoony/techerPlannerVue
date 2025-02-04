@@ -8,10 +8,12 @@
           v-model="timeInputs[1].start"
           placeholder="--:--"
           :clearable="false"
+          :manual-input="true"
         />
         <VueTimepicker
           v-model="timeInputs[1].end"
           :placeholder="timeInputs[1].end"
+          @update:modelValue="console.log('СЮДАА')"
           :clearable="false"
         />
       </div>
@@ -91,13 +93,13 @@
         </div>
       </div>
     </div>
-    <button class="blue-btn" type="submit">Добавить</button>
+    <button class="blue-btn" type="submit" @click.prevent="submitForm">Добавить</button>
   </form>
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { changeTime, formatDay } from '@/utils'
+import { changeTime, formatDate, formatDay, transformDate } from '@/utils'
 
 /* timepicker */
 import VueTimepicker from 'vue3-timepicker'
@@ -111,6 +113,8 @@ const reminder = ref(null)
 const break_group = ref(null)
 const date = ref(new Date())
 const repeatUntill = ref(new Date())
+const costLesson = ref()
+
 const periodicityDays = ref([
   { id: 1, text: 'ПН', active: false, day_of_week: 1 },
   { id: 2, text: 'ВТ', active: false, day_of_week: 2 },
@@ -123,10 +127,51 @@ const periodicityDays = ref([
 
 const timeInputs = ref({
   1: {
-    start: '',
-    end: '',
+    start: '--:--',
+    end: '--:--',
   },
 })
+const today = new Date()
+const submitForm = () => {
+  const lessonData = {
+    start_time: timeInputs.value[1].start,
+    end_time: timeInputs.value[1].start,
+    repeat_until: date.value,
+    cost_lesson: costLesson.value,
+    break_minutes: break_group.value,
+    reminder_minutes: reminder.value,
+    in_rule: false,
+    status: 'completed',
+    reminder_time: '',
+    one_time: true,
+    amount_deducted: false,
+    paid: false,
+    conducted_date: date,
+    created_date: today.toISOString().split('T')[0],
+    day_of_week_id: today.getDay(),
+  }
+  /*   {
+  "lesson_data": {
+    "day_of_week_id": 0,
+    "start_time": "19:41:38.558Z",
+    "end_time": "19:41:38.558Z",
+    "repeat_until": "2025-02-04",
+    "reminder_minutes": 0,
+    "break_minutes": 0,
+    "amount_deducted": false,
+    "status": "completed",
+    "conducted_date": "2025-02-04",
+    "created_date": "2025-02-04",
+    "reminder_time": "2025-02-04T19:41:38.558Z",
+    "one_time": false,
+    "paid": false,
+    "cost_lesson": 0,
+    "in_rule": true
+  },
+  "student_data": {
+    "student_name": "string"
+  } */
+}
 
 const toggleRadio = (radio, value) => {
   const target = radio === 'reminder' ? reminder : break_group
@@ -145,6 +190,7 @@ const props = defineProps({
 })
 
 onMounted(() => {
+  console.log(new Date().getDay())
   console.log(props.removeDate)
 })
 </script>

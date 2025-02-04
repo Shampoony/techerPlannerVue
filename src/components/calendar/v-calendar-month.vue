@@ -183,7 +183,7 @@ import vModalsContainer from '../generalComponents/v-modals-container.vue'
 
 import { useIsMobile } from '@/composables/useIsMobile'
 import { ref, onMounted, computed, useTemplateRef } from 'vue'
-import { getLessonsOnMonth } from '@/api/requests'
+import { getLessonsOnMonth, transferLesson } from '@/api/requests'
 import { useRouter } from 'vue-router'
 
 /* Переменные */
@@ -396,7 +396,17 @@ const handleDrop = (event, targetColumnIndex, targetRowIndex) => {
       return timeA - timeB
     })
   }
+  const targetDay = String(monthLessons.value.schedule[targetRowIndex][targetColumnIndex].day)
 
+  const requestBody = {
+    start_time: lesson.start_time + ':001Z',
+    end_time: lesson.end_time + ':001Z',
+    day_of_week_id: targetColumnIndex,
+    conducted_date: `${currentYear.value}-${currentMonth.value}-${targetDay.padStart(2, 0)}`,
+  }
+  transferLesson(lesson.lesson_id, requestBody).then(() => {
+    console.log('Выполнили')
+  })
   draggedItem.value = null
 }
 
@@ -419,12 +429,15 @@ const setMonth = (dateData) => {
 const setLessonsOnDate = () => {
   const params = new URLSearchParams(window.location.search)
   const queryParams = Object.fromEntries(params.entries())
+  console.log('в функции')
 
   if ('selected_date' in queryParams) {
     currentMonth.value = queryParams['selected_date'].split('.')[0]
     currentYear.value = queryParams['selected_date'].split('.')[1]
+  } else {
+    window.location.search = `?selected_date=${String(currentMonth.value).padStart(2, 0)}.${currentYear.value}`
   }
-  console.log(currentYear.value, parseInt(currentMonth.value))
+
   getLessonsOnMonth(currentYear.value, parseInt(currentMonth.value)).then((lessons) => {
     monthLessons.value = lessons
   })

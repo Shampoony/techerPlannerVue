@@ -92,10 +92,10 @@
             @setWeek="setLessonsOnWeek"
             @toggleBreakMode="toggleBreakMode"
           />
-          <ul class="v-calendar-week-mob__list" v-if="dayOfTheWeek && dayOfTheWeek.week.days">
+          <!--  <ul class="v-calendar-week-mob__list" v-if="lessonsOfWeek.length">
             <li
               class="v-calendar-week-mob__list-item"
-              v-for="(day, id) of dayOfTheWeek.week.days"
+              v-for="(day, id) of lessonsOfWeek.week.days"
               :key="id"
             >
               <div class="day" v-if="day.length">
@@ -114,6 +114,66 @@
                       <div class="day__lesson">
                         <div class="day__lesson-time">
                           <div class="day__lesson-circle"></div>
+                          <p>{{ lesson.start_time }}</p>
+                          <p>-</p>
+                          <p>{{ lesson.end_time }}</p>
+                        </div>
+                        <div class="day__lesson-name">{{ lesson.student_name }}</div>
+                      </div>
+                      <div class="day__lesson break" v-if="lesson.breaks">
+                        <div class="day__lesson-block">
+                          <img
+                            src="../../assets/images/button_add_calendar.svg"
+                            class="day-el"
+                            alt=""
+                          />
+                          <img
+                            src="../../assets/images/button_add_calendar_night.svg"
+                            class="night-el"
+                            alt=""
+                          />
+                          <div class="day__lesson-time">
+                            <p>{{ lesson.breaks.start_time }}</p>
+                            <p>-</p>
+                            <p>{{ lesson.breaks.end_time }}</p>
+                          </div>
+                        </div>
+                        <div class="day__lesson-name">Перерыв</div>
+                      </div>
+                    </div>
+                  </div>
+                </transition>
+              </div>
+            </li>
+          </ul> -->
+
+          <ul class="v-calendar-week-mob__list" v-if="dayOfTheWeek && dayOfTheWeek.week">
+            <li
+              v-for="(day, id) in dayOfTheWeek.week.days"
+              :key="id"
+              class="v-calendar-week-mob__list-item"
+            >
+              <div class="day" v-if="day">
+                <div class="day__header" @click="toggleOppenedDays(id)">
+                  <p class="day__date">{{ day.day }}</p>
+                  <img src="../../assets/images/arrowRightCalendar.svg" class="day-el" alt="" />
+                  <img
+                    src="../../assets/images/arrowRightCalendarNight.svg"
+                    class="night-el"
+                    alt=""
+                  />
+                </div>
+                <transition name="fade">
+                  <div v-if="openedLessons[id]">
+                    <div
+                      class="day__content"
+                      v-for="(lesson, number) of day.lessons"
+                      :key="lesson.id"
+                    >
+                      <div class="day__lesson">
+                        <div class="day__lesson-time">
+                          <div class="day__lesson-circle"></div>
+
                           <p>{{ lesson.start_time }}</p>
                           <p>-</p>
                           <p>{{ lesson.end_time }}</p>
@@ -167,7 +227,7 @@ import { ref, onMounted, useTemplateRef } from 'vue'
 import { useIsMobile } from '@/composables/useIsMobile'
 import { getLessonsOnWeek, transferLesson } from '@/api/requests'
 import { DayPilot, DayPilotCalendar } from '@daypilot/daypilot-lite-vue'
-import { transformDate } from '@/utils'
+import { formatDate, transformDate } from '@/utils'
 
 const { isMobile } = useIsMobile()
 const baseGap = 10
@@ -180,11 +240,12 @@ const route = useRoute()
 
 const breakMode = ref(localStorage.getItem('breakMode') === 'true')
 const events = ref()
-const startDate = ref(transformDate(route.query['start_date']))
+const today = ref(new Date())
+const startDate = ref(route.query['start_date'] || '01.12.2025')
 
 const config = {
   viewType: 'Week',
-  startDate: startDate.value,
+  startDate: transformDate(startDate.value),
   eventResizeHandling: 'Disabled',
   timeRangeSelectedHandling: 'Disabled',
   locale: 'ru-RU',
@@ -212,50 +273,32 @@ const config = {
     console.log('Event resized')
   },
 }
-/*  {
-      start: '2025-02-18T14:00:00',
-      end: '2025-02-18T15:00:00',
-      lesson_id: 6163,
-      student_name: 'ТЕСТ_11',
-      completed: false,
-      break: {
-        duration: null,
-      },
-    }, */
+
 const loadEvents = async (lessons) => {
   const lessonsToEvent = []
-  if (route.query['start_date']) {
-    /*  const lessons = await getLessonsOnWeek(route.query['start_date']) */
-    if (lessons) {
-      for (let day in lessons.week.days) {
-        lessons.week.days[day].lessons.forEach((lesson) => {
-          // Переименовываем start_time в start
-          const { start_time, end_time, ...rest } = lesson
-          const formattedStartTime = `${lessons.week.days[day].day} ${start_time}`
-            .replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1T')
-            .replace(' ', '')
-          const formattedEndTime = `${lessons.week.days[day].day} ${end_time}`
-            .replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1T')
-            .replace(' ', '')
-          console.log(start_time)
-          lessonsToEvent.push({
-            start: formattedStartTime,
-            end: formattedEndTime,
-            start_time: end_time.slice(0, 5),
-            end_time: end_time.slice(0, 5),
-            ...rest,
-          })
+  if (lessons) {
+    for (let day in lessons.week.days) {
+      lessons.week.days[day].lessons.forEach((lesson) => {
+        // Переименовываем start_time в start
+        const { start_time, end_time, ...rest } = lesson
+        const formattedStartTime = `${lessons.week.days[day].day} ${start_time}`
+          .replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1T')
+          .replace(' ', '')
+        const formattedEndTime = `${lessons.week.days[day].day} ${end_time}`
+          .replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1T')
+          .replace(' ', '')
+        console.log(start_time)
+        lessonsToEvent.push({
+          start: formattedStartTime,
+          end: formattedEndTime,
+          start_time: end_time.slice(0, 5),
+          end_time: end_time.slice(0, 5),
+          ...rest,
         })
-      }
+      })
     }
   }
-
-  console.log(
-    'Зашли в функцию',
-
-    startDate.value,
-    new DayPilot.Date(startDate.value).addDays(1),
-  )
+  console.log(lessonsToEvent, lessons)
   events.value = lessonsToEvent
 }
 
@@ -270,84 +313,8 @@ const weekDays = ref({
 })
 
 const modalsContainer = useTemplateRef('modalsContainer')
-/*
-const dayOfTheWeek = ref({
-  week: {
-    start_date: '20.01.2025',
-    end_date: '26.01.2025',
-    days: {
-      1: {
-        day: '20.01.2025'
-        lessons: [],
-      },
-      2: {
-        lessons: [
-          {
-            lesson_id: 312,
-            student_name: 'Артур',
-            start_time: '12:30:00',
-            end_time: '13:00:00',
-            break: {
-              break_id: 1,
-              duration: '15 минут',
-            },
-          },
-          {
-            lesson_id: 316,
-            student_name: 'Тимур',
-            start_time: '14:00:00',
-            end_time: '15:00:00',
-          },
-        ],
-      },
-      3: {
-        lessons: [],
-      },
-      4: {
-        lessons: [
-          {
-            lesson_id: 314,
-            student_name: 'Артур',
-            start_time: '14:00:00',
-            end_time: '15:00:00',
-            break: {
-              break_id: 2,
-              duration: '60 минут',
-            },
-          },
-          {
-            lesson_id: 317,
-            student_name: 'Артур',
-            start_time: '16:00:00',
-            end_time: '17:00:00',
-            break: {
-              break_id: 3,
-              duration: '60 минут',
-            },
-          },
-          {
-            lesson_id: 318,
-            student_name: 'Артур',
-            start_time: '18:00:00',
-            end_time: '19:00:00',
-          },
-        ],
-      },
-      5: {
-        lessons: [],
-      },
-      6: {
-        lessons: [],
-      },
-      7: {
-        lessons: [],
-      },
-    },
-  },
-})
- */
 const dayOfTheWeek = ref()
-
+const lessonsOfWeek = ref({})
 const draggedItem = ref({
   lesson: null,
   fromColumnIndex: null,
@@ -421,6 +388,7 @@ const handleDrop = (event, targetColumnIndex) => {
 const toggleBreakMode = () => {
   breakMode.value = !breakMode.value
   localStorage.setItem('breakMode', breakMode.value)
+  setLessonsFromUrl()
 
   if (breakMode.value) {
     loadEvents()
@@ -462,18 +430,21 @@ const formatDay = (dateStr) => {
   return `${weekDays.value[date - 1].day_of_week}, ${day}`
 }
 
-const setLessonsFromUrl = async () => {
+const setLessonsFromUrl = () => {
   const queryParams = route.query
   if ('start_date' in queryParams) {
     startDate.value = transformDate(queryParams['start_date'])
     config.startDate = transformDate(queryParams['start_date'])
-    console.log(config.startDate)
-
-    const lessons = await getLessonsOnWeek(queryParams['start_date'])
-    loadEvents(lessons)
-    dayOfTheWeek.value = lessons
-    console.log(dayOfTheWeek.value)
+    getLessonsOnWeek(queryParams['start_date']).then((lessons) => {
+      loadEvents(lessons)
+      lessonsOfWeek.value = lessons
+      dayOfTheWeek.value = lessons
+    })
+  } else {
+    const today = new Date()
+    window.location.search = `?start_date=${formatDate(today)}`
   }
+  console.log(lessonsOfWeek.value)
 }
 
 onMounted(() => {

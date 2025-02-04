@@ -20,14 +20,6 @@
         <div class="v-calendar-menu__select">
           <div class="v-calendar-menu__select-buttons">
             <div class="v-calendar-menu__select-button">
-              <!--  <month-picker-input
-                v-if="type === 'month'"
-                :no-default="false"
-                :lang="'ru'"
-                v-model="monthInput"
-                @input="onMonthSelect"
-              >
-              </month-picker-input> -->
               <VueDatePicker
                 v-if="type === 'month'"
                 month-picker
@@ -127,14 +119,17 @@
       <div class="v-calendar-menu__select mob">
         <div class="v-calendar-menu__select-buttons">
           <div class="v-calendar-menu__select-button">
-            <!-- <month-picker-input
+            <VueDatePicker
               v-if="type === 'month'"
-              :no-default="false"
-              :lang="'ru'"
+              month-picker
+              :locale="'ru-ru'"
+              :auto-apply="true"
+              :format="formatMonth"
               v-model="monthInput"
-              @input="onMonthSelect"
+              @update:model-value="onMonthSelect"
             >
-            </month-picker-input> -->
+              <template #clear-icon="{ clear }"> </template>
+            </VueDatePicker>
             <VueDatePicker
               v-if="type === 'week'"
               week-picker

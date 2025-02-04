@@ -84,3 +84,8 @@ export function transformDate(input) {
   const output = input.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1T') + '00:00:00'
   return output
 }
+
+export function formatDate(date) {
+  const d = new Date(date)
+  return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
