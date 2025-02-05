@@ -37,6 +37,7 @@
                           class="calendar-card__content"
                           v-for="(lesson, lessonIndex) in week[i].lessons"
                           :key="lesson.lesson_id"
+                          :class="{ completed: lesson.completed }"
                           @click="() => toggleButtonsModal(lesson)"
                           draggable="true"
                           @dragstart="

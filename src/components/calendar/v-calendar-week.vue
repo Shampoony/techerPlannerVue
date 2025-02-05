@@ -36,6 +36,7 @@
                     <div class="calendar-row__item-content calendar-card">
                       <div
                         class="calendar-card__content"
+                        :class="{ completed: lesson.completed }"
                         v-for="(lesson, lessonIndex) in day.lessons"
                         :key="lesson.lesson_id"
                         @click="toggleButtonsModal(lesson)"
@@ -79,7 +80,7 @@
               <template #event="{ event }">
                 <div class="event" @click="toggleButtonsModal(event.data)">
                   <div class="event-header">
-                    <div class="calendar-card__content">
+                    <div class="calendar-card__content" :class="{ completed: lesson.completed }">
                       <div class="calendar-card__lesson">
                         <p>{{ event.data.start_time }} - {{ event.data.end_time }}</p>
                         <p>{{ event.data.student_name }}</p>
@@ -229,7 +230,7 @@ const config = ref({
     const eventData = {
       start_time: startTime,
       end_time: endTime,
-      day_of_week: dayOfWeek,
+      day_of_week: dayOfWeek - 1,
     }
     const lessonId = args.e.data.lesson_id
     console.log(eventData, lessonId)
@@ -263,6 +264,7 @@ const loadEvents = async (lessons) => {
       })
     }
   }
+  console.log(lessonsToEvent)
   events.value = lessonsToEvent
 }
 
@@ -356,12 +358,6 @@ const toggleBreakMode = () => {
   breakMode.value = !breakMode.value
   localStorage.setItem('breakMode', breakMode.value)
   setLessonsFromUrl()
-
-  if (breakMode.value) {
-    loadEvents()
-  } else {
-    events.value = [] // Очищаем события при выключенном режиме
-  }
 }
 
 const paginateWeek = () => {
@@ -405,6 +401,7 @@ const setLessonsFromUrl = () => {
     startDate.value = transformDate(queryParams['start_date'])
     config.value.startDate = transformDate(queryParams['start_date'])
     getLessonsOnWeek(queryParams['start_date']).then((lessons) => {
+      console.log('Загружаем')
       loadEvents(lessons)
       lessonsOfWeek.value = lessons
       dayOfTheWeek.value = lessons

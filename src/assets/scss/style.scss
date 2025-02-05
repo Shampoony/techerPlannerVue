@@ -1206,6 +1206,9 @@ header {
     align-items: center;
     justify-content: center;
     gap: 5px;
+
+    position: relative;
+
     &.completed {
       opacity: 0.3;
     }
@@ -1226,6 +1229,7 @@ header {
     font-family: 'Inter', sans-serif;
 
     cursor: pointer;
+
     &.trial {
       background-color: #b5f5bf !important;
       border: 1px solid #b5f5bf;
@@ -1241,6 +1245,10 @@ header {
       border: 1px dashed var(--blue);
       color: var(--black);
     }
+  }
+  &__break {
+    position: absolute;
+    bottom: 0px;
   }
 }
 
@@ -1260,6 +1268,7 @@ header {
     }
     &-card {
       height: 100%;
+
       &__content {
         justify-content: start;
         gap: 0;
@@ -1273,6 +1282,7 @@ header {
         flex-direction: column;
         justify-content: center;
         gap: 10px;
+        margin-bottom: 20px;
       }
       &__break {
         border: 1px dashed var(--blue);
