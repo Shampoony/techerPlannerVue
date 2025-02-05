@@ -149,6 +149,25 @@ export async function setOneTimeLesson(data) {
   }
 }
 
+export async function setStableLesson(data) {
+  try {
+    const response = await fetch(`${domain}/api/lessons`, {
+      method: 'POST',
+      credentials: 'include', // ВАЖНО
+      body: JSON.stringify(data),
+    })
+
+    if (!response.ok) {
+      throw new Error(`Код ошибки при запросе: ${response.status}`)
+    }
+    console.log(response)
+
+    return response
+  } catch (error) {
+    console.error('Произошла ошибки при создании постоянного урока', error)
+  }
+}
+
 export async function getLessonsOnDay(date) {
   try {
     const response = await fetch(`${domain}/api/lessons/day?date=${date}`, {

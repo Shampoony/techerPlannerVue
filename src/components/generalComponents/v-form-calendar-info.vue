@@ -137,24 +137,34 @@ const timeInputs = ref({
 })
 const today = new Date()
 const submitForm = () => {
+  // Проверяем все ключевые значения на undefined или null
   const lessonData = {
     start_time: timeInputs.value[1].start + ':00.000Z',
     end_time: timeInputs.value[1].end + ':00.000Z',
-    repeat_until: nextDate.value.toISOString().split('T')[0],
-    cost_lesson: costLesson.value,
+    repeat_until: nextDate.value ? nextDate.value.toISOString().split('T')[0] : null,
+    cost_lesson: 0,
     break_minutes: break_group.value,
     reminder_minutes: reminder.value,
     in_rule: false,
     status: 'completed',
-    reminder_time: '',
+    reminder_time: 0,
     one_time: true,
     amount_deducted: false,
     paid: false,
-    conducted_date: date.value.toISOString().split('T')[0],
-    created_date: today.toISOString().split('T')[0],
-    day_of_week_id: today.getDay(),
+    conducted_date: date.value ? date.value.toISOString().split('T')[0] : null,
+    created_date: today ? today.toISOString().split('T')[0] : null,
+    day_of_week_id: today ? today.getDay() : null,
   }
-  emit('formSubmited', lessonData)
+
+  // Проверяем, что нет undefined или null в данных
+  const isValid = Object.values(lessonData).every((value) => value !== undefined && value !== null)
+
+  if (isValid) {
+    emit('formSubmited', lessonData)
+  } else {
+    alert('Заполните все поля формы!')
+    console.error('Некоторые поля пустые или некорректные!')
+  }
 }
 
 const toggleRadio = (radio, value) => {

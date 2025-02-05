@@ -84,7 +84,10 @@
                         <p>{{ event.data.start_time }} - {{ event.data.end_time }}</p>
                         <p>{{ event.data.student_name }}</p>
                       </div>
-                      <div class="calendar-card__break" v-if="event.data.break">
+                      <div
+                        class="calendar-card__break"
+                        v-if="event.data.break && event.data.break.duration"
+                      >
                         {{ event.data.break.duration }}
                       </div>
                     </div>

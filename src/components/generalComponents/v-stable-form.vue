@@ -26,7 +26,7 @@
               />
               <VueTimepicker
                 v-model="timeInputs[item.id].end"
-                @update:modelValue="(modelValue) => (timeInputs[item.id].end = modelValue)"
+                @update:modelValue="(modelValue) => handleTimeEnd(modelValue, item.id)"
                 :placeholder="timeInputs[item.id].end"
                 :clearable="false"
               />
@@ -87,25 +87,26 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-/* timepicker */
+
+/* Импорт компонентов */
 import VueTimepicker from 'vue3-timepicker'
 import 'vue3-timepicker/dist/VueTimepicker.css'
-
-/* datepicker */
 import '@vuepic/vue-datepicker/dist/main.css'
 import VueDatePicker from '@vuepic/vue-datepicker'
-
 import { formatDay } from '@/utils'
 
-const periodicityStack = ref([])
-
-const reminder = ref(null)
-const break_group = ref(null)
-const repeatUntill = ref(new Date())
-
+/* -------------------- Переменные -------------------- */
 const emit = defineEmits(['formSubmited'])
 
+/* Переменные состояния */
+const periodicityStack = ref([]) // Стек выбранных дней
+const reminder = ref(null) // Напоминание за (минуты)
+const break_group = ref(null) // Перерыв после (минуты)
+const repeatUntill = ref(new Date()) // Дата окончания повторения
+
+const timeInputs = ref({}) // Время для каждого дня
 const periodicityDays = ref([
+  // Дни недели
   { id: 1, text: 'ПН', active: false, day_of_week: 1, date: '2025-02-04' },
   { id: 2, text: 'ВТ', active: false, day_of_week: 2, date: '2025-02-05' },
   { id: 3, text: 'СР', active: false, day_of_week: 3, date: '2025-02-06' },
@@ -115,10 +116,14 @@ const periodicityDays = ref([
   { id: 7, text: 'ВС', active: false, day_of_week: 7, date: '2025-02-10' },
 ])
 
-const timeInputs = ref({})
+const stableForm = ref({}) // Данные формы для отправки
+
+/* -------------------- Методы -------------------- */
+
+/* Добавление/удаление дня из стека */
 const addDayToStack = (day) => {
   if (day.active) {
-    // Если день уже активен, удаляем его из стека
+    // Удалить день из стека
     const index = periodicityStack.value.findIndex((item) => item.id === day.id)
     if (index !== -1) {
       periodicityStack.value.splice(index, 1)
@@ -126,42 +131,51 @@ const addDayToStack = (day) => {
     day.active = false
     delete timeInputs.value[day.id]
   } else {
-    // Если день не активен, добавляем его в стек
+    // Добавить день в стек
     periodicityStack.value.push(day)
-
     periodicityStack.value.sort((a, b) => a.id - b.id)
     day.active = true
     timeInputs.value[day.id] = { start: '--:--', end: '--:--' }
   }
 }
-const stableForm = ref({})
+
+/* обновление времени конца */
+const handleTimeEnd = (modelValue, id) => {
+  timeInputs.value[id].end = modelValue
+}
+
+/* Обработчик отправки формы */
 const submitForm = () => {
   stableForm.value['day_of_week'] = []
   stableForm.value['start_times'] = []
   stableForm.value['end_times'] = []
+  stableForm.value['reminder_minutes'] = reminder.value
+  stableForm.value['break_minutes'] = break_group.value
+
   periodicityStack.value.forEach((el) => {
     stableForm.value['day_of_week'].push(el.id - 1)
 
     const startTime = timeInputs.value[el.id].start
     const endTime = timeInputs.value[el.id].end
 
-    // Добавляем ведущий ноль, если часы или минуты состоят из одной цифры
+    // Добавление ведущего нуля для времени
     const formattedStartTime = startTime.split(':')
     const formattedEndTime = endTime.split(':')
 
     const formattedStart = `${String(formattedStartTime[0]).padStart(2, '0')}:${String(formattedStartTime[1]).padStart(2, '0')}`
     const formattedEnd = `${String(formattedEndTime[0]).padStart(2, '0')}:${String(formattedEndTime[1]).padStart(2, '0')}`
 
-    // Создаем дату с правильным временем
-    const dateTimeStringStart = new Date(`${el.date}T${formattedStart}:00.000Z`)
-    const dateTimeStringEnd = new Date(`${el.date}T${formattedEnd}:00.000Z`)
+    // Создание даты с правильным временем
+    const TimeStringStart = `${formattedStart}:00.000Z`
+    const TimeStringEnd = `${formattedEnd}:00.000Z`
 
-    stableForm.value['start_times'].push(dateTimeStringStart.toISOString())
-    stableForm.value['end_times'].push(dateTimeStringEnd.toISOString())
+    stableForm.value['start_times'].push(TimeStringStart)
+    stableForm.value['end_times'].push(TimeStringEnd)
   })
-  console.log(stableForm.value)
+  emit('formSubmited', stableForm.value)
 }
 
+/* Обработчик изменения времени */
 const changeTime = (id) => {
   const currentTime = timeInputs.value[id].start.split(':')
   const hour = parseInt(currentTime[0]) + 1
@@ -170,16 +184,19 @@ const changeTime = (id) => {
   timeInputs.value[id].end = endTime
   console.log(endTime, timeInputs.value[id])
 }
+
+/* Установка даты окончания повторения */
 const setDate = (day) => {
   const currentDate = new Date()
   const dayOfWeek = currentDate.getDay()
-
   const difference = day.day_of_week - dayOfWeek
+
   if (difference > 0) {
     currentDate.setDate(currentDate.getDate() + difference + 1)
   } else {
     currentDate.setDate(currentDate.getDate() + difference + 8)
   }
+
   const formattedDate = currentDate.toISOString().split('T')[0]
   if (!maxDate || maxDate < formattedDate) {
     repeatUntill.value = formattedDate
@@ -187,48 +204,21 @@ const setDate = (day) => {
   }
 }
 
-let maxDate = null
+let maxDate = null // Максимальная дата для повторения
 
+/* Переключатель радиокнопок */
 const toggleRadio = (radio, value) => {
   const target = radio === 'reminder' ? reminder : break_group
   target.value = target.value === value ? null : value
 }
 
+/* Переключение активности дня */
 const togglePeriodicity = (day) => {
   addDayToStack(day)
   setDate(day)
 }
-/*
-const submitLesson = (typeOflesson) => {
-  if (typeOflesson == 'stable') {
-    stableForm.value['day_of_week'] = []
-    stableForm.value['start_times'] = []
-    stableForm.value['end_times'] = []
-    periodicityStack.value.forEach((el) => {
-      stableForm.value['day_of_week'].push(el.id - 1)
 
-      const startTime = timeInputs.value[el.id].start
-      const endTime = timeInputs.value[el.id].end
-
-      // Добавляем ведущий ноль, если часы или минуты состоят из одной цифры
-      const formattedStartTime = startTime.split(':')
-      const formattedEndTime = endTime.split(':')
-
-      const formattedStart = `${String(formattedStartTime[0]).padStart(2, '0')}:${String(formattedStartTime[1]).padStart(2, '0')}`
-      const formattedEnd = `${String(formattedEndTime[0]).padStart(2, '0')}:${String(formattedEndTime[1]).padStart(2, '0')}`
-
-      // Создаем дату с правильным временем
-      const dateTimeStringStart = new Date(`${el.date}T${formattedStart}:00.000Z`)
-      const dateTimeStringEnd = new Date(`${el.date}T${formattedEnd}:00.000Z`)
-
-      stableForm.value['start_times'].push(dateTimeStringStart.toISOString())
-      stableForm.value['end_times'].push(dateTimeStringEnd.toISOString())
-    })
-    stableForm.value['repeat_until'] = repeatUntill.value
-  }
-  console.log(stableForm.value)
-}
- */
+/* Обработчик времени в VueTimepicker */
 const handleTime = (modelValue, id) => {
   timeInputs.value[id].start = modelValue
   console.log('Лала', timeInputs.value)
