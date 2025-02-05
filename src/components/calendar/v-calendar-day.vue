@@ -82,8 +82,9 @@ onMounted(() => {
               :height="400"
               ref="calendarRef"
             >
-              <template #event="{ event }">
-                <div class="event" :class="{ break: event.data.break.duration }">
+              <template #event="{ event }"
+                ><!-- :class="{ break: event.data.break.duration }" -->
+                <div class="event">
                   <div class="event-header">
                     <!-- Event Text -->
                     <span class="event-text">{{ event.data.student_name }}</span>

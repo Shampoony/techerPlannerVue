@@ -166,3 +166,39 @@ export async function getLessonsOnDay(date) {
     console.error('Произошла ошибки при переносе урока', error)
   }
 }
+
+export async function getMyLessons(date) {
+  try {
+    const response = await fetch(`${domain}/api/lessons/day?date=${date}`, {
+      method: 'GET',
+      credentials: 'include', // ВАЖНО
+    })
+
+    if (!response.ok) {
+      throw new Error(`Код ошибки при запросе: ${response.status}`)
+    }
+    const responseData = await response.json()
+
+    return responseData
+  } catch (error) {
+    console.error('Произошла ошибки при переносе урока', error)
+  }
+}
+
+export async function getMyStudents() {
+  try {
+    const response = await fetch(`${domain}/api/all-students-in-teacher`, {
+      method: 'GET',
+      credentials: 'include', // ВАЖНО
+    })
+
+    if (!response.ok) {
+      throw new Error(`Код ошибки при запросе: ${response.status}`)
+    }
+    const responseData = await response.json()
+
+    return responseData
+  } catch (error) {
+    console.error('Произошла ошибки при переносе урока', error)
+  }
+}

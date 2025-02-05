@@ -23,8 +23,9 @@
         <v-form-calendar-info />
       </div>
       <div class="stable" v-if="activeAdd == 'stable'">
+        <v-stable-form />
         <!-- <v-form-calendar-info :removeDate="true" /> -->
-        <div class="periodicity">
+        <!--  <div class="periodicity">
           <h2 class="periodicity__title title">Периодичность</h2>
           <ul class="periodicity__list">
             <li
@@ -108,7 +109,7 @@
         </div>
         <button class="blue-btn" type="button" @click.prevent="() => submitLesson('stable')">
           Добавить
-        </button>
+        </button> -->
       </div>
     </div>
   </v-modal>
@@ -116,20 +117,21 @@
 
 <script setup>
 import vModal from '../generalComponents/v-modal.vue'
+import vStableForm from '../generalComponents/v-stable-form.vue'
 import vCustomSelect from '../generalComponents/v-custom-select.vue'
 import vFormCalendarInfo from '../generalComponents/v-form-calendar-info.vue'
 
-/* timepicker */
+/*
 import VueTimepicker from 'vue3-timepicker'
 import 'vue3-timepicker/dist/VueTimepicker.css'
 
-/* datepicker */
 import '@vuepic/vue-datepicker/dist/main.css'
 import VueDatePicker from '@vuepic/vue-datepicker'
 
-import { formatDay } from '@/utils'
+import { formatDay } from '@/utils' */
 
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { getMyStudents } from '@/api/requests'
 
 const activeAdd = ref('single')
 const stableForm = ref({
@@ -143,7 +145,7 @@ const stableForm = ref({
 const setActiveAdd = (name) => {
   activeAdd.value = name
 }
-
+/*
 const reminder = ref(null)
 const break_group = ref(null)
 const repeatUntill = ref(new Date())
@@ -156,11 +158,11 @@ const periodicityDays = ref([
   { id: 5, text: 'ПТ', active: false, day_of_week: 5, date: '2025-02-08' },
   { id: 6, text: 'СБ', active: false, day_of_week: 6, date: '2025-02-09' },
   { id: 7, text: 'ВС', active: false, day_of_week: 7, date: '2025-02-10' },
-])
-
+]) */
+/*
 const periodicityStack = ref([])
 
-const timeInputs = ref({})
+const timeInputs = ref({}) */
 
 const options = ref({
   student: {
@@ -169,8 +171,8 @@ const options = ref({
   },
 })
 
-let maxDate = null
-
+/* let maxDate = null */
+/*
 const toggleRadio = (radio, value) => {
   const target = radio === 'reminder' ? reminder : break_group
   target.value = target.value === value ? null : value
@@ -209,12 +211,13 @@ const submitLesson = (typeOflesson) => {
     stableForm.value['repeat_until'] = repeatUntill.value
   }
   console.log(stableForm.value)
-}
+} */
 
 const setStudent = (student) => {
+  console.log(student)
   stableForm.value.student_id = student.id
 }
-
+/*
 const addDayToStack = (day) => {
   if (day.active) {
     // Если день уже активен, удаляем его из стека
@@ -241,16 +244,16 @@ const changeTime = (id) => {
   const endTime = `${hour}:${minutes}`
   timeInputs.value[id].end = endTime
   console.log(endTime, timeInputs.value[id])
-}
+}  */ /*
 
 const handleTime = (modelValue, id) => {
   timeInputs.value[id].start = modelValue
   console.log('Лала', timeInputs.value)
   changeTime(id)
-}
+} */
 
 /* Устанавливает автоматически дату для поля "повторять до" */
-const setDate = (day) => {
+/* const setDate = (day) => {
   const currentDate = new Date()
   const dayOfWeek = currentDate.getDay()
 
@@ -265,5 +268,11 @@ const setDate = (day) => {
     repeatUntill.value = formattedDate
     maxDate = formattedDate
   }
-}
+} */
+
+onMounted(() => {
+  getMyStudents().then((students) => {
+    options.value.student = students
+  })
+})
 </script>

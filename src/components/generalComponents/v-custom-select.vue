@@ -11,14 +11,14 @@
         <img src="../../assets/images/arrow-up.svg" class="day-el" alt="" />
       </div>
     </div>
-    <ul class="v-custom-select__list" v-if="isMenuOpen">
+    <ul class="v-custom-select__list scroll-container" v-if="isMenuOpen">
       <li
         class="v-custom-select__list-item"
-        v-for="option in props.options.options"
+        v-for="option in options"
         :key="option.id"
         @click="setOption(option)"
       >
-        {{ option.text }}
+        {{ option.student_name }}
       </li>
     </ul>
   </div>
@@ -33,7 +33,7 @@ const isMenuOpen = ref(false)
 const emit = defineEmits(['valueSelected'])
 
 const setOption = (option) => {
-  selected.value = option.text
+  selected.value = option.student_name
   isMenuOpen.value = false
   emit('valueSelected', option)
 }

@@ -18,13 +18,13 @@
           Постоянные занятия
         </div>
       </div>
-      <v-custom-select :options="options.student" />
+      <v-custom-select :options="options.student" @valueSelected="setStudent" />
       <div class="single" v-if="activeAdd == 'single'">
         <v-form-calendar-info />
       </div>
       <div class="stable" v-if="activeAdd == 'stable'">
         <!-- <v-form-calendar-info :removeDate="true" /> -->
-        <div class="periodicity">
+        <!-- <div class="periodicity">
           <h2 class="periodicity__title title">Периодичность</h2>
           <ul class="periodicity__list">
             <li
@@ -109,7 +109,8 @@
             </div>
           </div>
         </div>
-        <button class="blue-btn" type="submit">Добавить</button>
+        <button class="blue-btn" type="submit">Добавить</button> -->
+        <v-stable-form />
       </div>
     </div>
   </v-modal>
@@ -117,6 +118,7 @@
 
 <script setup>
 import vModal from '../generalComponents/v-modal.vue'
+import vStableForm from '../generalComponents/v-stable-form.vue'
 import vCustomSelect from '../generalComponents/v-custom-select.vue'
 import vFormCalendarInfo from '../generalComponents/v-form-calendar-info.vue'
 
@@ -130,6 +132,7 @@ import VueDatePicker from '@vuepic/vue-datepicker'
 /* timepicker */
 import VueTimepicker from 'vue3-timepicker'
 import 'vue3-timepicker/dist/VueTimepicker.css'
+import { getMyStudents } from '@/api/requests'
 
 const props = defineProps({
   lesson: {
@@ -201,6 +204,10 @@ const addDayToStack = (day) => {
   }
 }
 
+const setStudent = (student) => {
+  console.log(student)
+}
+
 /* Добавляет 1 час к началу занятия и помещает в поле времени  конца занятия */
 const changeTime = (id) => {
   const currentTime = timeInputs.value[id].start.split(':')
@@ -233,6 +240,10 @@ const handleDate = (newdate) => {
   repeatUntill.value = newdate
 }
 onMounted(() => {
+  getMyStudents().then((students) => {
+    options.value.student = students
+    console.log(options.value)
+  })
   console.log('Выбранный урок - ', props.lesson)
 })
 </script>

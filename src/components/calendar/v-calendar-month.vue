@@ -113,7 +113,9 @@
             </table>
           </div>
           <div class="v-calendar-month-mob__info lesson-info" v-if="activeDayLessons">
-            <router-link :to="{ name: 'calendar-day', query: { date: activeDayLessons.day } }">
+            <router-link
+              :to="{ name: 'calendar-day', query: { date: getDateOfDay(activeDayLessons.day) } }"
+            >
               <div class="v-calendar-month-mob__day day">
                 <div class="day__header">
                   <p class="day__date">{{ activeDayLessons.day }}</p>
@@ -187,7 +189,7 @@ import vModalsContainer from '../generalComponents/v-modals-container.vue'
 import { useIsMobile } from '@/composables/useIsMobile'
 import { ref, onMounted, computed, useTemplateRef } from 'vue'
 import { getLessonsOnMonth, transferLesson } from '@/api/requests'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 /* Переменные */
 
@@ -228,6 +230,7 @@ const currentMonth = ref(today.value.getMonth() + 1)
 const currentYear = ref(today.value.getFullYear())
 
 const router = useRouter()
+const route = useRoute()
 
 const monthLessons = ref({})
 
@@ -240,6 +243,11 @@ const { isMobile } = useIsMobile()
 const modalsContainer = useTemplateRef('modalsContainer')
 
 /* Методы */
+
+const getDateOfDay = (day) => {
+  const date = route.query['selected_date']
+  return `${String(day).padStart(2, 0)}.${date}`
+}
 
 const toggleActiveDay = (weekIndex, day) => {
   activeDay.value[0] = parseInt(weekIndex)

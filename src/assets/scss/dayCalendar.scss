@@ -65,6 +65,9 @@
 
 // Темная тема
 .night__mode {
+  .calendar_default_event_inner {
+    background-color: var(--blue) !important;
+  }
   .calendar_default_rowheader_inner > div,
   .calendar_default_rowheader_minutes {
     color: #fff;
