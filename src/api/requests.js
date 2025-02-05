@@ -145,7 +145,7 @@ export async function setOneTimeLesson(data) {
 
     return response
   } catch (error) {
-    console.error('Произошла ошибки при переносе урока', error)
+    console.error('Произошла ошибки при добавлении одноразового урока', error)
   }
 }
 

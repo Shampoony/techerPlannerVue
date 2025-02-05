@@ -143,8 +143,8 @@ const submitForm = () => {
     end_time: timeInputs.value[1].end + ':00.000Z',
     repeat_until: nextDate.value ? nextDate.value.toISOString().split('T')[0] : null,
     cost_lesson: 0,
-    break_minutes: break_group.value,
-    reminder_minutes: reminder.value,
+    break_minutes: break_group.value || 0,
+    reminder_minutes: reminder.value || 0,
     in_rule: false,
     status: 'completed',
     reminder_time: 0,
@@ -162,6 +162,7 @@ const submitForm = () => {
   if (isValid) {
     emit('formSubmited', lessonData)
   } else {
+    console.log(lessonData)
     alert('Заполните все поля формы!')
     console.error('Некоторые поля пустые или некорректные!')
   }
