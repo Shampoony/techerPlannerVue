@@ -63,6 +63,10 @@
   }
 }
 
+.calendar_default_event_inner {
+  background-color: inherit !important;
+}
+
 // Темная тема
 .night__mode {
   .calendar_default_event_inner {
@@ -94,6 +98,7 @@
 
 // Стили событий
 .calendar_default_event {
+  background-color: #fff !important;
   &_bar {
     display: none !important;
   }

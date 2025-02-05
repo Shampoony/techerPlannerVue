@@ -131,6 +131,7 @@ export async function transferLesson(lesson_id, data) {
 }
 
 export async function setOneTimeLesson(data) {
+  console.log(data)
   try {
     const response = await fetch(`${domain}/api/lesson-one-time`, {
       method: 'POST',

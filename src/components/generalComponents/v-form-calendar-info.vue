@@ -139,21 +139,21 @@ const today = new Date()
 const submitForm = () => {
   // Проверяем все ключевые значения на undefined или null
   const lessonData = {
+    day_of_week_id: date.value ? date.value.getDay() : null,
     start_time: timeInputs.value[1].start + ':00.000Z',
     end_time: timeInputs.value[1].end + ':00.000Z',
     repeat_until: nextDate.value ? nextDate.value.toISOString().split('T')[0] : null,
-    cost_lesson: 0,
-    break_minutes: break_group.value || 0,
     reminder_minutes: reminder.value || 0,
-    in_rule: false,
-    status: 'completed',
-    reminder_time: 0,
-    one_time: true,
+    break_minutes: break_group.value || 0,
     amount_deducted: false,
-    paid: false,
+    status: 'completed',
     conducted_date: date.value ? date.value.toISOString().split('T')[0] : null,
     created_date: today ? today.toISOString().split('T')[0] : null,
-    day_of_week_id: today ? today.getDay() : null,
+    reminder_time: '2025-02-05T20:40:55.298Z',
+    one_time: true,
+    paid: false,
+    cost_lesson: 0,
+    in_rule: false,
   }
 
   // Проверяем, что нет undefined или null в данных

@@ -117,7 +117,7 @@
               class="v-calendar-week-mob__list-item"
             >
               <div class="day" v-if="day">
-                <div class="day__header" @click="toggleOppenedDays(id)">
+                <div class="day__header" @click="toggleOppenedDays(id, day.day)">
                   <p class="day__date">{{ day.day }}</p>
                   <img src="../../assets/images/arrowRightCalendar.svg" class="day-el" alt="" />
                   <img
@@ -126,8 +126,9 @@
                     alt=""
                   />
                 </div>
+
                 <transition name="fade">
-                  <div v-if="openedLessons[id]">
+                  <div v-if="openedLessons[id] || isToday(day.day)">
                     <router-link :to="{ name: 'calendar-day', query: { date: day.day } }">
                       <div
                         class="day__content"
@@ -166,6 +167,9 @@
                         </div>
                       </div>
                     </router-link>
+                    <div v-if="!day.lessons.length" class="title pb-4">
+                      В этот день у вас нет уроков!
+                    </div>
                   </div>
                 </transition>
               </div>
@@ -192,7 +196,7 @@ import { ref, onMounted, useTemplateRef } from 'vue'
 import { useIsMobile } from '@/composables/useIsMobile'
 import { getLessonsOnWeek, transferLesson } from '@/api/requests'
 import { DayPilot, DayPilotCalendar } from '@daypilot/daypilot-lite-vue'
-import { formatDate, getPreviousMonday, transformDate } from '@/utils'
+import { formatDate, formatDateToStandart, getPreviousMonday, transformDate } from '@/utils'
 
 const { isMobile } = useIsMobile()
 const baseGap = 10
@@ -205,7 +209,7 @@ const route = useRoute()
 
 const breakMode = ref(localStorage.getItem('breakMode') === 'true')
 const events = ref()
-const today = ref(new Date())
+const today = ref(formatDateToStandart(new Date()))
 const startDate = ref(route.query['start_date'] || '01.12.2025')
 
 const config = ref({
@@ -354,6 +358,11 @@ const handleDrop = (event, targetColumnIndex) => {
   draggedItem.value = { lesson: null, fromColumnIndex: null, fromLessonIndex: null }
 }
 
+const isToday = (day) => {
+  const expression = day === today.value
+  return expression
+}
+
 const toggleBreakMode = () => {
   breakMode.value = !breakMode.value
   localStorage.setItem('breakMode', breakMode.value)
@@ -364,7 +373,12 @@ const paginateWeek = () => {
   setLessonsFromUrl()
 }
 
-const toggleOppenedDays = (id) => {
+const toggleOppenedDays = (id, day) => {
+  if (day == today.value) {
+    openedLessons.value[id] = false
+    today.value = ''
+    return
+  }
   if (!(id in openedLessons.value)) {
     openedLessons.value[id] = true
     return

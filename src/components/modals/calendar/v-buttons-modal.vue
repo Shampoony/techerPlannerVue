@@ -7,7 +7,7 @@
           Удалить
         </div>
         <div class="v-buttons-modal__button blue-btn" @click="toggleLessonModals('change_lesson')">
-          Редакиировать правило
+          Редактировать правило
         </div>
         <div
           class="v-buttons-modal__button blue-btn"

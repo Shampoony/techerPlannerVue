@@ -49,14 +49,35 @@ const student_name = ref()
 
 const formSubmited = (data) => {
   data['cost_lesson'] = price.value || 0
-  const isPaid = data['cost_lesson'] > 0
+  data['paid'] = data['cost_lesson'] > 0
   if (student_name.value) {
     const requestBody = {
       lesson_data: data,
-      paid: isPaid,
+
       student_data: { student_name: student_name.value },
     }
-    setOneTimeLesson(requestBody).then(() => {
+    setOneTimeLesson({
+      lesson_data: {
+        day_of_week_id: 0,
+        start_time: '20:40:55.298Z',
+        end_time: '20:40:55.298Z',
+        repeat_until: '2025-02-05',
+        reminder_minutes: 0,
+        break_minutes: 0,
+        amount_deducted: false,
+        status: 'completed',
+        conducted_date: '2025-02-05',
+        created_date: '2025-02-05',
+        reminder_time: '2025-02-05T20:40:55.298Z',
+        one_time: false,
+        paid: false,
+        cost_lesson: 0,
+        in_rule: true,
+      },
+      student_data: {
+        student_name: 'string',
+      },
+    }).then(() => {
       console.log(requestBody)
       console.log('Создали')
     })
@@ -74,3 +95,8 @@ const togglePaymentInput = () => {
   background-color: var(--grey) !important;
 }
 </style>
+{ lesson_data : { amount_deducted : false break_minutes : 10 conducted_date : "2025-02-05"
+cost_lesson : 0 created_date : "2025-02-05" day_of_week_id : 3 end_time : "04:03:00.000Z" in_rule :
+false one_time : true paid : false reminder_minutes : 10 reminder_time : "2025-02-05T20:40:55.298Z"
+repeat_until : "2025-02-06" start_time : "03:03:00.000Z" status : "completed"} student_data :
+{student_name: 'Артём'} }
