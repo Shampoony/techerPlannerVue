@@ -50,7 +50,12 @@
                           </div>
                           <div
                             class="calendar-card__lesson break"
-                            v-if="monthLessons.breaks && monthLessons.breaks[lesson.lesson_id]"
+                            v-if="
+                              monthLessons.breaks &&
+                              monthLessons.breaks[lesson.lesson_id] &&
+                              monthLessons.breaks[lesson.lesson_id].start_time !==
+                                monthLessons.breaks[lesson.lesson_id].end_time
+                            "
                           >
                             {{ monthLessons.breaks[lesson.lesson_id].start_time }} -
                             {{ monthLessons.breaks[lesson.lesson_id].end_time }}
