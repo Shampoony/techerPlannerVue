@@ -49,14 +49,20 @@ const student_name = ref()
 
 const formSubmited = (data) => {
   data['cost_lesson'] = price.value || 0
-  const requestBody = {
-    lesson_data: data,
-    student_data: { student_name: student_name.value },
+  const isPaid = data['cost_lesson'] > 0
+  if (student_name.value) {
+    const requestBody = {
+      lesson_data: data,
+      paid: isPaid,
+      student_data: { student_name: student_name.value },
+    }
+    setOneTimeLesson(requestBody).then(() => {
+      console.log(requestBody)
+      console.log('Создали')
+    })
+  } else {
+    alert('Выберите ученика!')
   }
-  console.log(requestBody)
-  setOneTimeLesson(requestBody).then(() => {
-    console.log('Создали')
-  })
 }
 
 const togglePaymentInput = () => {
