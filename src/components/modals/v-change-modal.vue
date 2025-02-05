@@ -110,6 +110,7 @@
           </div>
         </div>
         <button class="blue-btn" type="submit">Добавить</button> -->
+
         <v-stable-form />
       </div>
     </div>

@@ -82,9 +82,7 @@
         </div>
       </div>
     </div>
-    <button class="blue-btn" type="button" @click.prevent="() => submitLesson('stable')">
-      Добавить
-    </button>
+    <button class="blue-btn" type="button" @click.prevent="submitForm">Добавить</button>
   </div>
 </template>
 <script setup>
@@ -104,6 +102,8 @@ const periodicityStack = ref([])
 const reminder = ref(null)
 const break_group = ref(null)
 const repeatUntill = ref(new Date())
+
+const emit = defineEmits(['formSubmited'])
 
 const periodicityDays = ref([
   { id: 1, text: 'ПН', active: false, day_of_week: 1, date: '2025-02-04' },
@@ -133,6 +133,33 @@ const addDayToStack = (day) => {
     day.active = true
     timeInputs.value[day.id] = { start: '--:--', end: '--:--' }
   }
+}
+const stableForm = ref({})
+const submitForm = () => {
+  stableForm.value['day_of_week'] = []
+  stableForm.value['start_times'] = []
+  stableForm.value['end_times'] = []
+  periodicityStack.value.forEach((el) => {
+    stableForm.value['day_of_week'].push(el.id - 1)
+
+    const startTime = timeInputs.value[el.id].start
+    const endTime = timeInputs.value[el.id].end
+
+    // Добавляем ведущий ноль, если часы или минуты состоят из одной цифры
+    const formattedStartTime = startTime.split(':')
+    const formattedEndTime = endTime.split(':')
+
+    const formattedStart = `${String(formattedStartTime[0]).padStart(2, '0')}:${String(formattedStartTime[1]).padStart(2, '0')}`
+    const formattedEnd = `${String(formattedEndTime[0]).padStart(2, '0')}:${String(formattedEndTime[1]).padStart(2, '0')}`
+
+    // Создаем дату с правильным временем
+    const dateTimeStringStart = new Date(`${el.date}T${formattedStart}:00.000Z`)
+    const dateTimeStringEnd = new Date(`${el.date}T${formattedEnd}:00.000Z`)
+
+    stableForm.value['start_times'].push(dateTimeStringStart.toISOString())
+    stableForm.value['end_times'].push(dateTimeStringEnd.toISOString())
+  })
+  console.log(stableForm.value)
 }
 
 const changeTime = (id) => {
@@ -171,7 +198,7 @@ const togglePeriodicity = (day) => {
   addDayToStack(day)
   setDate(day)
 }
-
+/*
 const submitLesson = (typeOflesson) => {
   if (typeOflesson == 'stable') {
     stableForm.value['day_of_week'] = []
@@ -201,7 +228,7 @@ const submitLesson = (typeOflesson) => {
   }
   console.log(stableForm.value)
 }
-
+ */
 const handleTime = (modelValue, id) => {
   timeInputs.value[id].start = modelValue
   console.log('Лала', timeInputs.value)

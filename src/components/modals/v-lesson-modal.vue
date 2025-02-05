@@ -145,6 +145,37 @@ const stableForm = ref({
 const setActiveAdd = (name) => {
   activeAdd.value = name
 }
+
+const submitLesson = (typeOflesson) => {
+  if (typeOflesson == 'stable') {
+    stableForm.value['day_of_week'] = []
+    stableForm.value['start_times'] = []
+    stableForm.value['end_times'] = []
+    periodicityStack.value.forEach((el) => {
+      stableForm.value['day_of_week'].push(el.id - 1)
+
+      const startTime = timeInputs.value[el.id].start
+      const endTime = timeInputs.value[el.id].end
+
+      // Добавляем ведущий ноль, если часы или минуты состоят из одной цифры
+      const formattedStartTime = startTime.split(':')
+      const formattedEndTime = endTime.split(':')
+
+      const formattedStart = `${String(formattedStartTime[0]).padStart(2, '0')}:${String(formattedStartTime[1]).padStart(2, '0')}`
+      const formattedEnd = `${String(formattedEndTime[0]).padStart(2, '0')}:${String(formattedEndTime[1]).padStart(2, '0')}`
+
+      // Создаем дату с правильным временем
+      const dateTimeStringStart = new Date(`${el.date}T${formattedStart}:00.000Z`)
+      const dateTimeStringEnd = new Date(`${el.date}T${formattedEnd}:00.000Z`)
+
+      stableForm.value['start_times'].push(dateTimeStringStart.toISOString())
+      stableForm.value['end_times'].push(dateTimeStringEnd.toISOString())
+    })
+    stableForm.value['repeat_until'] = repeatUntill.value
+  }
+  console.log(stableForm.value)
+}
+
 /*
 const reminder = ref(null)
 const break_group = ref(null)

@@ -135,22 +135,55 @@
               week-picker
               :format="formatWeek"
               :locale="'ru-ru'"
+              :auto-apply="true"
               v-model="startDate"
               @update:model-value="onWeekSelect"
             >
               <template #clear-icon="{ clear }"> </template>
             </VueDatePicker>
             <div class="v-calendar-menu__select-button-image">
-              <img src="../../assets/images/arrow-down.svg" class="day-el" alt="" />
-              <img src="../../assets/images/arrow-down-night.svg" class="night-el" alt="" />
+              <img class="day-el" src="../../assets/images/arrow-down.svg" alt="" />
+              <img class="night-el" src="../../assets/images/arrow-down-night.svg" alt="" />
             </div>
           </div>
-          <div class="v-calendar-menu__select-button">
-            <img src="../../assets/images/arrow-left.svg" class="day-el" alt="" />
-            <img src="../../assets/images/arrow-left-night.svg" class="night-el" alt="" />
+          <div class="v-calendar-menu__select-button" @click.prevent="prevAction">
+            <svg
+              class="day-el"
+              width="6"
+              height="14"
+              viewBox="0 0 6 14"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g transform="scale(-1,1) translate(-6,0)">
+                <path d="M6 7L-6.52533e-07 13.9282L-4.68497e-08 0.0717966L6 7Z" fill="#202020" />
+              </g>
+            </svg>
+            <svg
+              class="night-el"
+              width="6"
+              height="14"
+              viewBox="0 0 6 14"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <g transform="scale(-1,1) translate(-6,0)">
+                <path d="M6 7L-6.52533e-07 13.9282L-4.68497e-08 0.0717966L6 7Z" fill="#fff" />
+              </g>
+            </svg>
           </div>
-          <div class="v-calendar-menu__select-button">
-            <img src="../../assets/images/arrow-right.svg" class="day-el" alt="" />
+          <div class="v-calendar-menu__select-button" @click.prevent="nextAction">
+            <svg
+              class="day-el"
+              width="6"
+              height="14"
+              viewBox="0 0 6 14"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M6 7L-6.52533e-07 13.9282L-4.68497e-08 0.0717966L6 7Z" fill="#202020" />
+            </svg>
+
             <img src="../../assets/images/arrow-right-night.svg" class="night-el" alt="" />
           </div>
         </div>
