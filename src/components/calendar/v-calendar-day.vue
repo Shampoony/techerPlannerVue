@@ -204,7 +204,6 @@ onMounted(() => {
   loadEvents().then(() => {
     console.log(events.value)
   })
-  console.log()
 })
 </script>
 

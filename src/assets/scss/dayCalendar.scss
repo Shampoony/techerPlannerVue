@@ -98,7 +98,9 @@
 
 // Стили событий
 .calendar_default_event {
-  background-color: #fff !important;
+  @media (max-width: 480px) {
+    background-color: #fff !important;
+  }
   &_bar {
     display: none !important;
   }
