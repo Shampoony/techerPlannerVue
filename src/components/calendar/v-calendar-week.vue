@@ -11,64 +11,70 @@
             @paginateWeek="paginateWeek"
             @toggleBreakMode="toggleBreakMode"
           />
+
           <div class="v-calendar-week__content scroll-container" v-if="!breakMode && dayOfTheWeek">
-            <table class="v-calendar-week__table calendar" v-if="dayOfTheWeek">
-              <thead>
-                <tr class="calendar-header">
-                  <th
-                    class="calendar-header__item"
-                    v-for="(day, index) in dayOfTheWeek.week.days"
-                    :key="index"
-                  >
-                    {{ formatDay(day.day) }}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="calendar-row" v-if="dayOfTheWeek && dayOfTheWeek.week">
-                  <td
-                    v-for="(day, columnIndex) in dayOfTheWeek.week.days"
-                    :key="columnIndex"
-                    class="calendar-row__item"
-                    @dragover.prevent
-                    @drop="(event) => handleDrop(event, columnIndex)"
-                  >
-                    <div class="calendar-row__item-content calendar-card">
-                      <div
-                        class="calendar-card__content"
-                        :class="{ completed: lesson.completed }"
-                        v-for="(lesson, lessonIndex) in day.lessons"
-                        :key="lesson.lesson_id"
-                        @click="toggleButtonsModal(lesson)"
-                        draggable="true"
-                        @dragstart="
-                          (event) => handleDragStart(event, lesson, columnIndex, lessonIndex)
-                        "
+            <transition name="fade">
+              <table class="v-calendar-week__table calendar" v-if="dayOfTheWeek">
+                <thead>
+                  <tr class="calendar-header">
+                    <th
+                      class="calendar-header__item"
+                      v-for="(day, index) in dayOfTheWeek.week.days"
+                      :key="index"
+                    >
+                      {{ formatDay(day.day) }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <transition name="fade">
+                    <tr class="calendar-row" v-if="dayOfTheWeek && dayOfTheWeek.week">
+                      <td
+                        v-for="(day, columnIndex) in dayOfTheWeek.week.days"
+                        :key="columnIndex"
+                        class="calendar-row__item"
+                        @dragover.prevent
+                        @drop="(event) => handleDrop(event, columnIndex)"
                       >
-                        <div
-                          class="calendar-card__lesson"
-                          :style="{
-                            height: getHeight(lesson.duration),
-                            gap: `${baseGap * lesson.duration}px`,
-                          }"
-                        >
-                          <p>
-                            {{ cutSeconds(lesson.start_time) }} - {{ cutSeconds(lesson.end_time) }}
-                          </p>
-                          <p>{{ lesson.student_name }}</p>
+                        <div class="calendar-row__item-content calendar-card">
+                          <div
+                            class="calendar-card__content"
+                            :class="{ completed: lesson.completed }"
+                            v-for="(lesson, lessonIndex) in day.lessons"
+                            :key="lesson.lesson_id"
+                            @click="toggleButtonsModal(lesson)"
+                            draggable="true"
+                            @dragstart="
+                              (event) => handleDragStart(event, lesson, columnIndex, lessonIndex)
+                            "
+                          >
+                            <div
+                              class="calendar-card__lesson"
+                              :style="{
+                                height: getHeight(lesson.duration),
+                                gap: `${baseGap * lesson.duration}px`,
+                              }"
+                            >
+                              <p>
+                                {{ cutSeconds(lesson.start_time) }} -
+                                {{ cutSeconds(lesson.end_time) }}
+                              </p>
+                              <p>{{ lesson.student_name }}</p>
+                            </div>
+                            <div
+                              class="calendar-card__break"
+                              v-if="lesson.break && lesson.break.duration"
+                            >
+                              {{ lesson.break.duration }}
+                            </div>
+                          </div>
                         </div>
-                        <div
-                          class="calendar-card__break"
-                          v-if="lesson.break && lesson.break.duration"
-                        >
-                          {{ lesson.break.duration }}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                      </td>
+                    </tr>
+                  </transition>
+                </tbody>
+              </table>
+            </transition>
           </div>
           <div class="v-calendar-week__break scroll-container" v-if="breakMode && dayOfTheWeek">
             <DayPilotCalendar
@@ -214,6 +220,8 @@ const startDate = ref(route.query['start_date'] || '01.12.2025')
 
 const config = ref({
   viewType: 'Week',
+  cellDuration: 15,
+
   startDate: transformDate(startDate.value),
   allowEventOverlap: false,
 
@@ -251,17 +259,17 @@ const loadEvents = async (lessons) => {
       lessons.week.days[day].lessons.forEach((lesson) => {
         // Переименовываем start_time в start
         const { start_time, end_time, ...rest } = lesson
+
         const formattedStartTime = `${lessons.week.days[day].day} ${start_time}`
           .replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1T')
           .replace(' ', '')
         const formattedEndTime = `${lessons.week.days[day].day} ${end_time}`
           .replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1T')
           .replace(' ', '')
-
         lessonsToEvent.push({
           start: formattedStartTime,
           end: formattedEndTime,
-          start_time: end_time.slice(0, 5),
+          start_time: start_time.slice(0, 5),
           end_time: end_time.slice(0, 5),
           ...rest,
         })
