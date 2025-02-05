@@ -118,11 +118,50 @@ export async function transferLesson(lesson_id, data) {
       credentials: 'include', // ВАЖНО
       body: JSON.stringify(data),
     })
+
     if (!response.ok) {
       throw new Error(`Код ошибки при запросе: ${response.status}`)
     }
     console.log(response)
+
     return response
+  } catch (error) {
+    console.error('Произошла ошибки при переносе урока', error)
+  }
+}
+
+export async function setOneTimeLesson(data) {
+  try {
+    const response = await fetch(`${domain}/api/lesson-one-time`, {
+      method: 'POST',
+      credentials: 'include', // ВАЖНО
+      body: JSON.stringify(data),
+    })
+
+    if (!response.ok) {
+      throw new Error(`Код ошибки при запросе: ${response.status}`)
+    }
+    console.log(response)
+
+    return response
+  } catch (error) {
+    console.error('Произошла ошибки при переносе урока', error)
+  }
+}
+
+export async function getLessonsOnDay(date) {
+  try {
+    const response = await fetch(`${domain}/api/lessons/day?date=${date}`, {
+      method: 'GET',
+      credentials: 'include', // ВАЖНО
+    })
+
+    if (!response.ok) {
+      throw new Error(`Код ошибки при запросе: ${response.status}`)
+    }
+    const responseData = await response.json()
+
+    return responseData
   } catch (error) {
     console.error('Произошла ошибки при переносе урока', error)
   }

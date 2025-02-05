@@ -1,7 +1,7 @@
 <template>
   <v-modal>
     <div class="modal-add">
-      <div class="modal-title">Добавление занятия</div>
+      <div class="modal-title">Редактирование занятия</div>
       <div class="picker modal-add__picker">
         <div
           class="picker__item"

@@ -43,11 +43,11 @@
                 <template #clear-icon="{ clear }"> </template>
               </VueDatePicker>
               <div class="v-calendar-menu__select-button-image">
-                <img class="" src="../../assets/images/arrow-down.svg" alt="" />
-                <img class="" src="../../assets/images/arrow-down-night.svg" alt="" />
+                <img class="day-el" src="../../assets/images/arrow-down.svg" alt="" />
+                <img class="night-el" src="../../assets/images/arrow-down-night.svg" alt="" />
               </div>
             </div>
-            <div class="v-calendar-menu__select-button">
+            <div class="v-calendar-menu__select-button" @click.prevent="prevAction">
               <svg
                 class="day-el"
                 width="6"
@@ -73,7 +73,7 @@
                 </g>
               </svg>
             </div>
-            <div class="v-calendar-menu__select-button">
+            <div class="v-calendar-menu__select-button" @click.prevent="nextAction">
               <svg
                 class="day-el"
                 width="6"
@@ -189,7 +189,7 @@
         </div>
       </div>
       <div class="v-calendar-menu__date flex items-center justify-center">
-        <a class="v-calendar-menu__date-back" @click.prevent="prevMonth()">
+        <a class="v-calendar-menu__date-back" @click.prevent="prevAction">
           <img src="../../assets/images/arrowRightCalendar.svg" class="day-el" alt="" />
           <img src="../../assets/images/arrowRightCalendarNight.svg" class="night-el" alt="" />
         </a>
@@ -200,7 +200,7 @@
           <h3 class="v-calendar-menu__date-text">{{ selectedMonthName }}</h3>
           <p class="v-calendar-menu__date-subtitle">{{ selectedYear }}</p>
         </div>
-        <a class="v-calendar-menu__date-next" @click.prevent="prevMonth()">
+        <a class="v-calendar-menu__date-next" @click.prevent="nextAction">
           <img src="../../assets/images/arrowRightCalendar.svg" class="day-el" alt="" />
           <img src="../../assets/images/arrowRightCalendarNight.svg" class="night-el" alt="" />
         </a>
@@ -229,47 +229,44 @@
 import vTrialModal from '../modals/v-trial-modal.vue'
 import vLessonModal from '../modals/v-lesson-modal.vue'
 
-import { formatWeek, formatMonth, getMonthByIndex } from '@/utils'
+import {
+  formatWeek,
+  formatMonth,
+  getMonthByIndex,
+  transformDate,
+  formatDay,
+  formatDate,
+  getNextMonday,
+} from '@/utils'
 
 import '@vuepic/vue-datepicker/dist/main.css'
 import VueDatePicker from '@vuepic/vue-datepicker'
 
-import { MonthPickerInput } from 'vue-month-picker'
-
 import { useRoute, useRouter } from 'vue-router'
-import { ref, defineEmits, onMounted, computed } from 'vue'
+import { ref, defineEmits, onMounted, computed, nextTick } from 'vue'
 
 import { useIsMobile } from '@/composables/useIsMobile'
 
-const emit = defineEmits(['toggleBreakMode', 'setMonth', 'setWeek'])
+const emit = defineEmits([
+  'toggleBreakMode',
+  'setMonth',
+  'setWeek',
+  'paginateMonth',
+  'paginateWeek',
+])
 const showBreakInput = ref(localStorage.getItem('breakMode'))
 
 const startDate = ref({})
 
 const today = new Date()
-const selectedYear = ref(today.getFullYear())
-const selectedMonth = ref('2025-02')
-/* const selectedMonth = ref(`${selectedYear.value}-${String(today.getMonth() + 3).padStart(2, '0')}`) */
+const selectedMonth = ref(`${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`)
+const selectedYear = ref(selectedMonth.value.slice(0, 4))
 const monthInput = ref()
 
 const selectedMonthName = ref()
 
 const isTablet = useIsMobile(768)
 const isMobile = useIsMobile(480)
-
-const nextDate = computed(() => {
-  let month = selectedMonth.value
-  let year = selectedYear.value
-
-  if (month + 1 > 12) {
-    month = 1
-    year += 1
-  } else {
-    month += 1
-  }
-
-  return `${month}.${year}`
-})
 
 const weekStart = ref()
 const weekEnd = ref()
@@ -293,39 +290,83 @@ const modals = ref({
   trial_lesson: false,
 })
 
+/* ================================== Методы ================================== */
+
+/* ================= Для месяца ================= */
+
 const updateQueryParam = () => {
-  const query = { ...route.query, selected_date: `${selectedMonth.value}.${selectedYear.value}` }
+  const month = selectedMonth.value.split('-')[1]
+  const year = selectedMonth.value.split('-')[0]
+
+  const query = {
+    ...route.query,
+    selected_date: `${month}.${year}`,
+  }
+
   router.push({ query })
 }
 
-const prevMonth = () => {
-  if (selectedMonth.value === 1) {
-    selectedMonth.value = 12
-    selectedYear.value -= 1
+const paginateMonth = (type) => {
+  let month = parseInt(selectedMonth.value.split('-')[1])
+  let year = parseInt(selectedYear.value)
+  if (type == 'next') {
+    if (month === 12) {
+      month = 1
+      year += 1
+    } else {
+      month += 1
+    }
   } else {
-    selectedMonth.value -= 1
+    if (month === 1) {
+      month = 12
+      year -= 1
+    } else {
+      month -= 1
+    }
   }
+
+  selectedMonthName.value = getMonthByIndex(month - 1)
+  selectedMonth.value = `${year}-${String(month).padStart(2, 0)}`
+  monthInput.value = { month, year }
+
+  emit('paginateMonth', { month, year })
   updateQueryParam()
 }
 
-const nextMonth = () => {
-  if (selectedMonth.value === 12) {
-    selectedMonth.value = 1
-    selectedYear.value += 1
-  } else {
-    selectedMonth.value += 1
+/* ================= Для недели ================= */
+
+const updateQueryParamWeek = async (date) => {
+  const query = {
+    ...route.query,
+    start_date: date,
   }
-  updateQueryParam()
+  await router.push({ query })
+  console.log('В апдейте', route.query)
 }
+
+const paginateWeek = async (type) => {
+  const date = new Date(startDate.value[0])
+  const daysToSum = type === 'next' ? 7 : -7
+  date.setDate(date.getDate() + daysToSum)
+
+  const formatedStartDate = formatDate(date)
+
+  updateQueryParamWeek(formatedStartDate).then(() => {
+    updateWeekFromUrl()
+    emit('paginateWeek')
+  })
+}
+
+const onWeekSelect = (modelData) => {
+  startDate.value = modelData
+  emit('setWeek', modelData[0].toLocaleDateString('ru-RU'))
+}
+
+/* ================= Общие ================= */
 
 const toggleModals = (modalName) => {
   console.log(modalName)
   modals.value[modalName] = !modals.value[modalName]
-}
-const onWeekSelect = (modelData) => {
-  startDate.value = modelData
-  console.log(startDate.value)
-  emit('setWeek', modelData[0].toLocaleDateString('ru-RU'))
 }
 
 const changeBreakMode = () => {
@@ -347,12 +388,39 @@ const onMonthSelect = (modelData) => {
 
   emit('setMonth', modelData)
 }
+
+const updateWeekFromUrl = () => {
+  const queryParams = route.query
+  const date = queryParams['start_date'].replace(/\./g, '-')
+  console.log(date)
+
+  // Форматируем строку в объект Date
+  const formattedDate = new Date(date.split('-').reverse().join('-'))
+  const options = { day: 'numeric', month: 'long' }
+
+  // Формируем дату начала недели
+  weekStart.value = formattedDate.toLocaleDateString('ru-RU', options)
+
+  // Добавляем 7 дней для вычисления даты конца недели
+  const endDate = new Date(formattedDate)
+  endDate.setDate(formattedDate.getDate() + 7)
+  weekEnd.value = endDate.toLocaleDateString('ru-RU', options)
+
+  // Устанавливаем startDate для выбора недели
+  startDate.value = [formattedDate, endDate]
+  console.log(weekStart.value, weekEnd.value)
+}
+const nextAction = computed(() => {
+  return props.type === 'month' ? () => paginateMonth('next') : () => paginateWeek('next')
+})
+
+const prevAction = computed(() => {
+  return props.type === 'month' ? () => paginateMonth('prev') : () => paginateWeek('prev')
+})
 onMounted(() => {
-  const params = new URLSearchParams(window.location.search)
-  const queryParams = Object.fromEntries(params.entries())
-  if ('start_date' in queryParams) {
+  const queryParams = route.query
+  if (queryParams.start_date) {
     const date = queryParams['start_date'].replace(/\./g, '-') // Меняем точки на дефисы для правильного парсинга
-    console.log(date)
 
     // Форматируем строку в объект Date
     const formattedDate = new Date(date.split('-').reverse().join('-'))

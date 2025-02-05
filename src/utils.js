@@ -2,6 +2,22 @@ import { format } from 'date-fns'
 import { ru } from 'date-fns/locale'
 
 import { startOfWeek, endOfWeek } from 'date-fns'
+
+const months = [
+  'Январь',
+  'Февраль',
+  'Март',
+  'Апрель',
+  'Май',
+  'Июнь',
+  'Июль',
+  'Август',
+  'Сентябрь',
+  'Октябрь',
+  'Ноябрь',
+  'Декабрь',
+]
+
 export function changeTime(id, timeInputs) {
   /* Добавляет 1 час к началу занятия и помещает в поле времени конца занятия */
   const currentTime = timeInputs[id].start.split(':')
@@ -59,20 +75,6 @@ export function formatWeek(date) {
 }
 
 export function getMonthByIndex(monthIndex) {
-  const months = [
-    'Январь',
-    'Февраль',
-    'Март',
-    'Апрель',
-    'Май',
-    'Июнь',
-    'Июль',
-    'Август',
-    'Сентябрь',
-    'Октябрь',
-    'Ноябрь',
-    'Декабрь',
-  ]
   return months[monthIndex]
 }
 export function formatMonth(date) {
@@ -88,4 +90,13 @@ export function transformDate(input) {
 export function formatDate(date) {
   const d = new Date(date)
   return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
+
+export function getNextMonday(date) {
+  const day = date.getDay()
+  const diff = (7 - day + 1) % 7 // Расчет разницы до следующего понедельника
+  const nextMonday = new Date(date)
+  nextMonday.setDate(date.getDate() + diff) // Устанавливаем следующую дату понедельника
+  nextMonday.setHours(0, 0, 0, 0) // Устанавливаем время на 00:00:00
+  return nextMonday
 }

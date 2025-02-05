@@ -59,7 +59,7 @@ onMounted(() => {
               />
               <p class="text-black">Назад</p>
             </div>
-            <h1 class="v-calendar-day__date">3 января</h1>
+            <h1 class="v-calendar-day__date">{{ formatedCurrentDate }}</h1>
             <div class="v-calendar-day__buttons">
               <div class="v-calendar-day__button trial-btn" @click="toggleModals('trial_lesson')">
                 <div class="button-plus">+</div>
@@ -83,10 +83,10 @@ onMounted(() => {
               ref="calendarRef"
             >
               <template #event="{ event }">
-                <div class="event" :class="{ break: event.data.break }">
+                <div class="event" :class="{ break: event.data.break.duration }">
                   <div class="event-header">
                     <!-- Event Text -->
-                    <span class="event-text">{{ event.text() }}</span>
+                    <span class="event-text">{{ event.data.student_name }}</span>
                   </div>
                 </div>
               </template>
@@ -113,11 +113,17 @@ import vTrialModal from '../modals/v-trial-modal.vue'
 import vLessonModal from '../modals/v-lesson-modal.vue'
 import { DayPilotCalendar } from '@daypilot/daypilot-lite-vue'
 
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { getLessonsOnDay } from '@/api/requests'
+import { useRoute } from 'vue-router'
+import { formatDate, transformDate } from '@/utils'
 
 const events = ref([])
+const currentDate = ref()
+const formatedCurrentDate = ref()
 
 const calendarRef = ref(null)
+const route = useRoute()
 
 const config = ref({
   cellDuration: 60,
@@ -132,10 +138,32 @@ const toggleModals = (modalName) => {
   modals.value[modalName] = !modals.value[modalName]
 }
 
-const startDate = ref('2025-01-30')
+const startDate = ref()
 
-const loadEvents = () => {
-  events.value = [
+const loadEvents = async () => {
+  const lessons = await getLessonsOnDay(currentDate.value)
+  const lessonsToEvent = []
+  lessons.lessons.forEach((lesson) => {
+    // Переименовываем start_time в start
+    const { start_time, end_time, ...rest } = lesson
+    const formattedStartTime = `${currentDate.value} ${start_time}`
+      .replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1T')
+      .replace(' ', '')
+    const formattedEndTime = `${currentDate.value} ${end_time}`
+      .replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1T')
+      .replace(' ', '')
+
+    lessonsToEvent.push({
+      start: formattedStartTime,
+      end: formattedEndTime,
+      start_time: end_time.slice(0, 5),
+      end_time: end_time.slice(0, 5),
+      ...rest,
+    })
+  })
+  events.value = lessonsToEvent
+  console.log(events.value)
+  /* [
     {
       id: 1,
       start: '2025-01-30T10:00:00',
@@ -151,12 +179,31 @@ const loadEvents = () => {
       text: 'Перерыв',
       break: true,
     },
-  ]
+  ] */
+}
+
+const formatCurrentDate = (dateToFormat) => {
+  const [day, month, year] = dateToFormat.split('.')
+
+  const date = new Date(year, month - 1, day) // Создаем объект Date
+
+  const formattedDate = new Intl.DateTimeFormat('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+  }).format(date)
+  return formattedDate
 }
 
 onMounted(() => {
-  loadEvents()
-  console.log(events.value)
+  if (route.query.date) {
+    currentDate.value = route.query.date
+    startDate.value = transformDate(currentDate.value).split('T')[0]
+    formatedCurrentDate.value = formatCurrentDate(currentDate.value)
+  }
+  loadEvents().then(() => {
+    console.log(events.value)
+  })
+  console.log()
 })
 </script>
 

@@ -588,10 +588,6 @@ video {
   }
 }
 
-.fixed {
-  position: fixed;
-}
-
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -610,10 +606,6 @@ video {
 
 .ml-4 {
   margin-left: 1rem;
-}
-
-.mb-0 {
-  margin-bottom: 0px;
 }
 
 .flex {

@@ -1,13 +1,13 @@
 <template>
   <v-modal :id="'buttons-modal'">
     <div class="v-buttons-modal">
-      <div class="modal-title">Занятие</div>
+      <h2 class="modal-title">Занятие</h2>
       <div class="v-buttons-modal__container">
         <div class="v-buttons-modal__button white-btn" @click="toggleLessonModals('delete_lesson')">
           Удалить
         </div>
         <div class="v-buttons-modal__button blue-btn" @click="toggleLessonModals('change_lesson')">
-          Редакиировать
+          Редакиировать правило
         </div>
         <div
           class="v-buttons-modal__button blue-btn"

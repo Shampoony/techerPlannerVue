@@ -8,9 +8,10 @@
             :is-showed-break="true"
             :type="'week'"
             @setWeek="setLessonsOnWeek"
+            @paginateWeek="paginateWeek"
             @toggleBreakMode="toggleBreakMode"
           />
-          <div class="v-calendar-week__content scroll-container" v-if="!breakMode">
+          <div class="v-calendar-week__content scroll-container" v-if="!breakMode && dayOfTheWeek">
             <table class="v-calendar-week__table calendar" v-if="dayOfTheWeek">
               <thead>
                 <tr class="calendar-header">
@@ -50,10 +51,15 @@
                             gap: `${baseGap * lesson.duration}px`,
                           }"
                         >
-                          <p>{{ lesson.start_time }} - {{ lesson.end_time }}</p>
+                          <p>
+                            {{ cutSeconds(lesson.start_time) }} - {{ cutSeconds(lesson.end_time) }}
+                          </p>
                           <p>{{ lesson.student_name }}</p>
                         </div>
-                        <div class="calendar-card__break" v-if="lesson.break">
+                        <div
+                          class="calendar-card__break"
+                          v-if="lesson.break && lesson.break.duration"
+                        >
                           {{ lesson.break.duration }}
                         </div>
                       </div>
@@ -63,8 +69,13 @@
               </tbody>
             </table>
           </div>
-          <div class="v-calendar-week__break scroll-container" v-else>
-            <DayPilotCalendar :config="config" :events="events" ref="calendarRef">
+          <div class="v-calendar-week__break scroll-container" v-if="breakMode && dayOfTheWeek">
+            <DayPilotCalendar
+              :config="config"
+              :events="events"
+              ref="calendarRef"
+              v-if="events.length"
+            >
               <template #event="{ event }">
                 <div class="event" @click="toggleButtonsModal(event.data)">
                   <div class="event-header">
@@ -82,6 +93,9 @@
               </template>
             </DayPilotCalendar>
           </div>
+          <div class="loader-container" v-if="!dayOfTheWeek">
+            <div class="loader"></div>
+          </div>
         </div>
       </section>
       <section class="v-calendar-week-mob mob-page" v-else>
@@ -92,61 +106,6 @@
             @setWeek="setLessonsOnWeek"
             @toggleBreakMode="toggleBreakMode"
           />
-          <!--  <ul class="v-calendar-week-mob__list" v-if="lessonsOfWeek.length">
-            <li
-              class="v-calendar-week-mob__list-item"
-              v-for="(day, id) of lessonsOfWeek.week.days"
-              :key="id"
-            >
-              <div class="day" v-if="day.length">
-                <div class="day__header" @click="toggleOppenedDays(id)">
-                  <p class="day__date">{{ id }}</p>
-                  <img src="../../assets/images/arrowRightCalendar.svg" class="day-el" alt="" />
-                  <img
-                    src="../../assets/images/arrowRightCalendarNight.svg"
-                    class="night-el"
-                    alt=""
-                  />
-                </div>
-                <transition name="fade">
-                  <div v-if="openedLessons[id]">
-                    <div class="day__content" v-for="(number, lesson) of day" :key="lesson.id">
-                      <div class="day__lesson">
-                        <div class="day__lesson-time">
-                          <div class="day__lesson-circle"></div>
-                          <p>{{ lesson.start_time }}</p>
-                          <p>-</p>
-                          <p>{{ lesson.end_time }}</p>
-                        </div>
-                        <div class="day__lesson-name">{{ lesson.student_name }}</div>
-                      </div>
-                      <div class="day__lesson break" v-if="lesson.breaks">
-                        <div class="day__lesson-block">
-                          <img
-                            src="../../assets/images/button_add_calendar.svg"
-                            class="day-el"
-                            alt=""
-                          />
-                          <img
-                            src="../../assets/images/button_add_calendar_night.svg"
-                            class="night-el"
-                            alt=""
-                          />
-                          <div class="day__lesson-time">
-                            <p>{{ lesson.breaks.start_time }}</p>
-                            <p>-</p>
-                            <p>{{ lesson.breaks.end_time }}</p>
-                          </div>
-                        </div>
-                        <div class="day__lesson-name">Перерыв</div>
-                      </div>
-                    </div>
-                  </div>
-                </transition>
-              </div>
-            </li>
-          </ul> -->
-
           <ul class="v-calendar-week-mob__list" v-if="dayOfTheWeek && dayOfTheWeek.week">
             <li
               v-for="(day, id) in dayOfTheWeek.week.days"
@@ -165,42 +124,44 @@
                 </div>
                 <transition name="fade">
                   <div v-if="openedLessons[id]">
-                    <div
-                      class="day__content"
-                      v-for="(lesson, number) of day.lessons"
-                      :key="lesson.id"
-                    >
-                      <div class="day__lesson">
-                        <div class="day__lesson-time">
-                          <div class="day__lesson-circle"></div>
-
-                          <p>{{ lesson.start_time }}</p>
-                          <p>-</p>
-                          <p>{{ lesson.end_time }}</p>
-                        </div>
-                        <div class="day__lesson-name">{{ lesson.student_name }}</div>
-                      </div>
-                      <div class="day__lesson break" v-if="lesson.breaks">
-                        <div class="day__lesson-block">
-                          <img
-                            src="../../assets/images/button_add_calendar.svg"
-                            class="day-el"
-                            alt=""
-                          />
-                          <img
-                            src="../../assets/images/button_add_calendar_night.svg"
-                            class="night-el"
-                            alt=""
-                          />
+                    <router-link :to="{ name: 'calendar-day', query: { date: day.day } }">
+                      <div
+                        class="day__content"
+                        v-for="(lesson, number) of day.lessons"
+                        :key="lesson.id"
+                      >
+                        <div class="day__lesson">
                           <div class="day__lesson-time">
-                            <p>{{ lesson.breaks.start_time }}</p>
+                            <div class="day__lesson-circle"></div>
+
+                            <p>{{ lesson.start_time }}</p>
                             <p>-</p>
-                            <p>{{ lesson.breaks.end_time }}</p>
+                            <p>{{ lesson.end_time }}</p>
                           </div>
+                          <div class="day__lesson-name">{{ lesson.student_name }}</div>
                         </div>
-                        <div class="day__lesson-name">Перерыв</div>
+                        <div class="day__lesson break" v-if="lesson.breaks">
+                          <div class="day__lesson-block">
+                            <img
+                              src="../../assets/images/button_add_calendar.svg"
+                              class="day-el"
+                              alt=""
+                            />
+                            <img
+                              src="../../assets/images/button_add_calendar_night.svg"
+                              class="night-el"
+                              alt=""
+                            />
+                            <div class="day__lesson-time">
+                              <p>{{ lesson.breaks.start_time }}</p>
+                              <p>-</p>
+                              <p>{{ lesson.breaks.end_time }}</p>
+                            </div>
+                          </div>
+                          <div class="day__lesson-name">Перерыв</div>
+                        </div>
                       </div>
-                    </div>
+                    </router-link>
                   </div>
                 </transition>
               </div>
@@ -243,14 +204,15 @@ const events = ref()
 const today = ref(new Date())
 const startDate = ref(route.query['start_date'] || '01.12.2025')
 
-const config = {
+const config = ref({
   viewType: 'Week',
   startDate: transformDate(startDate.value),
+  allowEventOverlap: false,
+
   eventResizeHandling: 'Disabled',
   timeRangeSelectedHandling: 'Disabled',
   locale: 'ru-RU',
   headerDateFormat: 'ddd, d',
-  allowEventOverlap: false,
   touch: true,
   weekStarts: 1,
 
@@ -272,7 +234,7 @@ const config = {
   onEventResized: (args) => {
     console.log('Event resized')
   },
-}
+})
 
 const loadEvents = async (lessons) => {
   const lessonsToEvent = []
@@ -287,7 +249,7 @@ const loadEvents = async (lessons) => {
         const formattedEndTime = `${lessons.week.days[day].day} ${end_time}`
           .replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1T')
           .replace(' ', '')
-        console.log(start_time)
+
         lessonsToEvent.push({
           start: formattedStartTime,
           end: formattedEndTime,
@@ -298,7 +260,6 @@ const loadEvents = async (lessons) => {
       })
     }
   }
-  console.log(lessonsToEvent, lessons)
   events.value = lessonsToEvent
 }
 
@@ -325,6 +286,9 @@ const handleDragStart = (event, lesson, columnIndex, lessonIndex) => {
   draggedItem.value = { lesson, fromColumnIndex: columnIndex, fromLessonIndex: lessonIndex }
 }
 
+const cutSeconds = (time) => {
+  return time.slice(0, 5)
+}
 const handleDrop = (event, targetColumnIndex) => {
   const { lesson, fromColumnIndex, fromLessonIndex } = draggedItem.value
 
@@ -397,6 +361,10 @@ const toggleBreakMode = () => {
   }
 }
 
+const paginateWeek = () => {
+  setLessonsFromUrl()
+}
+
 const toggleOppenedDays = (id) => {
   if (!(id in openedLessons.value)) {
     openedLessons.value[id] = true
@@ -414,10 +382,8 @@ const getHeight = (duration) => {
 }
 
 const setLessonsOnWeek = (startDate) => {
-  router.push({ query: { start_date: startDate } })
-
-  setLessonsFromUrl().then(() => {
-    router.go(0)
+  router.push({ query: { start_date: startDate } }).then(() => {
+    setLessonsFromUrl()
   })
 }
 
@@ -434,7 +400,7 @@ const setLessonsFromUrl = () => {
   const queryParams = route.query
   if ('start_date' in queryParams) {
     startDate.value = transformDate(queryParams['start_date'])
-    config.startDate = transformDate(queryParams['start_date'])
+    config.value.startDate = transformDate(queryParams['start_date'])
     getLessonsOnWeek(queryParams['start_date']).then((lessons) => {
       loadEvents(lessons)
       lessonsOfWeek.value = lessons

@@ -99,7 +99,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { changeTime, formatDate, formatDay, transformDate } from '@/utils'
+import { changeTime, formatDay } from '@/utils'
 
 /* timepicker */
 import VueTimepicker from 'vue3-timepicker'
@@ -112,8 +112,12 @@ import VueDatePicker from '@vuepic/vue-datepicker'
 const reminder = ref(null)
 const break_group = ref(null)
 const date = ref(new Date())
+const nextDate = ref(new Date())
+nextDate.value.setDate(date.value.getDate() + 1)
 const repeatUntill = ref(new Date())
 const costLesson = ref()
+
+const emit = defineEmits(['formSubmited'])
 
 const periodicityDays = ref([
   { id: 1, text: 'ПН', active: false, day_of_week: 1 },
@@ -134,9 +138,9 @@ const timeInputs = ref({
 const today = new Date()
 const submitForm = () => {
   const lessonData = {
-    start_time: timeInputs.value[1].start,
-    end_time: timeInputs.value[1].start,
-    repeat_until: date.value,
+    start_time: timeInputs.value[1].start + ':00.000Z',
+    end_time: timeInputs.value[1].end + ':00.000Z',
+    repeat_until: nextDate.value.toISOString().split('T')[0],
     cost_lesson: costLesson.value,
     break_minutes: break_group.value,
     reminder_minutes: reminder.value,
@@ -146,31 +150,11 @@ const submitForm = () => {
     one_time: true,
     amount_deducted: false,
     paid: false,
-    conducted_date: date,
+    conducted_date: date.value.toISOString().split('T')[0],
     created_date: today.toISOString().split('T')[0],
     day_of_week_id: today.getDay(),
   }
-  /*   {
-  "lesson_data": {
-    "day_of_week_id": 0,
-    "start_time": "19:41:38.558Z",
-    "end_time": "19:41:38.558Z",
-    "repeat_until": "2025-02-04",
-    "reminder_minutes": 0,
-    "break_minutes": 0,
-    "amount_deducted": false,
-    "status": "completed",
-    "conducted_date": "2025-02-04",
-    "created_date": "2025-02-04",
-    "reminder_time": "2025-02-04T19:41:38.558Z",
-    "one_time": false,
-    "paid": false,
-    "cost_lesson": 0,
-    "in_rule": true
-  },
-  "student_data": {
-    "student_name": "string"
-  } */
+  emit('formSubmited', lessonData)
 }
 
 const toggleRadio = (radio, value) => {
