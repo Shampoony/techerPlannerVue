@@ -100,3 +100,10 @@ export function getNextMonday(date) {
   nextMonday.setHours(0, 0, 0, 0) // Устанавливаем время на 00:00:00
   return nextMonday
 }
+export function getPreviousMonday(date) {
+  const dayOfWeek = date.getDay() // 0 - воскресенье, 1 - понедельник, ..., 6 - суббота
+  const daysAgo = dayOfWeek === 1 ? 7 : dayOfWeek - 1 // Если понедельник, то возвращаем 7 дней назад
+  const previousMonday = new Date(date)
+  previousMonday.setDate(date.getDate() - daysAgo)
+  return previousMonday
+}

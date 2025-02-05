@@ -192,7 +192,7 @@ import { ref, onMounted, useTemplateRef } from 'vue'
 import { useIsMobile } from '@/composables/useIsMobile'
 import { getLessonsOnWeek, transferLesson } from '@/api/requests'
 import { DayPilot, DayPilotCalendar } from '@daypilot/daypilot-lite-vue'
-import { formatDate, transformDate } from '@/utils'
+import { formatDate, getPreviousMonday, transformDate } from '@/utils'
 
 const { isMobile } = useIsMobile()
 const baseGap = 10
@@ -407,7 +407,7 @@ const setLessonsFromUrl = () => {
       dayOfTheWeek.value = lessons
     })
   } else {
-    const today = new Date()
+    const today = getPreviousMonday(new Date())
     window.location.search = `?start_date=${formatDate(today)}`
   }
   console.log(lessonsOfWeek.value)
