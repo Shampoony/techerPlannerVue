@@ -1295,6 +1295,14 @@ header {
       }
     }
   }
+  &__break {
+    .calendar_default_cell_inner {
+      border-bottom: 1px solid rgba($color: #cfcece, $alpha: 0.5) !important;
+    }
+    .calendar_default_rowheader_inner {
+      padding-top: 0 !important;
+    }
+  }
 }
 
 .modal-add {

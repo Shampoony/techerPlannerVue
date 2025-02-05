@@ -80,7 +80,7 @@
               <template #event="{ event }">
                 <div class="event" @click="toggleButtonsModal(event.data)">
                   <div class="event-header">
-                    <div class="calendar-card__content" :class="{ completed: lesson.completed }">
+                    <div class="calendar-card__content">
                       <div class="calendar-card__lesson">
                         <p>{{ event.data.start_time }} - {{ event.data.end_time }}</p>
                         <p>{{ event.data.student_name }}</p>
