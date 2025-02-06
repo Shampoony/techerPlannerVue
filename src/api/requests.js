@@ -9,6 +9,8 @@ export async function getTeacherById(teacherId) {
     })
 
     if (!response.ok) {
+      const code = response.status
+      alert('Ошибка', code)
       throw new Error(`Код ошибки при запросе: ${response.status}`)
     }
 
