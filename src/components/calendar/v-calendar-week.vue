@@ -131,6 +131,7 @@
               :key="id"
               class="v-calendar-week-mob__list-item"
             >
+              {}
               <div class="day" v-if="day">
                 <div class="day__header" @click="toggleOppenedDays(id, day.day)">
                   <p class="day__date">{{ day.day }}</p>

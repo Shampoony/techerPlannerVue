@@ -128,7 +128,7 @@
             >
               <div class="v-calendar-month-mob__day day">
                 <div class="day__header">
-                  <p class="day__date">{{ activeDayLessons.day }}</p>
+                  <p class="day__date">{{ getDateOfDay(activeDayLessons.day) }}</p>
                   <img src="../../assets/images/arrowRightCalendar.svg" class="day-el" alt="" />
                   <img
                     src="../../assets/images/arrowRightCalendarNight.svg"
@@ -363,7 +363,7 @@ const paginateMonth = (dateData) => {
   console.log('Зашли')
   getLessonsOnMonth(dateData.year, dateData.month).then((lessons) => {
     monthLessons.value = lessons
-    console.log(lessons)
+    activeDay.value = []
   })
 }
 const setLessonsOnDate = () => {

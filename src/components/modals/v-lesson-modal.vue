@@ -71,7 +71,7 @@ const setActiveAdd = (name) => {
 
 const submitStableForm = (stableForm) => {
   if (student.value) {
-    stableForm['student_id'] = student.value.student_id
+    stableForm['student_id'] = student.value.id
     stableForm['goal'] = 'string'
     stableForm['in_rule'] = true
 
@@ -93,7 +93,7 @@ const submitSingleForm = (singleForm) => {
 
   if (student.value) {
     const requestBody = {
-      student_id: student.value.student_id,
+      student_id: student.value.id,
       goal: 'string',
       days_of_week: [singleForm.day_of_week_id],
       start_times: [singleForm.start_time],
