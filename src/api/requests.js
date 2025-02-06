@@ -131,15 +131,15 @@ export async function transferLesson(lesson_id, data) {
   }
 }
 export async function setOneTimeLesson(data) {
-  console.log(jsonOrder.stringify(data.requestBody))
   try {
+    const requestData = data.requestBody || data
     const response = await fetch(`${domain}/api/lesson-one-time`, {
       method: 'POST',
       credentials: 'include', // ВАЖНО
       headers: {
         'Content-Type': 'application/json',
       },
-      body: jsonOrder.stringify(data.requestBody),
+      body: jsonOrder.stringify(requestData),
     })
 
     if (!response.ok) {
