@@ -242,18 +242,21 @@ const config = ref({
 
   onEventMoved: (args) => {
     console.log('Event moved', args)
-    const startTime = args.newStart.value
-    const endTime = args.newStart.value
-    const startDate = new Date(startTime)
-    const dayOfWeek = startDate.getDay()
+    const startTime = args.newStart.value.split('T')[1]
+    const endTime = args.newStart.value.split('T')[1]
+    const startDate = args.e.data.start.value.split('T')[0]
+    const dayOfWeek = new Date(args.newStart.value).getDay()
 
     const eventData = {
+      day_of_week_id: dayOfWeek,
       start_time: startTime,
       end_time: endTime,
-      day_of_week: dayOfWeek - 1,
+      conducted_date: startDate,
     }
     const lessonId = args.e.data.lesson_id
-    console.log(eventData, lessonId)
+    transferLesson(lessonId, eventData).then(() => {
+      console.log('Выполнили запрос')
+    })
   },
   onEventResized: (args) => {
     console.log('Event resized')
@@ -366,6 +369,8 @@ const handleDrop = (event, targetColumnIndex) => {
 
     // Вставляем урок в целевой столбец в нужное место
     targetLessons.splice(insertIndex, 0, lesson)
+    console.log(requestBody)
+
     transferLesson(lesson.lesson_id, requestBody).then(() => {
       console.log('Перенос осуществлен')
     })

@@ -118,6 +118,9 @@ export async function transferLesson(lesson_id, data) {
     const response = await fetch(`${domain}/api/lessons/${lesson_id}`, {
       method: 'PUT',
       credentials: 'include', // ВАЖНО
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(data),
     })
 

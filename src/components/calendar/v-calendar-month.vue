@@ -323,14 +323,15 @@ const handleDrop = (event, targetColumnIndex, targetRowIndex) => {
       const targetDay = String(monthLessons.value.schedule[targetRowIndex][targetColumnIndex].day)
 
       const requestBody = {
-        /* start_time: lesson.start_time + ':00.001Z',
-    end_time: lesson.end_time + ':00.001Z', */
-        /*  day_of_week_id: targetColumnIndex,
-    conducted_date: `${currentYear.value}-${currentMonth.value}-${targetDay.padStart(2, 0)}`, */
         day_of_week_id: targetColumnIndex - 1,
+        start_time: lesson.start_time + ':00.001Z',
+        end_time: lesson.end_time + ':00.001Z',
+
+        conducted_date: `${currentYear.value}-${currentMonth.value}-${targetDay.padStart(2, 0)}`,
+        /*   day_of_week_id: targetColumnIndex - 1,
         start_time: '16:03:44.361Z',
         end_time: '17:03:44.361Z',
-        conducted_date: '2025-02-04',
+        conducted_date: '2025-02-04', */
       }
       transferLesson(lesson.lesson_id, requestBody).then(() => {
         console.log('Выполнили')
