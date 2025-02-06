@@ -1267,6 +1267,9 @@ header {
 }
 
 .v-calendar-week {
+  &__container {
+    position: relative;
+  }
   &__content {
     overflow-x: auto;
     overflow-y: hidden;
@@ -1788,4 +1791,30 @@ header {
   to {
     transform: rotate(1turn);
   }
+}
+
+.sec-hidden-content {
+  display: none;
+  position: absolute;
+  z-index: 100;
+  align-items: center;
+  flex-direction: column;
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+}
+
+.sec-hidden-content h1 {
+  text-align: center;
+  color: var(--blue);
+}
+
+.sec-hidden-content.showing {
+  display: flex;
+}
+
+.blur {
+  filter: blur(3px);
 }

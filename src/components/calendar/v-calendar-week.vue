@@ -11,8 +11,14 @@
             @paginateWeek="paginateWeek"
             @toggleBreakMode="toggleBreakMode"
           />
-
-          <div class="v-calendar-week__content scroll-container" v-if="!breakMode && dayOfTheWeek">
+          <div class="sec-hidden-content showing" v-if="isWeekEmpty">
+            <h1 class="text-title text-blue">Еще не запланировано ни одного занятия!</h1>
+          </div>
+          <div
+            class="v-calendar-week__content scroll-container"
+            :class="{ blur: isWeekEmpty }"
+            v-if="(!breakMode && dayOfTheWeek) || isWeekEmpty"
+          >
             <transition name="fade">
               <table class="v-calendar-week__table calendar" v-if="dayOfTheWeek">
                 <thead>
@@ -75,7 +81,10 @@
               </table>
             </transition>
           </div>
-          <div class="v-calendar-week__break scroll-container" v-if="breakMode && dayOfTheWeek">
+          <div
+            class="v-calendar-week__break scroll-container"
+            v-if="breakMode && dayOfTheWeek && !isWeekEmpty"
+          >
             <DayPilotCalendar
               :config="config"
               :events="events"
@@ -196,7 +205,7 @@ import VHeader from '../generalComponents/v-header.vue'
 import vModalsContainer from '../generalComponents/v-modals-container.vue'
 
 import { useRoute, useRouter } from 'vue-router'
-import { ref, onMounted, useTemplateRef } from 'vue'
+import { ref, onMounted, useTemplateRef, computed } from 'vue'
 
 import { useIsMobile } from '@/composables/useIsMobile'
 import { getLessonsOnWeek, transferLesson } from '@/api/requests'
@@ -433,6 +442,20 @@ const setLessonsFromUrl = () => {
   }
   console.log(lessonsOfWeek.value)
 }
+const isWeekEmpty = computed(() => {
+  if (dayOfTheWeek.value && dayOfTheWeek.value.week.days) {
+    for (let index in dayOfTheWeek.value.week.days) {
+      const day = dayOfTheWeek.value.week.days[index]
+      if (day.lessons && day.lessons.length) {
+        return false
+      }
+    }
+
+    return true // Если уроков нет, возвращаем true
+  }
+
+  return false // Если нет данных о днях недели
+})
 
 onMounted(() => {
   setLessonsFromUrl()

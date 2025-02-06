@@ -74,7 +74,7 @@ const submitSingleForm = (singleForm) => {
 
     if (isValid) {
       setOneTimeLesson(requestBody).then(() => {
-        router.go(0)
+        console.log('Сделали')
       })
     } else {
       alert('Заполните все поля формы')

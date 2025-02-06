@@ -146,7 +146,6 @@ export async function setOneTimeLesson(data) {
       throw new Error(`Код ошибки при запросе: ${response.status}`)
     } else {
       window.location.reload(true)
-      console.log(response)
     }
 
     return response

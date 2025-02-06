@@ -5,11 +5,14 @@
       <section class="v-calendar-month" v-if="!isMobile">
         <div class="v-calendar-month__container container">
           <v-calendar-menu :type="'month'" @setMonth="setMonth" @paginateMonth="paginateMonth" />
+          <div class="sec-hidden-content showing" v-if="isMonthEmpty">
+            <h1 class="text-title text-blue">Еще не запланировано ни одного занятия!</h1>
+          </div>
           <div
             class="v-calendar-month__content scroll-container"
             v-if="monthLessons.schedule && daysWeek"
           >
-            <table class="v-calendar-month__table calendar">
+            <table class="v-calendar-month__table calendar" :class="{ blur: isMonthEmpty }">
               <thead>
                 <tr class="calendar-header">
                   <th class="calendar-header__item" v-for="day in daysWeek" :key="day.id">
@@ -387,6 +390,23 @@ const activeDayLessons = computed(() => {
     }
   }
   return null
+})
+
+const isMonthEmpty = computed(() => {
+  if (monthLessons.value && monthLessons.value.schedule) {
+    for (let index in monthLessons.value.schedule) {
+      const week = monthLessons.value.schedule[index]
+      for (let weekIndex in week) {
+        console.log(week[weekIndex])
+        if (week[weekIndex].lessons.length) {
+          return false
+        }
+      }
+    }
+
+    return true // Если уроков нет, возвращаем true
+  }
+  return true
 })
 
 /* Хуки */
