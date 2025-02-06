@@ -360,7 +360,7 @@ const paginateMonth = (type) => {
 
   selectedMonthName.value = getMonthByIndex(month - 1)
   selectedMonth.value = `${year}-${String(month).padStart(2, 0)}`
-  monthInput.value = { month, year }
+  monthInput.value = { month: month - 1, year }
 
   emit('paginateMonth', { month, year })
   updateQueryParam()

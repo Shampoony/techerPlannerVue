@@ -1,4 +1,5 @@
 const domain = 'https://api.teacherplanner.ru'
+import router from '@/router'
 import jsonOrder from 'json-order'
 
 export async function getTeacherById(teacherId) {
@@ -156,6 +157,7 @@ export async function setOneTimeLesson(data) {
 
 export async function setStableLesson(data) {
   try {
+    console.log(data)
     const response = await fetch(`${domain}/api/lessons`, {
       method: 'POST',
       credentials: 'include', // ВАЖНО
@@ -167,8 +169,10 @@ export async function setStableLesson(data) {
 
     if (!response.ok) {
       throw new Error(`Код ошибки при запросе: ${response.status}`)
+    } else {
+      console.log(response)
+      router.go(0)
     }
-    console.log(response)
 
     return response
   } catch (error) {

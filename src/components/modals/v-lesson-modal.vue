@@ -48,16 +48,52 @@ const setActiveAdd = (name) => {
 
 const submitStableForm = (stableForm) => {
   stableForm['student_id'] = student.value.student_id
+  stableForm['goal'] = 'string'
+  stableForm['in_rule'] = true
   const isFormWrong = Object.values(stableForm).some((value) => !value)
   if (!isFormWrong) {
     setStableLesson(stableForm).then(() => {
-      console.log('Запрос произведён')
-      router.go(0)
+      console.log('Запрос выполнен')
     })
   } else {
     alert('Заполните все поля формы')
   }
 }
+/* {
+  "student_id": 0,
+  "goal": "string",
+  "days_of_week": [
+    0
+  ],
+  "start_times": [
+    "10:52:49.220Z"
+  ],
+  "end_times": [
+    "10:52:49.220Z"
+  ],
+  "repeat_until": "2025-02-06",
+  "reminder_minutes": 0,
+  "break_minutes": 0,
+  "in_rule": true
+} */
+
+/* {
+  "student_id": 18,
+  "goal": "string",
+    "day_of_week": [
+        3
+    ],
+    "start_times": [
+        "03:04:00.000Z"
+    ],
+    "end_times": [
+        "04:04:00.000Z"
+    ],
+    "repeat_until": "2025-02-14",
+    "reminder_minutes": 10,
+    "break_minutes": 10,
+    "in_rule": true
+} */
 
 const submitSingleForm = (singleForm) => {
   singleForm['cost_lesson'] = 0

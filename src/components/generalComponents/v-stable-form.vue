@@ -171,6 +171,7 @@ const submitForm = () => {
 
     stableForm.value['start_times'].push(TimeStringStart)
     stableForm.value['end_times'].push(TimeStringEnd)
+    stableForm.value['repeat_until'] = repeatUntill.value
   })
   emit('formSubmited', stableForm.value)
 }
