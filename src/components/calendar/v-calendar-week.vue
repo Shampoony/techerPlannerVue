@@ -118,11 +118,15 @@
         </div>
       </section>
       <section class="v-calendar-week-mob mob-page" v-else>
+        <router-link :to="{ name: 'calendar-day', query: { date: '06.02.2025' } }">
+          день
+        </router-link>
         <div class="v-calendar-week-mob__container container">
           <v-calendar-menu
             :is-showed-break="true"
             :type="'week'"
             @setWeek="setLessonsOnWeek"
+            @paginateWeek="paginateWeek"
             @toggleBreakMode="toggleBreakMode"
           />
           <ul class="v-calendar-week-mob__list" v-if="dayOfTheWeek && dayOfTheWeek.week">
@@ -131,7 +135,6 @@
               :key="id"
               class="v-calendar-week-mob__list-item"
             >
-              {}
               <div class="day" v-if="day">
                 <div class="day__header" @click="toggleOppenedDays(id, day.day)">
                   <p class="day__date">{{ day.day }}</p>
@@ -255,7 +258,7 @@ const config = ref({
       end_time: endTime,
       conducted_date: startDate,
     }
-    const lessonId = args.e.data.lesson_id
+    const lessonId = args.e.data.id
     transferLesson(lessonId, eventData).then(() => {
       console.log('Выполнили запрос')
     })
@@ -280,6 +283,7 @@ const loadEvents = async (lessons) => {
           .replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1T')
           .replace(' ', '')
         lessonsToEvent.push({
+          id: lesson.id,
           start: formattedStartTime,
           end: formattedEndTime,
           start_time: start_time.slice(0, 5),
@@ -305,7 +309,6 @@ const weekDays = ref({
 
 const modalsContainer = useTemplateRef('modalsContainer')
 const dayOfTheWeek = ref()
-const lessonsOfWeek = ref({})
 const draggedItem = ref({
   lesson: null,
   fromColumnIndex: null,
@@ -389,10 +392,12 @@ const isToday = (day) => {
 const toggleBreakMode = () => {
   breakMode.value = !breakMode.value
   localStorage.setItem('breakMode', breakMode.value)
-  setLessonsFromUrl()
+  console.log(dayOfTheWeek.value)
+  loadEvents(dayOfTheWeek.value)
 }
 
 const paginateWeek = () => {
+  console.log('Зашли')
   setLessonsFromUrl()
 }
 
@@ -432,22 +437,18 @@ const formatDay = (dateStr) => {
   return `${weekDays.value[date - 1].day_of_week}, ${day}`
 }
 
-const setLessonsFromUrl = () => {
+const setLessonsFromUrl = async () => {
   const queryParams = route.query
   if ('start_date' in queryParams) {
     startDate.value = transformDate(queryParams['start_date'])
     config.value.startDate = transformDate(queryParams['start_date'])
-    getLessonsOnWeek(queryParams['start_date']).then((lessons) => {
-      console.log('Загружаем')
-      loadEvents(lessons)
-      lessonsOfWeek.value = lessons
-      dayOfTheWeek.value = lessons
-    })
+    const lessons = await getLessonsOnWeek(queryParams['start_date'])
+    loadEvents(lessons)
+    dayOfTheWeek.value = lessons
   } else {
     const today = getPreviousMonday(new Date())
     window.location.search = `?start_date=${formatDate(today)}`
   }
-  console.log(lessonsOfWeek.value)
 }
 const isWeekEmpty = computed(() => {
   if (dayOfTheWeek.value && dayOfTheWeek.value.week.days) {
@@ -465,7 +466,9 @@ const isWeekEmpty = computed(() => {
 })
 
 onMounted(() => {
-  setLessonsFromUrl()
+  setLessonsFromUrl().then(() => {
+    loadEvents(dayOfTheWeek.value)
+  })
 })
 </script>
 
