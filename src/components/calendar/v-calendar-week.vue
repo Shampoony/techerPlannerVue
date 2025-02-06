@@ -27,28 +27,33 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <transition name="fade">
-                    <tr class="calendar-row" v-if="dayOfTheWeek && dayOfTheWeek.week">
-                      <td
-                        v-for="(day, columnIndex) in dayOfTheWeek.week.days"
-                        :key="columnIndex"
-                        class="calendar-row__item"
-                        @dragover.prevent
-                        @drop="(event) => handleDrop(event, columnIndex)"
-                      >
-                        <div class="calendar-row__item-content calendar-card">
-                          <div
-                            class="calendar-card__content"
-                            :class="{ completed: lesson.completed }"
-                            v-for="(lesson, lessonIndex) in day.lessons"
-                            :key="lesson.lesson_id"
-                            @click="toggleButtonsModal(lesson)"
-                            draggable="true"
-                            @dragstart="
-                              (event) => handleDragStart(event, lesson, columnIndex, lessonIndex)
-                            "
-                          >
+                  <tr
+                    class="calendar-row"
+                    v-if="dayOfTheWeek && dayOfTheWeek.week"
+                    :key="dayOfTheWeek.week.start_date"
+                  >
+                    <td
+                      v-for="(day, columnIndex) in dayOfTheWeek.week.days"
+                      :key="columnIndex"
+                      class="calendar-row__item"
+                      @dragover.prevent
+                      @drop="(event) => handleDrop(event, columnIndex)"
+                    >
+                      <div class="calendar-row__item-content calendar-card">
+                        <div
+                          class="calendar-card__content"
+                          :class="{ completed: lesson.completed }"
+                          v-for="(lesson, lessonIndex) in day.lessons"
+                          :key="lesson.lesson_id"
+                          @click="toggleButtonsModal(lesson)"
+                          draggable="true"
+                          @dragstart="
+                            (event) => handleDragStart(event, lesson, columnIndex, lessonIndex)
+                          "
+                        >
+                          <transition name="flip">
                             <div
+                              v-if="lesson"
                               class="calendar-card__lesson"
                               :style="{
                                 height: getHeight(lesson.duration),
@@ -61,17 +66,11 @@
                               </p>
                               <p>{{ lesson.student_name }}</p>
                             </div>
-                            <div
-                              class="calendar-card__break"
-                              v-if="lesson.break && lesson.break.duration"
-                            >
-                              {{ lesson.break.duration }}
-                            </div>
-                          </div>
+                          </transition>
                         </div>
-                      </td>
-                    </tr>
-                  </transition>
+                      </div>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </transition>

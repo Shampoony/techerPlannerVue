@@ -588,6 +588,10 @@ video {
   }
 }
 
+.absolute {
+  position: absolute;
+}
+
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -661,12 +665,12 @@ video {
   border-width: 1px;
 }
 
-.pb-7 {
-  padding-bottom: 1.75rem;
-}
-
 .pb-4 {
   padding-bottom: 1rem;
+}
+
+.pb-7 {
+  padding-bottom: 1.75rem;
 }
 
 .text-base {

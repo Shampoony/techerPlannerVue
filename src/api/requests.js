@@ -1,4 +1,5 @@
 const domain = 'https://api.teacherplanner.ru'
+import jsonOrder from 'json-order'
 
 export async function getTeacherById(teacherId) {
   try {
@@ -129,20 +130,24 @@ export async function transferLesson(lesson_id, data) {
     console.error('Произошла ошибки при переносе урока', error)
   }
 }
-
 export async function setOneTimeLesson(data) {
-  console.log(data)
+  console.log(jsonOrder.stringify(data.requestBody))
   try {
     const response = await fetch(`${domain}/api/lesson-one-time`, {
       method: 'POST',
       credentials: 'include', // ВАЖНО
-      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonOrder.stringify(data.requestBody),
     })
 
     if (!response.ok) {
       throw new Error(`Код ошибки при запросе: ${response.status}`)
+    } else {
+      window.location.reload(true)
+      console.log(response)
     }
-    console.log(response)
 
     return response
   } catch (error) {
@@ -155,6 +160,9 @@ export async function setStableLesson(data) {
     const response = await fetch(`${domain}/api/lessons`, {
       method: 'POST',
       credentials: 'include', // ВАЖНО
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(data),
     })
 

@@ -76,6 +76,15 @@ body {
   max-width: 1440px;
   padding: 0 20px;
   margin: 0 auto;
+
+  @media (min-width: 992px) {
+    max-width: 1320px;
+  }
+  @media (max-width: 1024px) {
+    .container {
+      max-width: 964px;
+    }
+  }
 }
 
 .text-black {
@@ -1041,6 +1050,7 @@ header {
     gap: 5px;
     &__lesson {
       font-size: clamp(0.625rem, 0.196rem + 0.67vw, 1rem);
+      white-space: nowrap;
     }
   }
 }
@@ -1218,7 +1228,7 @@ header {
   }
   &__lesson {
     width: 100%;
-    border-radius: 6px;
+    border-radius: 8px !important;
 
     background-color: var(--blue);
     color: var(--white);
@@ -1305,6 +1315,9 @@ header {
     }
     .calendar_default_rowheader_inner {
       padding-top: 0 !important;
+    }
+    .calendar_default_event {
+      border-radius: 8px;
     }
   }
 }
