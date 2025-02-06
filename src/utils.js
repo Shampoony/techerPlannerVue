@@ -114,3 +114,7 @@ export function getPreviousMonday(date) {
   previousMonday.setDate(date.getDate() - daysAgo)
   return previousMonday
 }
+
+export function sortObject(obj, order) {
+  return Object.fromEntries(order.map((key) => [key, obj[key]]))
+}

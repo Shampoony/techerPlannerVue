@@ -112,8 +112,9 @@ export async function deleteLessonById(lesson_id) {
   }
 }
 
-export async function transferLesson(lesson_id, data) {
+export async function transferLesson(lesson_id, data, updateAfterTransfer = false) {
   console.log(JSON.stringify(data))
+
   try {
     const response = await fetch(`${domain}/api/lessons/${lesson_id}`, {
       method: 'PUT',
@@ -126,6 +127,11 @@ export async function transferLesson(lesson_id, data) {
 
     if (!response.ok) {
       throw new Error(`Код ошибки при запросе: ${response.status}`)
+    } else {
+      if (updateAfterTransfer) {
+        router.go(0)
+      }
+      console.log('Запрос прошёл успешно')
     }
     console.log(response)
 
@@ -159,15 +165,16 @@ export async function setOneTimeLesson(data) {
 }
 
 export async function setStableLesson(data) {
+  console.log(jsonOrder.stringify(data))
+
   try {
-    console.log(data)
     const response = await fetch(`${domain}/api/lessons`, {
       method: 'POST',
       credentials: 'include', // ВАЖНО
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: jsonOrder.stringify(data),
     })
 
     if (!response.ok) {

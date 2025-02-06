@@ -5,13 +5,14 @@
       <section class="v-calendar-month" v-if="!isMobile">
         <div class="v-calendar-month__container container">
           <v-calendar-menu :type="'month'" @setMonth="setMonth" @paginateMonth="paginateMonth" />
-          <div class="sec-hidden-content showing" v-if="isMonthEmpty">
-            <h1 class="text-title text-blue">Еще не запланировано ни одного занятия!</h1>
-          </div>
+
           <div
             class="v-calendar-month__content scroll-container"
             v-if="monthLessons.schedule && daysWeek"
           >
+            <div class="sec-hidden-content showing" v-if="isMonthEmpty">
+              <h1 class="text-title text-blue">Еще не запланировано ни одного занятия!</h1>
+            </div>
             <table class="v-calendar-month__table calendar" :class="{ blur: isMonthEmpty }">
               <thead>
                 <tr class="calendar-header">
@@ -47,7 +48,7 @@
                             (event) => handleDragStart(event, lesson, weekIndex, i, lessonIndex)
                           "
                         >
-                          <div class="calendar-card__lesson">
+                          <div class="calendar-card__lesson" :class="{ trial: lesson.one_time }">
                             {{ lesson.start_time }} - {{ lesson.end_time }}
                             {{ lesson.student_name }}
                           </div>
@@ -407,7 +408,8 @@ const isMonthEmpty = computed(() => {
 
     return true // Если уроков нет, возвращаем true
   }
-  return true
+  console.log('лол')
+  return false
 })
 
 /* Хуки */

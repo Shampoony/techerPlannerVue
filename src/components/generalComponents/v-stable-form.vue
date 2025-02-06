@@ -93,6 +93,7 @@ import VueTimepicker from 'vue3-timepicker'
 import 'vue3-timepicker/dist/VueTimepicker.css'
 import '@vuepic/vue-datepicker/dist/main.css'
 import VueDatePicker from '@vuepic/vue-datepicker'
+
 import { formatDay } from '@/utils'
 
 /* -------------------- Переменные -------------------- */
@@ -146,14 +147,14 @@ const handleTimeEnd = (modelValue, id) => {
 
 /* Обработчик отправки формы */
 const submitForm = () => {
-  stableForm.value['day_of_week'] = []
+  stableForm.value['days_of_week'] = []
   stableForm.value['start_times'] = []
   stableForm.value['end_times'] = []
   stableForm.value['reminder_minutes'] = reminder.value
   stableForm.value['break_minutes'] = break_group.value
 
   periodicityStack.value.forEach((el) => {
-    stableForm.value['day_of_week'].push(el.id - 1)
+    stableForm.value['days_of_week'].push(el.id - 1)
 
     const startTime = timeInputs.value[el.id].start
     const endTime = timeInputs.value[el.id].end

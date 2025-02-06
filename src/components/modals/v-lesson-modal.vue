@@ -36,80 +36,84 @@ import vCustomSelect from '../generalComponents/v-custom-select.vue'
 import vFormCalendarInfo from '../generalComponents/v-form-calendar-info.vue'
 
 import { onMounted, ref } from 'vue'
+import { sortObject } from '@/utils'
 import { getMyStudents, setOneTimeLesson, setStableLesson } from '@/api/requests'
-import router from '@/router'
+
+/* ============================================================ Переменные состояния ============================================================*/
 
 const activeAdd = ref('single')
 const student = ref()
+
+const options = ref({
+  student: {
+    default: 'Ученик',
+    options: [{ id: 1, text: 'Артур' }],
+  },
+})
+
+const stableOrder = [
+  'student_id',
+  'goal',
+  'days_of_week',
+  'start_times',
+  'end_times',
+  'repeat_until',
+  'reminder_minutes',
+  'break_minutes',
+  'in_rule',
+]
+
+/* ============================================================ Методы ============================================================*/
 
 const setActiveAdd = (name) => {
   activeAdd.value = name
 }
 
 const submitStableForm = (stableForm) => {
-  stableForm['student_id'] = student.value.student_id
-  stableForm['goal'] = 'string'
-  stableForm['in_rule'] = true
-  const isFormWrong = Object.values(stableForm).some((value) => !value)
-  if (!isFormWrong) {
-    setStableLesson(stableForm).then(() => {
-      console.log('Запрос выполнен')
-    })
+  if (student.value) {
+    stableForm['student_id'] = student.value.student_id
+    stableForm['goal'] = 'string'
+    stableForm['in_rule'] = true
+
+    const isFormWrong = Object.values(stableForm).some((value) => !value)
+
+    if (!isFormWrong) {
+      setStableLesson(sortObject(stableForm, stableOrder)).then(() => {
+        console.log('Запрос выполнен')
+      })
+    } else {
+      alert('Заполните все поля формы')
+    }
   } else {
-    alert('Заполните все поля формы')
+    alert('Выберите ученика')
   }
 }
-/* {
-  "student_id": 0,
-  "goal": "string",
-  "days_of_week": [
-    0
-  ],
-  "start_times": [
-    "10:52:49.220Z"
-  ],
-  "end_times": [
-    "10:52:49.220Z"
-  ],
-  "repeat_until": "2025-02-06",
-  "reminder_minutes": 0,
-  "break_minutes": 0,
-  "in_rule": true
-} */
-
-/* {
-  "student_id": 18,
-  "goal": "string",
-    "day_of_week": [
-        3
-    ],
-    "start_times": [
-        "03:04:00.000Z"
-    ],
-    "end_times": [
-        "04:04:00.000Z"
-    ],
-    "repeat_until": "2025-02-14",
-    "reminder_minutes": 10,
-    "break_minutes": 10,
-    "in_rule": true
-} */
-
 const submitSingleForm = (singleForm) => {
   singleForm['cost_lesson'] = 0
 
   if (student.value) {
     const requestBody = {
+      student_id: student.value.student_id,
+      goal: 'string',
+      days_of_week: [singleForm.day_of_week_id],
+      start_times: [singleForm.start_time],
+      end_times: [singleForm.end_time],
+      repeat_until: singleForm.repeat_until,
+      reminder_minutes: singleForm.reminder_minutes,
+      break_minutes: singleForm.break_minutes,
+      in_rule: false,
+    }
+    /* const requestBody = {
       lesson_data: singleForm,
       student_data: { student_name: student.value.student_name },
-    }
+    } */
     const isValid = Object.values(requestBody).every(
       (value) => value !== undefined && value !== null,
     )
     console.log('сабмит')
 
     if (isValid) {
-      setOneTimeLesson(requestBody).then(() => {
+      setStableLesson(requestBody).then(() => {
         console.log('Сделали')
       })
     } else {
@@ -120,17 +124,11 @@ const submitSingleForm = (singleForm) => {
   }
 }
 
-const options = ref({
-  student: {
-    default: 'Ученик',
-    options: [{ id: 1, text: 'Артур' }],
-  },
-})
-
 const setStudent = (selectedStudent) => {
-  console.log(student)
   student.value = selectedStudent
 }
+
+/* ============================================================ Хуки ============================================================*/
 
 onMounted(() => {
   getMyStudents().then((students) => {

@@ -61,6 +61,7 @@
                             <div
                               v-if="lesson"
                               class="calendar-card__lesson"
+                              :class="{ trial: lesson.trial }"
                               :style="{
                                 height: getHeight(lesson.duration),
                                 gap: `${baseGap * lesson.duration}px`,

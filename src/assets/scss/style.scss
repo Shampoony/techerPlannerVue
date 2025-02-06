@@ -1024,6 +1024,8 @@ header {
 
 .v-calendar-month {
   margin-bottom: 60px;
+  position: relative;
+
   &__content {
     overflow-x: auto;
   }
@@ -1041,6 +1043,7 @@ header {
     &-row__item {
       width: clamp(8.75rem, 4.583rem + 8.68vw, 15rem) !important;
       min-height: 176px;
+      min-width: 180px;
     }
   }
   .calendar-card {
@@ -1131,6 +1134,7 @@ header {
 .calendar {
   width: 100%;
   min-width: 980px;
+
   .mob-page & {
     margin-bottom: 50px;
   }
@@ -1246,7 +1250,7 @@ header {
       color: #5a8c59;
     }
     .night__mode &.trial {
-      background-color: #fdf2b9;
+      background-color: #fdf2b9 !important;
       border: none;
       color: var(--white);
     }
@@ -1796,6 +1800,7 @@ header {
   z-index: 100;
   align-items: center;
   flex-direction: column;
+  width: 80%;
 
   top: 50%;
   left: 50%;
