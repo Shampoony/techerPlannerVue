@@ -25,12 +25,8 @@ const props = defineProps({
   },
 })
 const deleteLesson = () => {
-  console.log('Урок для удаления -', props.lesson)
   deleteLessonById(props.lesson.lesson_id).then(() => {
     router.go(0)
   })
 }
-onMounted(() => {
-  console.log('Выбранный урок - ', props.lesson)
-})
 </script>

@@ -63,9 +63,11 @@ const submitStableForm = (stableForm) => {
     stableForm['goal'] = 'string'
     stableForm['in_rule'] = true
 
-    const isFormWrong = Object.values(stableForm).some((value) => !value)
+    const isValid = Object.values(stableForm).every(
+      (value) => value !== undefined && value !== null,
+    )
 
-    if (!isFormWrong) {
+    if (isValid) {
       setStableLesson(sortObject(stableForm, stableOrder)).then(() => {
         console.log('Запрос выполнен')
       })
@@ -91,18 +93,14 @@ const submitSingleForm = (singleForm) => {
       break_minutes: singleForm.break_minutes,
       in_rule: false,
     }
-    /* const requestBody = {
-      lesson_data: singleForm,
-      student_data: { student_name: student.value.student_name },
-    } */
+
     const isValid = Object.values(requestBody).every(
       (value) => value !== undefined && value !== null,
     )
-    console.log('сабмит')
 
     if (isValid) {
       setStableLesson(requestBody).then(() => {
-        console.log('Сделали')
+        console.log('Выполнили запрос')
       })
     } else {
       alert('Заполните все поля формы')

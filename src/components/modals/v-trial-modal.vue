@@ -59,7 +59,6 @@ const formSubmited = (data) => {
     setOneTimeLesson({
       requestBody,
     }).then(() => {
-      console.log(requestBody)
       console.log('Создали')
     })
   } else {

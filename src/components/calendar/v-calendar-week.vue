@@ -267,7 +267,6 @@ const config = ref({
   weekStarts: 1,
 
   onEventMoved: (args) => {
-    console.log('Event moved', args)
     const startTime = args.newStart.value.split('T')[1]
     const endTime = args.newEnd.value.split('T')[1]
     const startDate = args.e.data.start.value.split('T')[0]
@@ -280,7 +279,6 @@ const config = ref({
       conducted_date: startDate,
     }
     const lessonId = args.e.data.lesson_id
-    console.log(args.e.data)
     transferLesson(lessonId, eventData).then(() => {
       console.log('Выполнили запрос')
     })
@@ -389,7 +387,6 @@ const handleDrop = (event, targetColumnIndex) => {
 
     // Вставляем урок в целевой столбец в нужное место
     targetLessons.splice(insertIndex, 0, lesson)
-    console.log(requestBody)
 
     transferLesson(lesson.lesson_id, requestBody).then(() => {
       console.log('Перенос осуществлен')
@@ -412,7 +409,6 @@ const toggleBreakMode = () => {
 }
 
 const paginateWeek = () => {
-  console.log('Зашли')
   setLessonsFromUrl()
 }
 

@@ -230,7 +230,6 @@ const changeTime = (id) => {
   const minutes = currentTime[1]
   const endTime = `${hour}:${minutes}`
   timeInputs.value[id].end = endTime
-  console.log(endTime, timeInputs.value[id])
 }
 
 /* Установка даты окончания повторения */
@@ -269,7 +268,6 @@ const togglePeriodicity = (day) => {
 /* Обработчик времени в VueTimepicker */
 const handleTime = (modelValue, id) => {
   timeInputs.value[id].start = modelValue
-  console.log('Лала', timeInputs.value)
   changeTime(id)
 }
 

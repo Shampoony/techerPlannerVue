@@ -264,7 +264,6 @@ const toggleActiveDay = (weekIndex, day) => {
   activeDay.value[1] = day
 
   localStorage.setItem('activeDay', JSON.stringify(activeDay.value))
-  console.log(JSON.parse(localStorage.getItem('activeDay')))
 }
 
 const handleDragStart = (event, lesson, rowIndex, columnIndex, lessonIndex) => {
@@ -283,7 +282,6 @@ const handleDrop = (event, targetColumnIndex, targetRowIndex) => {
     if (!monthLessons.value.schedule[targetRowIndex][targetColumnIndex]) {
       alert('Интерактивным способом вы можете переносить урок только в пределах месяца')
     } else {
-      console.log('в else')
       const sourceLessons = monthLessons.value.schedule[fromRowIndex][fromColumnIndex].lessons
       const targetLessons = monthLessons.value.schedule[targetRowIndex][targetColumnIndex].lessons
 
@@ -334,9 +332,7 @@ const handleDrop = (event, targetColumnIndex, targetRowIndex) => {
         end_time: '17:03:44.361Z',
         conducted_date: '2025-02-04', */
       }
-      transferLesson(lesson.lesson_id, requestBody).then(() => {
-        console.log('Выполнили')
-      })
+      transferLesson(lesson.lesson_id, requestBody).then(() => {})
       draggedItem.value = null
     }
   }

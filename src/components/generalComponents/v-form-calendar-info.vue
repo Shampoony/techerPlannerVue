@@ -13,7 +13,6 @@
         <VueTimepicker
           v-model="timeInputs[1].end"
           :placeholder="timeInputs[1].end"
-          @update:modelValue="console.log('СЮДАА')"
           :clearable="false"
         />
       </div>
@@ -139,7 +138,7 @@ const today = new Date()
 const submitForm = () => {
   // Проверяем все ключевые значения на undefined или null
   const lessonData = {
-    day_of_week_id: date.value ? date.value.getDay() : null,
+    day_of_week_id: date.value ? date.value.getDay() + 1 : null,
     start_time: timeInputs.value[1].start + ':00.000Z',
     end_time: timeInputs.value[1].end + ':00.000Z',
     repeat_until: nextDate.value ? nextDate.value.toISOString().split('T')[0] : null,
@@ -151,6 +150,7 @@ const submitForm = () => {
     created_date: today ? today.toISOString().split('T')[0] : null,
     reminder_time: '2025-02-05T20:40:55.298Z',
     one_time: true,
+    trial: true,
     paid: false,
     cost_lesson: 0,
     in_rule: false,
@@ -162,7 +162,6 @@ const submitForm = () => {
   if (isValid) {
     emit('formSubmited', lessonData)
   } else {
-    console.log(lessonData)
     alert('Заполните все поля формы!')
     console.error('Некоторые поля пустые или некорректные!')
   }
@@ -176,7 +175,6 @@ const toggleRadio = (radio, value) => {
 const handleTimeUpdate = (newValue) => {
   timeInputs.value[1].start = newValue
   timeInputs.value[1].end = newValue
-  console.log(timeInputs.value)
   changeTime(1, timeInputs.value) // Не забудьте добавить .value для ref
 }
 
@@ -185,7 +183,6 @@ const props = defineProps({
 })
 
 onMounted(() => {
-  console.log(new Date().getDay())
   console.log(props.removeDate)
 })
 </script>

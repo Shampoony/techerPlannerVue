@@ -404,17 +404,6 @@ const changeBreakMode = () => {
   emit('toggleBreakMode')
 }
 const onMonthSelect = (modelData) => {
-  console.log(modelData, monthInput.value)
-  /*  if (modelData) {
-    selectedMonth.value = modelData.monthIndex
-    selectedYear.value = modelData.year
-  }
-
-  // Обновляем название месяца после изменения индекса
-  selectedMonthName.value = new Date(
-    selectedYear.value,
-    selectedMonth.value.monthIndex,
-  ).toLocaleString('ru-RU', { month: 'long' }) */
   monthInput.value = modelData
 
   emit('setMonth', modelData)
@@ -423,7 +412,6 @@ const onMonthSelect = (modelData) => {
 const updateWeekFromUrl = () => {
   const queryParams = route.query
   const date = queryParams['start_date'].replace(/\./g, '-')
-  console.log(date)
 
   // Форматируем строку в объект Date
   const formattedDate = new Date(date.split('-').reverse().join('-'))
@@ -439,7 +427,6 @@ const updateWeekFromUrl = () => {
 
   // Устанавливаем startDate для выбора недели
   startDate.value = [formattedDate, endDate]
-  console.log(weekStart.value, weekEnd.value)
 }
 const nextAction = computed(() => {
   return props.type === 'month' ? () => paginateMonth('next') : () => paginateWeek('next')

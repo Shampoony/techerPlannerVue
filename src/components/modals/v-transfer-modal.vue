@@ -102,14 +102,12 @@ const submitForm = () => {
   if (changedData.value) {
     const time = changedData.value.time[1]
 
-    console.log(changedData.value.time, changedData.value.time[1])
     const requestBody = {
       day_of_week_id: changedData.value.date.getDay(),
-      start_time: time.start,
-      end_time: time.end,
+      start_time: time.start + ':00.000Z',
+      end_time: time.end + ':00.000Z',
       conducted_date: changedData.value.date.toISOString().split('T')[0],
     }
-    console.log(changedData.value.date.getDay())
     transferLesson(props.lesson.lesson_id, requestBody, true)
   }
 }
@@ -119,10 +117,4 @@ const handleTimeUpdate = (newValue) => {
   changedData.value.time[1].end = newValue
   changeTime(1, changedData.value.time)
 }
-
-/* =================================================================== Хуки ===================================================================== */
-
-onMounted(() => {
-  console.log('Выбранный урок - ', props.lesson)
-})
 </script>

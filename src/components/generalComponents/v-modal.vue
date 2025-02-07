@@ -40,7 +40,6 @@ const close = () => {
 
 onMounted(() => {
   store.increment()
-  console.log(store.modals_count, index)
 })
 </script>
 
