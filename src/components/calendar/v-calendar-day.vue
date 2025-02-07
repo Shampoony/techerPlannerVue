@@ -51,7 +51,7 @@
                   <div
                     class="event-header"
                     :class="{ break: event.data.break }"
-                    v-if="event.data.break"
+                    v-if="event.data.break.duration"
                   >
                     <span class="event-text">Перерыв</span>
                   </div>
@@ -79,7 +79,7 @@ import vFooter from '../generalComponents/v-footer.vue'
 
 import vTrialModal from '../modals/v-trial-modal.vue'
 import vLessonModal from '../modals/v-lesson-modal.vue'
-import { DayPilotCalendar } from '@daypilot/daypilot-lite-vue'
+import { DayPilot, DayPilotCalendar } from '@daypilot/daypilot-lite-vue'
 import vModalsContainer from '../generalComponents/v-modals-container.vue'
 
 import { ref, onMounted, computed, useTemplateRef, onUnmounted } from 'vue'
@@ -98,6 +98,7 @@ const route = useRoute()
 
 const config = ref({
   cellDuration: 60,
+  separators: [{ color: 'Red', location: new DayPilot.Date() }],
 })
 
 const modals = ref({

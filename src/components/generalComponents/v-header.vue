@@ -8,23 +8,23 @@
 
         <ul class="v-header__list">
           <li class="v-header__list-item">
-            <a class="v-header__list-item-link" href="/home-teacher/">Главная</a>
+            <a class="v-header__list-item-link" href="/home-teacher">Главная</a>
           </li>
           <li class="v-header__list-item">
-            <a class="v-header__list-item-link" href="/my-students/">Ученики</a>
+            <a class="v-header__list-item-link" href="/my-students">Ученики</a>
           </li>
           <li class="v-header__list-item">
-            <a class="v-header__list-item-link active" href="/calendar/">Календарь</a>
+            <a class="v-header__list-item-link active" href="/calendar">Календарь</a>
           </li>
           <li class="v-header__list-item">
-            <a class="v-header__list-item-link" href="/finance/">Финансы</a>
+            <a class="v-header__list-item-link" href="/finance">Финансы</a>
           </li>
           <li class="v-header__list-item">
-            <a class="v-header__list-item-link" href="/analytics/">Аналитика</a>
+            <a class="v-header__list-item-link" href="/analytics">Аналитика</a>
           </li>
 
           <li class="v-header__list-item">
-            <a class="v-header__list-item-link" href="/announcements/">Анонсы</a>
+            <a class="v-header__list-item-link" href="/announcements">Анонсы</a>
           </li>
         </ul>
 
@@ -91,22 +91,22 @@
         </div>
         <ul class="modal-burger__list">
           <li class="modal-burger__list-item">
-            <a class="modal-burger__list-item-link active" href="/home-teacher/">Главная</a>
+            <a class="modal-burger__list-item-link active" href="/home-teacher">Главная</a>
           </li>
           <li class="modal-burger__list-item">
-            <a class="modal-burger__list-item-link" href="/students/">Ученики</a>
+            <a class="modal-burger__list-item-link" href="/students">Ученики</a>
           </li>
           <li class="modal-burger__list-item">
-            <a class="modal-burger__list-item-link" href="/calendar/">Календарь</a>
+            <a class="modal-burger__list-item-link" href="/calendar">Календарь</a>
           </li>
           <li class="modal-burger__list-item">
-            <a class="modal-burger__list-item-link" href="/finance/">Финансы</a>
+            <a class="modal-burger__list-item-link" href="/finance">Финансы</a>
           </li>
           <li class="modal-burger__list-item">
-            <a class="modal-burger__list-item-link" href="/analytics/">Аналитика</a>
+            <a class="modal-burger__list-item-link" href="/analytics">Аналитика</a>
           </li>
           <li class="modal-burger__list-item">
-            <a class="modal-burger__list-item-link" href="/announcements/">Анонсы</a>
+            <a class="modal-burger__list-item-link" href="/announcements">Анонсы</a>
           </li>
         </ul>
         <div class="modal__burger__login flex-col items-start">
