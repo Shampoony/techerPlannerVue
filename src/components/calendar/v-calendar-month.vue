@@ -324,7 +324,7 @@ const handleDrop = (event, targetColumnIndex, targetRowIndex) => {
       const targetDay = String(monthLessons.value.schedule[targetRowIndex][targetColumnIndex].day)
 
       const requestBody = {
-        day_of_week_id: targetColumnIndex - 1,
+        day_of_week_id: targetColumnIndex,
         start_time: lesson.start_time + ':00.001Z',
         end_time: lesson.end_time + ':00.001Z',
 
@@ -416,6 +416,7 @@ const isMonthEmpty = computed(() => {
 
 onMounted(() => {
   setLessonsOnDate()
+  localStorage.setItem('upd', 1)
   activeDay.value = JSON.parse(localStorage.getItem('activeDay')) || []
 })
 </script>

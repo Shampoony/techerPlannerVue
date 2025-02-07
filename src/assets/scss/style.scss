@@ -73,13 +73,13 @@ body {
 }
 
 .container {
-  max-width: 1440px;
+  max-width: 1920px;
   padding: 0 20px;
   margin: 0 auto;
 
   @media (max-width: 1024px) {
     .container {
-      max-width: 964px;
+      max-width: 768px;
     }
   }
 }
@@ -1268,7 +1268,13 @@ header {
     bottom: 0px;
   }
 }
-
+.v-trial-modal {
+  .custom-checkbox-label {
+    @media (max-width: 480px) {
+      justify-content: center;
+    }
+  }
+}
 .v-calendar-week {
   &__container {
     position: relative;

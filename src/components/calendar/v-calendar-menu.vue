@@ -374,7 +374,6 @@ const updateQueryParamWeek = async (date) => {
     start_date: date,
   }
   await router.push({ query })
-  console.log('В апдейте', route.query)
 }
 
 const paginateWeek = async (type) => {
@@ -398,7 +397,6 @@ const onWeekSelect = (modelData) => {
 /* ================= Общие ================= */
 
 const toggleModals = (modalName) => {
-  console.log(modalName)
   modals.value[modalName] = !modals.value[modalName]
 }
 

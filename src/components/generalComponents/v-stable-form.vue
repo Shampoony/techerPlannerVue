@@ -86,7 +86,7 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 /* Импорт компонентов */
 import VueTimepicker from 'vue3-timepicker'
@@ -108,18 +108,62 @@ const repeatUntill = ref(new Date()) // Дата окончания повтор
 const timeInputs = ref({}) // Время для каждого дня
 const periodicityDays = ref([
   // Дни недели
-  { id: 1, text: 'ПН', active: false, day_of_week: 1, date: '2025-02-04' },
-  { id: 2, text: 'ВТ', active: false, day_of_week: 2, date: '2025-02-05' },
-  { id: 3, text: 'СР', active: false, day_of_week: 3, date: '2025-02-06' },
-  { id: 4, text: 'ЧТ', active: false, day_of_week: 4, date: '2025-02-07' },
-  { id: 5, text: 'ПТ', active: false, day_of_week: 5, date: '2025-02-08' },
-  { id: 6, text: 'СБ', active: false, day_of_week: 6, date: '2025-02-09' },
-  { id: 7, text: 'ВС', active: false, day_of_week: 7, date: '2025-02-10' },
+  { id: 1, text: 'ПН', active: false, day_of_week: 1 },
+  { id: 2, text: 'ВТ', active: false, day_of_week: 2 },
+  { id: 3, text: 'СР', active: false, day_of_week: 3 },
+  { id: 4, text: 'ЧТ', active: false, day_of_week: 4 },
+  { id: 5, text: 'ПТ', active: false, day_of_week: 5 },
+  { id: 6, text: 'СБ', active: false, day_of_week: 6 },
+  { id: 7, text: 'ВС', active: false, day_of_week: 7 },
 ])
 
 const stableForm = ref({}) // Данные формы для отправки
 
+const props = defineProps({
+  ruleData: {
+    type: Object,
+    required: false,
+  },
+})
+
+const daysOfWeek = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
+
 /* -------------------- Методы -------------------- */
+const saveRuleData = () => {
+  if (!props.ruleData || !props.ruleData.days_of_week) return
+
+  periodicityStack.value = []
+  periodicityDays.value.forEach((day) => (day.active = false)) // Сброс активности
+
+  Object.entries(props.ruleData.days_of_week).forEach(([dayStr, timeArray]) => {
+    const dayNum = Number(dayStr)
+    const time = timeArray[0] // Берем первый временной интервал
+
+    const obj = {
+      id: dayNum,
+      text: daysOfWeek[dayNum - 1],
+      active: true,
+      dayOfWeek: dayNum,
+    }
+
+    // Обновляем список дней
+    const targetDay = periodicityDays.value.find((d) => d.day_of_week === dayNum)
+    if (targetDay) targetDay.active = true
+
+    // Обновляем `timeInputs`
+    timeInputs.value[dayNum] = {
+      start: time.start_time || '--:--',
+      end: time.end_time || '--:--',
+    }
+
+    periodicityStack.value.push(obj)
+  })
+
+  // Обновляем дату повторения
+  repeatUntill.value = props.ruleData.repeat_until
+    ? new Date(props.ruleData.repeat_until)
+    : new Date()
+}
 
 /* Добавление/удаление дня из стека */
 const addDayToStack = (day) => {
@@ -147,14 +191,15 @@ const handleTimeEnd = (modelValue, id) => {
 
 /* Обработчик отправки формы */
 const submitForm = () => {
-  stableForm.value['days_of_week'] = []
-  stableForm.value['start_times'] = []
-  stableForm.value['end_times'] = []
-  stableForm.value['reminder_minutes'] = reminder.value
-  stableForm.value['break_minutes'] = break_group.value
+  const upd = props.ruleData ? 'updated_' : ''
+  stableForm.value[upd + 'days_of_week'] = []
+  stableForm.value[upd + 'start_times'] = []
+  stableForm.value[upd + 'end_times'] = []
+  stableForm.value['reminder_minutes'] = reminder.value || 0
+  stableForm.value['break_minutes'] = break_group.value || 0
 
   periodicityStack.value.forEach((el) => {
-    stableForm.value['days_of_week'].push(el.id - 1)
+    stableForm.value[upd + 'days_of_week'].push(el.id)
 
     const startTime = timeInputs.value[el.id].start
     const endTime = timeInputs.value[el.id].end
@@ -170,10 +215,11 @@ const submitForm = () => {
     const TimeStringStart = `${formattedStart}:00.000Z`
     const TimeStringEnd = `${formattedEnd}:00.000Z`
 
-    stableForm.value['start_times'].push(TimeStringStart)
-    stableForm.value['end_times'].push(TimeStringEnd)
-    stableForm.value['repeat_until'] = repeatUntill.value
+    stableForm.value[upd + 'start_times'].push(TimeStringStart)
+    stableForm.value[upd + 'end_times'].push(TimeStringEnd)
+    stableForm.value['repeat_until'] = new Date(repeatUntill.value).toISOString().split('T')[0]
   })
+
   emit('formSubmited', stableForm.value)
 }
 
@@ -226,4 +272,8 @@ const handleTime = (modelValue, id) => {
   console.log('Лала', timeInputs.value)
   changeTime(id)
 }
+
+onMounted(() => {
+  saveRuleData()
+})
 </script>

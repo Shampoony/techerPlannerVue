@@ -36,8 +36,8 @@ import vCustomSelect from '../generalComponents/v-custom-select.vue'
 import vFormCalendarInfo from '../generalComponents/v-form-calendar-info.vue'
 
 import { onMounted, ref } from 'vue'
-import { sortObject } from '@/utils'
-import { getMyStudents, setOneTimeLesson, setStableLesson } from '@/api/requests'
+import { sortObject, stableOrder } from '@/utils'
+import { getMyStudents, setStableLesson } from '@/api/requests'
 
 /* ============================================================ Переменные состояния ============================================================*/
 
@@ -50,18 +50,6 @@ const options = ref({
     options: [{ id: 1, text: 'Артур' }],
   },
 })
-
-const stableOrder = [
-  'student_id',
-  'goal',
-  'days_of_week',
-  'start_times',
-  'end_times',
-  'repeat_until',
-  'reminder_minutes',
-  'break_minutes',
-  'in_rule',
-]
 
 /* ============================================================ Методы ============================================================*/
 

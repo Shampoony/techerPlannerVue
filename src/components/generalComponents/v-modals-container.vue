@@ -4,6 +4,7 @@
       v-if="modals.buttons"
       @toggleLessonModals="toggleLessonModals"
       @close="toggleLessonModals('buttons')"
+      :lesson="pickedLesson"
     />
   </transition>
   <transition name="fade">

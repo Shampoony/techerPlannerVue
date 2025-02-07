@@ -245,3 +245,45 @@ export async function getMyStudents() {
     console.error('Произошла ошибки при переносе урока', error)
   }
 }
+
+export async function getRule(student_id) {
+  try {
+    const response = await fetch(`${domain}/api/lessons/get-rule/${student_id}/`, {
+      method: 'GET',
+      credentials: 'include', // ВАЖНО
+    })
+
+    if (!response.ok) {
+      throw new Error(`Код ошибки при запросе: ${response.status}`)
+    }
+    const responseData = await response.json()
+
+    return responseData
+  } catch (error) {
+    console.error('Произошла ошибки при получении правила урока', error)
+  }
+}
+
+export async function editRule(data) {
+  console.log(jsonOrder.stringify(data))
+  try {
+    const response = await fetch(`${domain}/api/edit-rule`, {
+      method: 'PUT',
+      credentials: 'include', // ВАЖНО
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonOrder.stringify(data),
+    })
+
+    if (!response.ok) {
+      throw new Error(`Код ошибки при запросе: ${response.status}`)
+    } else {
+      router.go(0)
+    }
+
+    return response
+  } catch (error) {
+    console.error('Произошла ошибки при переносе урока', error)
+  }
+}

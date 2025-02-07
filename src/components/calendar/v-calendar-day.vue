@@ -31,6 +31,7 @@
             </div>
 
             <DayPilotCalendar
+              v-if="config"
               :startDate="startDate"
               viewType="day"
               locale="ru-RU"
@@ -41,12 +42,18 @@
               :height="400"
               ref="calendarRef"
             >
-              <template #event="{ event }"
-                ><!-- :class="{ break: event.data.break.duration }" -->
-                <div class="event">
-                  <div class="event-header">
-                    <!-- Event Text -->
-                    <span class="event-text">{{ event.data.student_name }}</span>
+              <template #event="{ event }">
+                <div class="event" @click="toggleButtonsModal(event.data)">
+                  <div class="event-header" :class="{ trial: event.data.trial }">
+                    <span class="event-text">{{ event.data.student_name }} </span>
+                  </div>
+
+                  <div
+                    class="event-header"
+                    :class="{ break: event.data.break }"
+                    v-if="event.data.break"
+                  >
+                    <span class="event-text">Перерыв</span>
                   </div>
                 </div>
               </template>
@@ -63,6 +70,7 @@
   <transition name="fade">
     <v-trial-modal v-if="modals.trial_lesson" @close="toggleModals('trial_lesson')" />
   </transition>
+  <v-modals-container ref="modalsContainer" />
 </template>
 
 <script setup>
@@ -72,15 +80,18 @@ import vFooter from '../generalComponents/v-footer.vue'
 import vTrialModal from '../modals/v-trial-modal.vue'
 import vLessonModal from '../modals/v-lesson-modal.vue'
 import { DayPilotCalendar } from '@daypilot/daypilot-lite-vue'
+import vModalsContainer from '../generalComponents/v-modals-container.vue'
 
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, useTemplateRef, onUnmounted } from 'vue'
 import { getLessonsOnDay } from '@/api/requests'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { formatDate, transformDate } from '@/utils'
 
 const events = ref([])
 const currentDate = ref()
 const formatedCurrentDate = ref()
+
+const modalsContainer = useTemplateRef('modalsContainer')
 
 const calendarRef = ref(null)
 const route = useRoute()
@@ -93,6 +104,10 @@ const modals = ref({
   lessons: false,
   trial_lesson: false,
 })
+
+const toggleButtonsModal = (lesson) => {
+  modalsContainer.value.toggleLessonModals('buttons', lesson)
+}
 
 const toggleModals = (modalName) => {
   modals.value[modalName] = !modals.value[modalName]
@@ -121,25 +136,8 @@ const loadEvents = async () => {
       ...rest,
     })
   })
-  events.value = lessonsToEvent
-  console.log(events.value)
-  /* [
-    {
-      id: 1,
-      start: '2025-01-30T10:00:00',
-      end: '2025-01-30T11:00:00',
-      text: 'Алексей',
-      break: false,
-    },
 
-    {
-      id: 2,
-      start: '2025-01-30T11:00:00',
-      end: '2025-01-30T11:15:00',
-      text: 'Перерыв',
-      break: true,
-    },
-  ] */
+  events.value = lessonsToEvent
 }
 
 const formatCurrentDate = (dateToFormat) => {
@@ -153,16 +151,24 @@ const formatCurrentDate = (dateToFormat) => {
   }).format(date)
   return formattedDate
 }
+const router = useRouter()
 
 onMounted(() => {
+  if (!localStorage.getItem('upd')) {
+    localStorage.setItem('upd', 1)
+    router.go(0)
+  }
   if (route.query.date) {
     currentDate.value = route.query.date
     startDate.value = transformDate(currentDate.value).split('T')[0]
     formatedCurrentDate.value = formatCurrentDate(currentDate.value)
   }
   loadEvents().then(() => {
-    console.log(events.value)
+    console.log('events загружены')
   })
+})
+onUnmounted(() => {
+  localStorage.removeItem('upd')
 })
 </script>
 

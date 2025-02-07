@@ -3,6 +3,29 @@ import { ru } from 'date-fns/locale'
 
 import { startOfWeek, endOfWeek } from 'date-fns'
 
+export const stableOrder = [
+  'student_id',
+  'goal',
+  'days_of_week',
+  'start_times',
+  'end_times',
+  'repeat_until',
+  'reminder_minutes',
+  'break_minutes',
+  'in_rule',
+]
+
+export const updatedStableOrder = [
+  'student_id',
+  'lesson_id',
+  'updated_days_of_week',
+  'updated_start_times',
+  'updated_end_times',
+  'repeat_until',
+  'reminder_minutes',
+  'break_minutes',
+]
+
 const months = [
   'Январь',
   'Февраль',
@@ -117,4 +140,18 @@ export function getPreviousMonday(date) {
 
 export function sortObject(obj, order) {
   return Object.fromEntries(order.map((key) => [key, obj[key]]))
+}
+
+export function addTimeWithDuration(timeStr, durationMinutes) {
+  let [hours, minutes] = timeStr.split(':').map(Number)
+
+  // Добавляем минуты
+  minutes += durationMinutes
+
+  // Учитываем переход через час
+  hours += Math.floor(minutes / 60)
+  minutes %= 60
+
+  // Форматируем результат в "HH:MM"
+  return [String(hours).padStart(2, '0'), String(minutes).padStart(2, '0')].join(':')
 }

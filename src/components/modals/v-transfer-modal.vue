@@ -2,11 +2,21 @@
   <v-modal>
     <div class="modal-transfer">
       <h2 class="modal-title mb-4">Перенос занятия</h2>
-      <input type="text" class="styled-input" :value="props.lesson.student_name" readonly />
+      <input
+        type="text"
+        class="styled-input text-center"
+        :value="props.lesson.student_name"
+        readonly
+      />
       <div class="flex gap-4">
         <div class="modal-transfer__block">
           <h3 class="text-subtitle">Перенести с</h3>
-          <input type="text" class="styled-input" :value="props.lesson.date" readonly />
+          <input
+            type="text"
+            class="styled-input text-center"
+            :value="formatDay(props.lesson.conducted_date)"
+            readonly
+          />
           <div class="flex gap-2">
             <input
               type="time"
@@ -69,7 +79,8 @@ import 'vue3-timepicker/dist/VueTimepicker.css'
 import { formatDay, changeTime } from '@/utils'
 import { ref, defineProps, onMounted } from 'vue'
 import { transferLesson } from '@/api/requests'
-import router from '@/router'
+
+/* ============================================================ Переменные состояния ============================================================ */
 
 const props = defineProps({
   lesson: {
@@ -77,28 +88,6 @@ const props = defineProps({
     require: true,
   },
 })
-const submitForm = () => {
-  if (changedData.value) {
-    const time = changedData.value.time[1]
-    /*  const startTime = `${time.start.HH}:${time.start.mm}:00.000Z`
-  const endTime = `${time.end.HH}:${time.end.mm}:00.000Z` */
-    console.log(changedData.value.time, changedData.value.time[1])
-    const requestBody = {
-      day_of_week_id: changedData.value.date.getDay(),
-      start_time: time.start,
-      end_time: time.end,
-      conducted_date: changedData.value.date.toISOString().split('T')[0],
-    }
-    transferLesson(props.lesson.lesson_id, requestBody, true)
-  }
-}
-/*  {"day_of_week_id":2,"start_time":"16:03:44","end_time":"17:03:44","conducted_date":"2025-02-04"} */
-
-const handleTimeUpdate = (newValue) => {
-  changedData.value.time[1].start = newValue
-  changedData.value.time[1].end = newValue
-  changeTime(1, changedData.value.time) // Не забудьте добавить .value для ref
-}
 
 const changedData = ref({
   date: new Date(),
@@ -106,6 +95,32 @@ const changedData = ref({
     1: { start: '', end: '--:--' },
   },
 })
+
+/* =================================================================== Методы ===================================================================== */
+
+const submitForm = () => {
+  if (changedData.value) {
+    const time = changedData.value.time[1]
+
+    console.log(changedData.value.time, changedData.value.time[1])
+    const requestBody = {
+      day_of_week_id: changedData.value.date.getDay(),
+      start_time: time.start,
+      end_time: time.end,
+      conducted_date: changedData.value.date.toISOString().split('T')[0],
+    }
+    console.log(changedData.value.date.getDay())
+    transferLesson(props.lesson.lesson_id, requestBody, true)
+  }
+}
+
+const handleTimeUpdate = (newValue) => {
+  changedData.value.time[1].start = newValue
+  changedData.value.time[1].end = newValue
+  changeTime(1, changedData.value.time)
+}
+
+/* =================================================================== Хуки ===================================================================== */
 
 onMounted(() => {
   console.log('Выбранный урок - ', props.lesson)
