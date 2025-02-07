@@ -50,7 +50,7 @@
 
                   <div
                     class="event-header"
-                    :class="{ break: event.data.break }"
+                    :class="{ break: event.data.break.duration }"
                     v-if="event.data.break.duration"
                   >
                     <span class="event-text">Перерыв</span>

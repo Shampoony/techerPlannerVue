@@ -19,12 +19,12 @@ const router = createRouter({
       component: Test,
     },
     {
-      path: 'calendar/day',
+      path: '/calendar/day',
       name: 'calendar-day',
       component: VCalendarDay,
     },
     {
-      path: 'calendar/week',
+      path: '/calendar/week',
       name: 'calendar-week',
       component: VCalendarWeek,
     },
