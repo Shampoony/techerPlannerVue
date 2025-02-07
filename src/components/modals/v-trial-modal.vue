@@ -40,7 +40,7 @@ import vModal from '../generalComponents/v-modal.vue'
 import vFormCalendarInfo from '../generalComponents/v-form-calendar-info.vue'
 
 import { ref } from 'vue'
-import { setOneTimeLesson } from '@/api/requests'
+import { setOneTimeLesson, setTrialLesson } from '@/api/requests'
 
 const pay = ref(true)
 
@@ -50,13 +50,14 @@ const student_name = ref()
 const formSubmited = (data) => {
   data['cost_lesson'] = price.value || 0
   data['paid'] = data['cost_lesson'] > 0
+  data['one_time'] = false
   if (student_name.value) {
     const requestBody = {
       lesson_data: data,
 
       student_data: { student_name: student_name.value },
     }
-    setOneTimeLesson({
+    setTrialLesson({
       requestBody,
     }).then(() => {
       console.log('Создали')

@@ -138,10 +138,10 @@ const today = new Date()
 const submitForm = () => {
   // Проверяем все ключевые значения на undefined или null
   const lessonData = {
+    student_id: 0,
     day_of_week_id: date.value ? date.value.getDay() + 1 : null,
     start_time: timeInputs.value[1].start + ':00.000Z',
     end_time: timeInputs.value[1].end + ':00.000Z',
-    repeat_until: nextDate.value ? nextDate.value.toISOString().split('T')[0] : null,
     reminder_minutes: reminder.value || 0,
     break_minutes: break_group.value || 0,
     amount_deducted: false,

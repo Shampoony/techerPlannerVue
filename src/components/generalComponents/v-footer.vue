@@ -10,25 +10,27 @@
         <div class="v-footer__container">
           <div class="v-footer__content">
             <a href="#">Управление подпиской</a>
-            <a href="../../media/documentation/confi.docx" target="_blank"
+            <a href="../../assets/documentation/confi.docx" target="_blank" download
               >Политика конфиденциальности</a
             >
-            <a href="../../media/documentation/agreement.docx">Пользовательское соглашение</a>
+            <a href="../../assets/documentation/agreement.docx" download
+              >Пользовательское соглашение</a
+            >
             <a href="/faq">FAQ</a>
           </div>
         </div>
         <div class="v-footer__contacts">
-          <a href="https://t.me/teacherplanner">
+          <a href="https://t.me/teacherplanner" class="flex gap-2">
             <img src="../../assets/images/chat-icon.svg" alt="" />
             Чат поддержки
           </a>
           <div>
-            <a href="https://t.me/teachandplan" target="_blank">
+            <a href="https://t.me/teachandplan" class="flex gap-2" target="_blank">
               <img src="../../assets/images/tg-icon-gray.svg" alt="" />
               @teachandplan
             </a>
           </div>
-          <a href="mailto:info@teacherplanner.ru">
+          <a href="mailto:info@teacherplanner.ru" class="flex gap-2">
             <img src="../../assets/images/gmail-icon.svg" alt="" />
             info@teacherplanner.ru
           </a>

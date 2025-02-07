@@ -48,7 +48,7 @@
                             (event) => handleDragStart(event, lesson, weekIndex, i, lessonIndex)
                           "
                         >
-                          <div class="calendar-card__lesson" :class="{ trial: lesson.one_time }">
+                          <div class="calendar-card__lesson" :class="{ trial: lesson.trial }">
                             {{ lesson.start_time }} - {{ lesson.end_time }}
                             {{ lesson.student_name }}
                           </div>
@@ -343,20 +343,17 @@ const toggleButtonsModal = (lesson) => {
 }
 
 const setMonth = (dateData) => {
-  console.log('Зашли')
   router.push({
     query: { selected_date: `${String(dateData.month + 1).padStart(2, '0')}.${dateData.year}` },
   })
   currentMonth.value = dateData.month
   currentYear.value = dateData.year
-  console.log(dateData.year, dateData.month + 1)
   getLessonsOnMonth(dateData.year, dateData.month + 1).then((lessons) => {
     monthLessons.value = lessons
   })
 }
 
 const paginateMonth = (dateData) => {
-  console.log('Зашли')
   getLessonsOnMonth(dateData.year, dateData.month).then((lessons) => {
     monthLessons.value = lessons
     activeDay.value = []
@@ -365,7 +362,6 @@ const paginateMonth = (dateData) => {
 const setLessonsOnDate = () => {
   const params = new URLSearchParams(window.location.search)
   const queryParams = Object.fromEntries(params.entries())
-  console.log('в функции')
 
   if ('selected_date' in queryParams) {
     currentMonth.value = queryParams['selected_date'].split('.')[0]
@@ -395,7 +391,6 @@ const isMonthEmpty = computed(() => {
     for (let index in monthLessons.value.schedule) {
       const week = monthLessons.value.schedule[index]
       for (let weekIndex in week) {
-        console.log(week[weekIndex])
         if (week[weekIndex].lessons.length) {
           return false
         }
@@ -404,7 +399,6 @@ const isMonthEmpty = computed(() => {
 
     return true // Если уроков нет, возвращаем true
   }
-  console.log('лол')
   return false
 })
 

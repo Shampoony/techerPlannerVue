@@ -272,6 +272,11 @@ const config = ref({
     const startDate = args.e.data.start.value.split('T')[0]
     const dayOfWeek = new Date(args.newStart.value).getDay()
 
+    console.log(startTime)
+
+    args.e.data.start_time = startTime.slice(0, 5)
+    args.e.data.end_time = endTime.slice(0, 5)
+
     const eventData = {
       day_of_week_id: dayOfWeek,
       start_time: startTime,

@@ -37,7 +37,7 @@ import vFormCalendarInfo from '../generalComponents/v-form-calendar-info.vue'
 
 import { onMounted, ref } from 'vue'
 import { sortObject, stableOrder } from '@/utils'
-import { getMyStudents, setStableLesson } from '@/api/requests'
+import { getMyStudents, setOneTimeLesson, setStableLesson } from '@/api/requests'
 
 /* ============================================================ Переменные состояния ============================================================*/
 
@@ -79,10 +79,11 @@ const submitStableForm = (stableForm) => {
   }
 }
 const submitSingleForm = (singleForm) => {
-  singleForm['cost_lesson'] = 0
+  singleForm['trial'] = false
 
   if (student.value) {
-    const requestBody = {
+    singleForm['student_id'] = student.value.id
+    /*  const requestBody = {
       student_id: student.value.id,
       goal: 'string',
       days_of_week: [singleForm.day_of_week_id],
@@ -92,14 +93,14 @@ const submitSingleForm = (singleForm) => {
       reminder_minutes: singleForm.reminder_minutes,
       break_minutes: singleForm.break_minutes,
       in_rule: false,
-    }
+    } */
 
-    const isValid = Object.values(requestBody).every(
+    const isValid = Object.values(singleForm).every(
       (value) => value !== undefined && value !== null,
     )
 
     if (isValid) {
-      setStableLesson(requestBody).then(() => {
+      setOneTimeLesson(singleForm).then(() => {
         console.log('Выполнили запрос')
       })
     } else {

@@ -91,7 +91,6 @@ export async function getMyInfo() {
     }
 
     const responseData = await response.json()
-    console.log(responseData)
     return responseData
   } catch (error) {
     console.error('Произошла ошибки при получении информации об учителе', error)
@@ -107,7 +106,6 @@ export async function deleteLessonById(lesson_id) {
     if (!response.ok) {
       throw new Error(`Код ошибки при запросе: ${response.status}`)
     }
-    console.log(response)
     return response
   } catch (error) {
     console.error('Произошла ошибки при удалении урока', error)
@@ -135,7 +133,6 @@ export async function transferLesson(lesson_id, data, updateAfterTransfer = fals
       }
       console.log('Запрос прошёл успешно')
     }
-    console.log(response)
 
     return response
   } catch (error) {
@@ -157,7 +154,31 @@ export async function setOneTimeLesson(data) {
     if (!response.ok) {
       throw new Error(`Код ошибки при запросе: ${response.status}`)
     } else {
-      window.location.reload(true)
+      router.go(0)
+    }
+
+    return response
+  } catch (error) {
+    console.error('Произошла ошибки при добавлении одноразового урока', error)
+  }
+}
+
+export async function setTrialLesson(data) {
+  try {
+    const requestData = data.requestBody || data
+    const response = await fetch(`${domain}/api/lesson-trial`, {
+      method: 'POST',
+      credentials: 'include', // ВАЖНО
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonOrder.stringify(requestData),
+    })
+
+    if (!response.ok) {
+      throw new Error(`Код ошибки при запросе: ${response.status}`)
+    } else {
+      router.go(0)
     }
 
     return response
@@ -182,7 +203,6 @@ export async function setStableLesson(data) {
     if (!response.ok) {
       throw new Error(`Код ошибки при запросе: ${response.status}`)
     } else {
-      console.log(response)
       router.go(0)
     }
 

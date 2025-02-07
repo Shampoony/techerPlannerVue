@@ -91,13 +91,13 @@
         </div>
         <ul class="modal-burger__list">
           <li class="modal-burger__list-item">
-            <a class="modal-burger__list-item-link active" href="/home-teacher">Главная</a>
+            <a class="modal-burger__list-item-link" href="/home-teacher">Главная</a>
           </li>
           <li class="modal-burger__list-item">
             <a class="modal-burger__list-item-link" href="/students">Ученики</a>
           </li>
           <li class="modal-burger__list-item">
-            <a class="modal-burger__list-item-link" href="/calendar">Календарь</a>
+            <a class="modal-burger__list-item-link active" href="/calendar">Календарь</a>
           </li>
           <li class="modal-burger__list-item">
             <a class="modal-burger__list-item-link" href="/finance">Финансы</a>
