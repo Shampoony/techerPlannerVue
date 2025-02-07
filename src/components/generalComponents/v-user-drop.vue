@@ -25,7 +25,7 @@
         </span>
         <span class="text">Подписка</span>
       </a>
-      <a class="v-user-drop__menu-item" href="logout.html">
+      <a class="v-user-drop__menu-item" href="/logout/">
         <span class="icon">
           <img src="../../assets/images/exit-icon.png" alt="" class="day-el" />
           <img src="../../assets/images/exit-icon-night.png" alt="" class="night-el" />
