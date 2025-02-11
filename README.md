@@ -8,6 +8,8 @@ This project represents an interactive calendar with the following key features:
 - View schedule by month or week.
 - Add, delete, and edit events.
 - Drag-and-drop functionality for easy event rescheduling.
+- Modal windows with full CRUD functionality.
+- Fully responsive design with a dedicated mobile version layout.
 
 The application is built with the following technologies:
 - **Vue.js** for building the user interface and managing state.
@@ -46,3 +48,4 @@ npm run build
 
 ```sh
 npm run lint
+```
