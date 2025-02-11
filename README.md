@@ -2,6 +2,20 @@
 
 This template should help get you started developing with Vue 3 in Vite.
 
+## Project Overview
+
+This project represents an interactive calendar with the following key features:
+- View schedule by month or week.
+- Add, delete, and edit events.
+- Drag-and-drop functionality for easy event rescheduling.
+
+The application is built with the following technologies:
+- **Vue.js** for building the user interface and managing state.
+- **HTML** for structuring the pages.
+- **SCSS/CSS** for styling and responsive design.
+
+The calendar is designed for managing schedules efficiently, providing flexibility and an intuitive user experience.
+
 ## Recommended IDE Setup
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
@@ -32,4 +46,3 @@ npm run build
 
 ```sh
 npm run lint
-```
