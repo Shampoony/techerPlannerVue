@@ -15,6 +15,7 @@ The application is built with the following technologies:
 - **Vue.js** for building the user interface and managing state.
 - **HTML** for structuring the pages.
 - **SCSS/CSS** for styling and responsive design.
+- **Tailwind css** a utility-first CSS framework.
 
 The calendar is designed for managing schedules efficiently, providing flexibility and an intuitive user experience.
 
