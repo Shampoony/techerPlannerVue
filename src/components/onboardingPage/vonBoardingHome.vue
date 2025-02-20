@@ -21,6 +21,7 @@
         </div>
       </div>
       <swiper
+        v-if="!isLoading"
         :key="swiperKey"
         :modules="modules"
         class="onboardingSwiper"
@@ -94,6 +95,7 @@ import 'swiper/css/pagination'
 import { Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { useIsMobile } from '@/composables/useIsMobile'
+import { is } from 'date-fns/locale'
 
 const images = import.meta.glob('@/assets/images/onboarding/**/*', { eager: true })
 
@@ -106,6 +108,7 @@ const swiperInstance = ref(null)
 const isMobile = useIsMobile(768)
 const isMobileRef = ref(isMobile)
 const currentPageTitle = ref('Главная страница')
+const isLoading = ref(false)
 
 const onSwiper = (swiper) => {
   swiperInstance.value = swiper
@@ -139,9 +142,11 @@ const nextSlide = () => {
 }
 
 const resetSwiper = async () => {
+  isLoading.value = true
   swiperInstance.value = null
-  swiperKey.value++
+  swiperKey.value++ // Обновляем ключ, чтобы пересоздать Swiper
   await nextTick()
+  isLoading.value = false
 }
 
 const nextPage = async () => {
