@@ -174,7 +174,7 @@ const getImagePath = (imagePath) => {
     ? `${imagesPath.value}/mobile/${imagePath.replace('jpg', 'png')}`
     : `${imagesPath.value}/${imagePath}`
 }
-/*
+
 const pageImages = ref([
   {
     title: 'Главная страница',
@@ -383,7 +383,7 @@ const pageImages = ref([
     ],
   },
 ])
- */
+/*
 const pageImages = ref([
   {
     title: 'Главная страница',
@@ -592,6 +592,6 @@ const pageImages = ref([
     ],
   },
 ])
-
+ */
 onMounted(() => {})
 </script>
