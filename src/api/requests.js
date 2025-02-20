@@ -105,8 +105,9 @@ export async function deleteLessonById(lesson_id) {
     })
     if (!response.ok) {
       throw new Error(`Код ошибки при запросе: ${response.status}`)
+    } else {
+      router.go(0)
     }
-    return response
   } catch (error) {
     console.error('Произошла ошибки при удалении урока', error)
   }
@@ -133,6 +134,7 @@ export async function transferLesson(lesson_id, data, updateAfterTransfer = fals
       }
       console.log('Запрос прошёл успешно')
     }
+    console.log(response)
 
     return response
   } catch (error) {

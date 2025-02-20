@@ -8,7 +8,7 @@
         :value="props.lesson.student_name"
         readonly
       />
-      <div class="flex gap-4">
+      <div class="flex gap-4 modal-transfer__container">
         <div class="modal-transfer__block">
           <h3 class="text-subtitle">Перенести с</h3>
           <input
@@ -41,6 +41,7 @@
             :locale="'ru-ru'"
             v-model="changedData.date"
             :auto-apply="true"
+            :position="'left'"
           >
             <template #clear-icon="{ clear }"> </template>
           </VueDatePicker>
@@ -48,6 +49,7 @@
             <VueTimepicker
               @update:modelValue="handleTimeUpdate"
               v-model="changedData.time[1].start"
+              :position="'top'"
               placeholder="--:--"
               :clearable="false"
             />
@@ -101,12 +103,14 @@ const changedData = ref({
 const submitForm = () => {
   if (changedData.value) {
     const time = changedData.value.time[1]
+    const dayOfWeekId = changedData.value.date.getDay()
 
     const requestBody = {
-      day_of_week_id: changedData.value.date.getDay(),
+      day_of_week_id: dayOfWeekId || 7,
       start_time: time.start + ':00.000Z',
       end_time: time.end + ':00.000Z',
       conducted_date: changedData.value.date.toISOString().split('T')[0],
+      in_rule: false,
     }
     transferLesson(props.lesson.lesson_id, requestBody, true)
   }
@@ -117,4 +121,8 @@ const handleTimeUpdate = (newValue) => {
   changedData.value.time[1].end = newValue
   changeTime(1, changedData.value.time)
 }
+
+onMounted(() => {
+  console.log(props.lesson)
+})
 </script>

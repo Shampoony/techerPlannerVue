@@ -9,7 +9,7 @@
         <div
           class="v-buttons-modal__button blue-btn"
           @click="toggleLessonModals('change_lesson')"
-          v-if="!lesson.one_time"
+          v-if="!lesson.one_time && !lesson.trial"
         >
           Редактировать правило
         </div>

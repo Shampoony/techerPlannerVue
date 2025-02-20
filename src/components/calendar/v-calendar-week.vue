@@ -2,7 +2,7 @@
   <div class="wrapper">
     <v-header />
     <main>
-      <section class="v-calendar-week" v-if="!isMobile">
+      <section class="v-calendar-week" v-show="!isMobile">
         <div class="v-calendar-week__container container">
           <v-calendar-menu
             :is-showed-break="true"
@@ -91,7 +91,7 @@
                 <div class="event" @click="toggleButtonsModal(event.data)">
                   <div class="event-header">
                     <div class="calendar-card__content">
-                      <div class="calendar-card__lesson">
+                      <div class="calendar-card__lesson" :class="{ trial: event.data.trial }">
                         <p>{{ event.data.start_time }} - {{ event.data.end_time }}</p>
                         <p>{{ event.data.student_name }}</p>
                       </div>
@@ -112,7 +112,7 @@
           </div>
         </div>
       </section>
-      <section class="v-calendar-week-mob mob-page" v-else>
+      <section class="v-calendar-week-mob mob-page" v-if="isMobile">
         <div class="v-calendar-week-mob__container container">
           <v-calendar-menu
             :is-showed-break="true"
@@ -147,7 +147,7 @@
                         :key="lesson.id"
                       >
                         <div class="day__lesson">
-                          <div class="day__lesson-time">
+                          <div class="day__lesson-time" :class="{ trial: lesson.trial }">
                             <div class="day__lesson-circle"></div>
 
                             <p>{{ cutSeconds(lesson.start_time) }}</p>
@@ -158,7 +158,12 @@
                         </div>
                         <div
                           class="day__lesson break"
-                          v-if="dayOfTheWeek.breaks && dayOfTheWeek.breaks[lesson.lesson_id]"
+                          v-if="
+                            dayOfTheWeek.breaks &&
+                            dayOfTheWeek.breaks[lesson.lesson_id] &&
+                            dayOfTheWeek.breaks[lesson.lesson_id].start_time !==
+                              dayOfTheWeek.breaks[lesson.lesson_id].end_time
+                          "
                         >
                           <div class="day__lesson-block">
                             <img
@@ -272,16 +277,17 @@ const config = ref({
     const startDate = args.e.data.start.value.split('T')[0]
     const dayOfWeek = new Date(args.newStart.value).getDay()
 
-    console.log(startTime)
+    console.log(dayOfWeek || 7)
 
     args.e.data.start_time = startTime.slice(0, 5)
     args.e.data.end_time = endTime.slice(0, 5)
 
     const eventData = {
-      day_of_week_id: dayOfWeek,
+      day_of_week_id: dayOfWeek || 7,
       start_time: startTime,
       end_time: endTime,
       conducted_date: startDate,
+      in_rule: false,
     }
     const lessonId = args.e.data.lesson_id
     transferLesson(lessonId, eventData).then(() => {
@@ -324,13 +330,13 @@ const loadEvents = async (lessons) => {
 }
 
 const weekDays = ref({
-  0: { day_of_week: 'пн', date: '' },
-  1: { day_of_week: 'вт', date: '' },
-  2: { day_of_week: 'ср', date: '' },
-  3: { day_of_week: 'чт', date: '' },
-  4: { day_of_week: 'пт', date: '' },
-  5: { day_of_week: 'сб', date: '' },
-  6: { day_of_week: 'вс', date: '' },
+  1: { day_of_week: 'пн', date: '' },
+  2: { day_of_week: 'вт', date: '' },
+  3: { day_of_week: 'ср', date: '' },
+  4: { day_of_week: 'чт', date: '' },
+  5: { day_of_week: 'пт', date: '' },
+  6: { day_of_week: 'сб', date: '' },
+  7: { day_of_week: 'вс', date: '' },
 })
 
 const handleDragStart = (event, lesson, columnIndex, lessonIndex) => {
@@ -347,13 +353,20 @@ const handleDrop = (event, targetColumnIndex) => {
     // Получаем список уроков из исходного и целевого столбцов
     const sourceLessons = dayOfTheWeek.value.week.days[fromColumnIndex].lessons
     const targetLessons = dayOfTheWeek.value.week.days[targetColumnIndex].lessons
-    const conductedDate = weekDays.value[targetColumnIndex].date.toISOString().split('T')[0]
+    console.log(weekDays.value)
+    const targetDate = weekDays.value[targetColumnIndex].date
+    const year = targetDate.getFullYear()
+    const month = String(targetDate.getMonth() + 1).padStart(2, '0') // месяцы начинаются с 0
+    const day = String(targetDate.getDate()).padStart(2, '0')
+
+    const conductedDate = `${year}-${month}-${day}`
 
     const requestBody = {
       day_of_week_id: parseInt(targetColumnIndex),
       start_time: lesson.start_time,
       end_time: lesson.end_time,
       conducted_date: conductedDate,
+      in_rule: false,
     }
 
     const timeToMinutes = (time) => {
@@ -448,9 +461,9 @@ const formatDay = (dateStr) => {
   const [day, month, year] = dateStr.split('.').map(Number)
   let date = new Date(year, month - 1, day)
   date = date.getDay() || 7
-  weekDays.value[date - 1].date = new Date(year, month - 1, day)
+  weekDays.value[date].date = new Date(year, month - 1, day)
   // Получаем день недели и форматируем строку
-  return `${weekDays.value[date - 1].day_of_week}, ${day}`
+  return `${weekDays.value[date].day_of_week}, ${day}`
 }
 
 const setLessonsFromUrl = async () => {

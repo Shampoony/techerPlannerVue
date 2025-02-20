@@ -1,7 +1,7 @@
 <template>
   <footer class="v-footer base-footer">
     <div class="container flex items-center justify-between">
-      <a href="/index" class="logo">
+      <a href="/" class="logo">
         <img class="night-el v-footer__logo" src="../../assets/images/black.svg" alt="Night Logo" />
         <img class="day-el v-footer__logo" src="../../assets/images/day.svg" alt="Day Logo" />
       </a>

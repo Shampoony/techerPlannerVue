@@ -108,6 +108,7 @@
                       <div class="calendar-card__content">
                         <div
                           class="calendar-card__lesson"
+                          :class="{ trial: lesson.trial }"
                           v-for="lesson in week[i].lessons"
                           :key="lesson.lesson_id"
                         ></div>
@@ -142,7 +143,7 @@
                   :key="lesson.id"
                 >
                   <div class="day__lesson">
-                    <div class="day__lesson-time">
+                    <div class="day__lesson-time" :class="{ trial: lesson.trial }">
                       <div class="day__lesson-circle"></div>
                       <p>{{ lesson.start_time }}</p>
                       <p>-</p>
@@ -327,10 +328,7 @@ const handleDrop = (event, targetColumnIndex, targetRowIndex) => {
         end_time: lesson.end_time + ':00.001Z',
 
         conducted_date: `${currentYear.value}-${currentMonth.value}-${targetDay.padStart(2, 0)}`,
-        /*   day_of_week_id: targetColumnIndex - 1,
-        start_time: '16:03:44.361Z',
-        end_time: '17:03:44.361Z',
-        conducted_date: '2025-02-04', */
+        in_rule: false,
       }
       transferLesson(lesson.lesson_id, requestBody).then(() => {})
       draggedItem.value = null
@@ -397,7 +395,7 @@ const isMonthEmpty = computed(() => {
       }
     }
 
-    return true // Если уроков нет, возвращаем true
+    return true
   }
   return false
 })

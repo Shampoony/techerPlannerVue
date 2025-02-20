@@ -1,9 +1,10 @@
+@import url(radio.scss);
+@import url(variables.scss);
+@import url(weekPicker.scss);
+@import url(timePicker.scss);
+@import url(_onboarding.scss);
 @import url(monthPicker.scss);
 @import url(dayCalendar.scss);
-@import url(../scss/radio.scss);
-@import url(../scss/variables.scss);
-@import url(../scss/weekPicker.scss);
-@import url(../scss/timePicker.scss);
 @import url('https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
@@ -13,6 +14,14 @@ body {
 
 body:has(.modal-overlay) {
   overflow: hidden;
+}
+
+body:has(.gradient) {
+  background: linear-gradient(360deg, rgba(29, 78, 204, 0.15) 0%, rgba(29, 78, 204, 0) 73.55%);
+}
+
+body:has(.white-page) {
+  background-color: var(--white);
 }
 
 .night__mode {
@@ -397,6 +406,9 @@ input {
     @media (max-width: 480px) {
       margin: 0;
     }
+  }
+  &-inner:has(.modal-burger) {
+    padding: 20px;
   }
   &-inner > div {
     background-color: var(--white);
@@ -1003,7 +1015,7 @@ header {
 }
 
 .modal-burger {
-  width: 95%;
+  width: 100%;
   .night__mode & {
     background-color: var(--grey);
   }
@@ -1250,6 +1262,9 @@ header {
       background-color: #b5f5bf !important;
       border: 1px solid #b5f5bf;
       color: #5a8c59;
+      @media (max-width: 480px) {
+        background-color: #48ad72 !important;
+      }
     }
     .night__mode &.trial {
       background-color: #fdf2b9 !important;
@@ -1378,11 +1393,22 @@ header {
 }
 
 .modal-transfer {
+  &__container {
+    @media (max-width: 480px) {
+      flex-direction: column;
+    }
+  }
   &__block {
-    width: 100%;
+    width: 50%;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    @media (max-width: 450px) {
+      width: 100%;
+    }
+  }
+  button {
+    margin-top: 20px;
   }
 }
 
@@ -1796,6 +1822,12 @@ header {
       border-radius: 50%;
       background-color: var(--blue);
     }
+    &-time.trial &-circle {
+      background-color: #42b773;
+    }
+    .night__mode &-time.trial &-circle {
+      background-color: #202020;
+    }
     &-time {
       color: var(--blue);
       background-color: #e8edfb;
@@ -1810,6 +1842,15 @@ header {
       gap: 5px;
 
       padding: 5px;
+      &.trial {
+        color: #258d50 !important;
+        background-color: #e2ffe7 !important;
+      }
+
+      .night__mode &.trial {
+        background-color: #fdf2b9 !important;
+        color: #202020 !important;
+      }
     }
 
     .night__mode &-time {

@@ -107,6 +107,7 @@ const modals = ref({
 })
 
 const toggleButtonsModal = (lesson) => {
+  console.log(lesson)
   modalsContainer.value.toggleLessonModals('buttons', lesson)
 }
 
@@ -132,7 +133,7 @@ const loadEvents = async () => {
     lessonsToEvent.push({
       start: formattedStartTime,
       end: formattedEndTime,
-      start_time: end_time.slice(0, 5),
+      start_time: start_time.slice(0, 5),
       end_time: end_time.slice(0, 5),
       ...rest,
     })

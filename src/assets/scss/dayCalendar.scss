@@ -79,7 +79,7 @@
 }
 
 .night__mode .event {
-  background-color: #202020;
+  background-color: #202020 !important;
 }
 .night__mode .event-header {
   &:not(.break) {
@@ -98,12 +98,17 @@
     margin-top: 5px;
     background-color: transparent !important;
     border: 1px dashed var(--blue) !important;
+    min-height: 16px;
   }
+}
+
+.event:has(.break) .event-header:not(.break) {
+  height: 55% !important;
 }
 
 .event-header:not(.break) {
   padding-top: 2px;
-  height: 70%;
+  height: 100%;
   background-color: #ecf0fa !important;
   &.trial {
     .event-text {

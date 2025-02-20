@@ -76,3 +76,12 @@
 .dp__arrow_top {
   display: none;
 }
+body:has(.modal-transfer) .dp--menu-wrapper {
+  @media (max-width: 480px) {
+    top: -270px !important;
+  }
+  @media (max-width: 450px) {
+    left: 50% !important;
+    transform: translateX(-50%);
+  }
+}

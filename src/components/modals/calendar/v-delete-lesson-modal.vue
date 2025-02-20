@@ -26,7 +26,7 @@ const props = defineProps({
 })
 const deleteLesson = () => {
   deleteLessonById(props.lesson.lesson_id).then(() => {
-    router.go(0)
+    console.log('Выполнили запрос')
   })
 }
 </script>
