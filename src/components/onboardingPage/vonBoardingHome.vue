@@ -166,7 +166,7 @@ const prevSlide = () => {
   }
 }
 
-const imagesPath = ref('/src/assets/images/onboarding')
+const imagesPath = ref('@/assets/images/onboarding')
 
 // Функция для обновления пути изображения в зависимости от устройства
 const getImagePath = (imagePath) => {
