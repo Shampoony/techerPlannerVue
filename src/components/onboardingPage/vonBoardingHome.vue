@@ -34,7 +34,7 @@
         <button
           class="swiper-button-prev onboarding__button-prev"
           @click="prevSlide"
-          v-if="!isMobile"
+          v-if="!isMobile.isMobile"
         >
           <img src="../../assets/images/arrow-back.svg" alt="" />
           <span>Назад</span>
@@ -95,13 +95,13 @@ const images = import.meta.glob('@/assets/images/onboarding/**/*', { eager: true
 
 const modules = ref([Pagination])
 
-const swiperInstance = ref(null)
+const swiperKey = ref(0)
 const activeIndex = ref(0)
 const currentPage = ref(0)
-const currentPageTitle = ref('Главная страница')
-const swiperKey = ref(0) // Ключ для пересоздания Swiper
+const swiperInstance = ref(null)
 const isMobile = useIsMobile(768)
 const isMobileRef = ref(isMobile)
+const currentPageTitle = ref('Главная страница')
 
 const onSwiper = (swiper) => {
   swiperInstance.value = swiper
