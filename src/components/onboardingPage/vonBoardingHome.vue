@@ -28,7 +28,11 @@
         @slideChange="onSlideChange"
         @touchEnd="onTouchEnd"
       >
-        <swiper-slide v-for="slide in pageImages[currentPage].images" :key="slide.id">
+        <swiper-slide
+          v-for="slide in pageImages[currentPage].images"
+          :key="slide.id"
+          @click="handleClick"
+        >
           <img :src="slide.image" alt="" />
         </swiper-slide>
         <button
@@ -136,8 +140,8 @@ const nextSlide = () => {
 
 const resetSwiper = async () => {
   swiperInstance.value = null
-  swiperKey.value++ // Обновляем ключ, чтобы пересоздать Swiper
-  await nextTick() // Ждём, пока Vue обновит DOM
+  swiperKey.value++
+  await nextTick()
 }
 
 const nextPage = async () => {
@@ -168,7 +172,20 @@ const prevSlide = () => {
   }
 }
 
-const imagesPath = ref('@/assets/images/onboarding')
+const handleClick = (event) => {
+  console.log('кликнули')
+  if (!swiperInstance.value) return
+
+  const slideWidth = event.currentTarget.clientWidth
+  const clickX = event.offsetX
+  if (clickX > slideWidth * 0.75) {
+    // Клик ближе к правому краю (перелистываем вправо)
+    nextSlide()
+  } else if (clickX < slideWidth * 0.25) {
+    // Клик ближе к левому краю (перелистываем влево)
+    prevSlide()
+  }
+}
 
 // Функция для обновления пути изображения в зависимости от устройства
 const getImagePath = (imagePath) => {
