@@ -91,6 +91,8 @@ import { Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { useIsMobile } from '@/composables/useIsMobile'
 
+const images = import.meta.glob('@/assets/images/onboarding/**/*', { eager: true })
+
 const modules = ref([Pagination])
 
 const swiperInstance = ref(null)
@@ -170,9 +172,11 @@ const imagesPath = ref('@/assets/images/onboarding')
 
 // Функция для обновления пути изображения в зависимости от устройства
 const getImagePath = (imagePath) => {
-  return isMobileRef.value.isMobile
-    ? `${imagesPath.value}/mobile/${imagePath.replace('jpg', 'png')}`
-    : `${imagesPath.value}/${imagePath}`
+  const path = isMobileRef.value.isMobile
+    ? `/src/assets/images/onboarding/mobile/${imagePath.replace('jpg', 'png')}`
+    : `/src/assets/images/onboarding/${imagePath}`
+
+  return images[path]?.default || path
 }
 
 const pageImages = ref([
@@ -383,215 +387,6 @@ const pageImages = ref([
     ],
   },
 ])
-/*
-const pageImages = ref([
-  {
-    title: 'Главная страница',
-    images: [
-      {
-        id: 1,
-        image: new URL(getImagePath('home/home-1.jpg'), import.meta.url).href,
-        title: 'Ваш зарабаток',
-        subtitle:
-          'Выберите период (например, месяц) чтобы увидеть статистику загруженности и ваш средний чек',
-      },
-      {
-        id: 3,
-        image: new URL(getImagePath('home/home-2.jpg'), import.meta.url).href,
-        title: 'Задачи',
-        subtitle: 'Просматривайте текущие задачи и добавляйте новые.',
-      },
-      {
-        id: 4,
-        image: new URL(getImagePath('home/home-3.jpg'), import.meta.url).href,
-        title: 'Ближайшее занятие',
-        subtitle:
-          'Просматривайте проблемы предыдущего занятия, чтобы правильно скорректировать курс обучения.',
-      },
-      {
-        id: 5,
-        image: new URL(getImagePath('home/home-4.jpg'), import.meta.url).href,
-        title: 'Добавляйте:',
-        subtitle:
-          'Информацию об оплаченных занятиях, новые занятия в расписание и результаты проверенных работ.',
-      },
-      {
-        id: 6,
-        image: new URL(getImagePath('home/home-5.jpg'), import.meta.url).href,
-        title: 'Ваши ученики',
-        subtitle: 'Просматривайте информацию о ваших учениках и добавляйте новых',
-      },
-    ],
-  },
-  {
-    title: 'Ученики',
-    images: [
-      {
-        id: 1,
-        image: new URL(getImagePath('students/students-1.jpg'), import.meta.url).href,
-        title: 'Массовое добавление учеников <span>(доступо в версии для ПК)</span>',
-        subtitle: 'Заполните один файл и карточки учеников будут созданы автоматически',
-      },
-      {
-        id: 2,
-        image: new URL(getImagePath('students/students-2.jpg'), import.meta.url).href,
-        title: 'Карточка ученика',
-        subtitle:
-          'В карточке ученика хранится информация о ученике, которую можно изменить при необходимости. При прекращении занятий с учеником, карточку можно архивировать.',
-      },
-      {
-        id: 3,
-        image: new URL(getImagePath('students/students-3.jpg'), import.meta.url).href,
-        title: 'Источник ученика',
-        subtitle: 'Укажите откуда был привлечен ученик',
-      },
-      {
-        id: 4,
-        image: new URL(getImagePath('students/students-4.jpg'), import.meta.url).href,
-        title: 'Часовой пояс',
-        subtitle: 'Укажите в каком часовом поясе находится ученик',
-      },
-      {
-        id: 5,
-        image: new URL(getImagePath('students/students-5.jpg'), import.meta.url).href,
-        title: 'Ставка',
-        subtitle: 'Укажите стоимость занятий за 60 минут',
-      },
-      {
-        id: 6,
-        image: new URL(getImagePath('students/students-6.jpg'), import.meta.url).href,
-        title: 'Баланс',
-        subtitle:
-          'Количество средств, внесенных учеником, из которых будут оплачены занятия. Формируется автоматически на основе внесеных в систему оплат',
-      },
-      {
-        id: 7,
-        image: new URL(getImagePath('students/students-7.jpg'), import.meta.url).href,
-        title: 'Баланс',
-        subtitle:
-          'Количество средств, внесенных учеником, из которых будут оплачены занятия. Формируется автоматически на основе внесеных в систему оплат',
-      },
-    ],
-  },
-  {
-    title: 'Расписание занятий',
-    images: [
-      {
-        id: 1,
-        image: new URL(getImagePath('calendar/calendar-1.jpg'), import.meta.url).href,
-        title: 'Выбирайте удобный вам формат отображения',
-        subtitle: '',
-      },
-      {
-        id: 2,
-        image: new URL(getImagePath('calendar/calendar-2.jpg'), import.meta.url).href,
-        title: 'Добавляйте пробные занятия или занятия для постоянных учеников',
-        subtitle: '',
-      },
-      {
-        id: 3,
-        image: new URL(getImagePath('calendar/calendar-3.jpg'), import.meta.url).href,
-        title: 'Пробное занятие',
-        subtitle:
-          'Для добавления пробного занятия не требуется создание карточки ученика, только его имя.',
-      },
-      {
-        id: 4,
-        image: new URL(getImagePath('calendar/calendar-4.jpg'), import.meta.url).href,
-        title: 'Платное пробное занятие',
-        subtitle: 'Если вы проводите пробное занятие платно, вы можете указать его стоимость.',
-      },
-      {
-        id: 5,
-        image: new URL(getImagePath('calendar/calendar-5.jpg'), import.meta.url).href,
-        title: 'Устанавливайте напоминания о занятии',
-        subtitle: '',
-      },
-      {
-        id: 6,
-        image: new URL(getImagePath('calendar/calendar-6.jpg'), import.meta.url).href,
-        title: 'Добавляйте перерывы после занятия',
-        subtitle: '',
-      },
-      {
-        id: 7,
-        image: new URL(getImagePath('calendar/calendar-7.jpg'), import.meta.url).href,
-        title: 'Занятия для постоянных учеников',
-        subtitle:
-          'Добавляйте занятия в удобном вам формате: разовый урок или регулярное расписание',
-      },
-      {
-        id: 8,
-        image: new URL(getImagePath('calendar/calendar-8.jpg'), import.meta.url).href,
-        title: 'Регулярные занятия',
-        subtitle:
-          'Для добавления регулярного занятия выберите необходимые дни недели и время, а также дату прекращения занятий.',
-      },
-    ],
-  },
-  {
-    title: 'Финансы',
-    images: [
-      {
-        id: 1,
-        image: new URL(getImagePath('finance/finance-1.jpg'), import.meta.url).href,
-        title: 'График заработка',
-        subtitle:
-          'Просматривайте соотношение вашего реального и возможного заработка. Возможный заработок складывается из запланированных занятий.',
-      },
-      {
-        id: 2,
-        image: new URL(getImagePath('finance/finance-2.jpg'), import.meta.url).href,
-        title: 'Затраты на рекламу',
-        subtitle:
-          'Показатель Доли Рекламных Расходов - отражает соотношение ваших рекламных расходов и доходов от рекламы.',
-      },
-      {
-        id: 3,
-        image: new URL(getImagePath('finance/finance-3.jpg'), import.meta.url).href,
-        title: 'Анализ учеников',
-        subtitle:
-          'Просматривайте аналитику по целям и источникам учеников, а также соотношению заработка по ученикам',
-      },
-    ],
-  },
-  {
-    title: 'Аналитика',
-    images: [
-      {
-        id: 1,
-        image: new URL(getImagePath('analytics/analytics-1.jpg'), import.meta.url).href,
-        title: 'Выбор ученика',
-        subtitle: 'Для просмотра аналитики выберите ученика из списка',
-      },
-      {
-        id: 2,
-        image: new URL(getImagePath('analytics/analytics-2.jpg'), import.meta.url).href,
-        title: 'Статистика домашнего задания',
-        subtitle: 'Контролируйте наличие и выполнение домашнего задания',
-      },
-      {
-        id: 3,
-        image: new URL(getImagePath('analytics/analytics-3.jpg'), import.meta.url).href,
-        title: 'Темы занятий',
-        subtitle: 'Собирайте в однои месте темы занятий с учеником',
-      },
-      {
-        id: 4,
-        image: new URL(getImagePath('analytics/analytics-4.jpg'), import.meta.url).href,
-        title: 'Домашнее задание',
-        subtitle:
-          'Просматривайте информацию о темах и описании каждого занятия, а также контролируйте выполнение домашнего задания',
-      },
-      {
-        id: 5,
-        image: new URL(getImagePath('analytics/analytics-5.jpg'), import.meta.url).href,
-        title: 'График прогресса ученика',
-        subtitle: 'Контролируйте прогресс ученика',
-      },
-    ],
-  },
-])
- */
+
 onMounted(() => {})
 </script>
