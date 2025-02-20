@@ -34,7 +34,7 @@
         <button
           class="swiper-button-prev onboarding__button-prev"
           @click="prevSlide"
-          v-if="!isMobile.isMobile"
+          v-if="!isMobileRef.isMobile"
         >
           <img src="../../assets/images/arrow-back.svg" alt="" />
           <span>Назад</span>
