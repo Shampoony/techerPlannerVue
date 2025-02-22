@@ -36,6 +36,9 @@
     }
   }
   &__holder {
+    width: clamp(43.75rem, -10.795rem + 113.64vw, 68.75rem);
+    max-height: 530px;
+
     display: flex;
     justify-content: space-between;
     gap: 40px;
@@ -86,7 +89,7 @@
     }
   }
   &__content {
-    width: 45%;
+    min-width: 350px;
     max-width: 350px;
     max-height: 100%;
     display: flex;
@@ -94,7 +97,7 @@
     justify-content: space-between;
     gap: 20px;
     @media (max-width: 1024px) {
-      width: 40%;
+      min-width: 281px;
     }
     @media (max-width: 768px) {
       width: 100%;

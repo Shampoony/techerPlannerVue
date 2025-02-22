@@ -465,3 +465,4 @@ const pageImages = ref([
 
 onMounted(() => {})
 </script>
+<style scoped></style>
