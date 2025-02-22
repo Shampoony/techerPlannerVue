@@ -7,38 +7,54 @@ const vCalendarMonth = () => import('@/components/calendar/v-calendar-month.vue'
 const VonBoardingHome = () => import('@/components/onboardingPage/vonBoardingHome.vue')
 const vOnboardingStart = () => import('@/components/onboardingPage/v-onboarding-start.vue')
 
+/* Календарь */
+const calendarRoutes = [
+  {
+    path: '',
+    name: 'home',
+    component: vCalendarMonth,
+  },
+  {
+    path: 'day',
+    name: 'calendar-day',
+    component: VCalendarDay,
+  },
+  {
+    path: 'week',
+    name: 'calendar-week',
+    component: VCalendarWeek,
+  },
+]
+
+const onBoardingRoutes = [
+  {
+    path: 'guide',
+    name: 'onboarding_home',
+    component: VonBoardingHome,
+  },
+  {
+    path: '',
+    name: 'onboarding',
+    component: vOnboardingStart,
+  },
+]
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/calendar',
-      name: 'home',
-      component: vCalendarMonth,
+      path: '/calendar/',
+      children: calendarRoutes,
     },
+
     {
-      path: '/calendar/test',
-      name: 'test',
-      component: Test,
-    },
-    {
-      path: '/calendar/day',
-      name: 'calendar-day',
-      component: VCalendarDay,
-    },
-    {
-      path: '/calendar/week',
-      name: 'calendar-week',
-      component: VCalendarWeek,
-    },
-    {
-      path: '/onboarding/',
+      path: '/onboarding/guide',
       name: 'onboarding_home',
       component: VonBoardingHome,
     },
     {
-      path: '/',
-      name: 'onboarding',
-      component: vOnboardingStart,
+      path: '/onboarding/',
+      children: onBoardingRoutes,
     },
   ],
 })

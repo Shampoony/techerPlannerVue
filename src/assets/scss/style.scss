@@ -21,7 +21,7 @@ body:has(.gradient) {
 }
 
 body:has(.white-page) {
-  background-color: var(--white);
+  background-color: var(--white) !important;
 }
 
 .night__mode {
@@ -102,7 +102,7 @@ body {
   flex-direction: column;
 }
 
-.wrapper:has(.mob-page) {
+.wrapper:has(.mob-page, .white-page) {
   background-color: var(--white);
 }
 .night__mode .wrapper {

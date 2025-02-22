@@ -1,69 +1,74 @@
 <template>
-  <div class="v-onboarding-home white-page onboarding" :class="{ mob: isMobileRef.isMobile }">
-    <router-link :to="{ name: 'home' }" class="onboarding-close">
-      <img src="/src/assets/images/cross.svg" alt="" />
-    </router-link>
-    <div class="v-onboarding-home__container container">
-      <div v-if="isMobileRef.isMobile">
-        <div class="onboarding__block">
-          <div class="onboarding__title">{{ currentPageTitle }}</div>
-          <p class="onboarding__pages">
-            {{ activeIndex + 1 }}/{{ pageImages[currentPage].images.length }}
-          </p>
-        </div>
-        <div class="onboarding__pagination">
-          <span
-            class="onboarding__pagination-bullet"
-            v-for="(slide, index) in pageImages[currentPage].images"
-            :key="slide.id"
-            :class="{ active: index === activeIndex }"
-          ></span>
+  <div class="wrapper">
+    <main class="v-onboarding-home white-page onboarding" :class="{ mob: isMobileRef.isMobile }">
+      <router-link :to="{ name: 'home' }" class="onboarding-close">
+        <img src="/src/assets/images/cross.svg" alt="" />
+      </router-link>
+      <div class="onboarding__container container" v-if="!isMobileRef.isMobile">
+        <div class="onboarding__holder">
+          <swiper
+            v-if="!isLoading"
+            :key="swiperKey"
+            :modules="modules"
+            class="onboardingSwiper"
+            @swiper="onSwiper"
+            @slideChange="onSlideChange"
+            @touchEnd="onTouchEnd"
+          >
+            <swiper-slide
+              v-for="slide in pageImages[currentPage].images"
+              :key="slide.id"
+              @click="handleClick"
+            >
+              <img :src="slide.image" alt="" />
+            </swiper-slide>
+            <button
+              class="swiper-button-prev onboarding__button-prev"
+              @click="prevSlide"
+              v-if="!isMobileRef.isMobile"
+            >
+              <img src="../../assets/images/arrow-back.svg" alt="" />
+              <span>Назад</span>
+            </button>
+          </swiper>
+
+          <div class="onboarding__content">
+            <div>
+              <div class="onboarding__block">
+                <div class="onboarding__title">{{ currentPageTitle }}</div>
+                <p class="onboarding__pages">
+                  {{ activeIndex + 1 }}/{{ pageImages[currentPage].images.length }}
+                </p>
+              </div>
+              <div class="onboarding__pagination">
+                <span
+                  class="onboarding__pagination-bullet"
+                  v-for="(slide, index) in pageImages[currentPage].images"
+                  :key="slide.id"
+                  :class="{ active: index === activeIndex }"
+                ></span>
+              </div>
+            </div>
+            <div
+              class="onboarding__buttons"
+              v-if="
+                currentPage === pageImages.length - 1 &&
+                activeIndex === pageImages[currentPage].images.length - 1
+              "
+            >
+              <router-link to="/home-teacher" class="onboarding__finish onboarding-button"
+                >Завершить гайд</router-link
+              >
+            </div>
+            <div class="onboarding__buttons" v-else>
+              <div class="onboarding__next onboarding-button" @click="nextSlide">Далее</div>
+              <div class="onboarding__page-button" @click="nextPage">Следующая страница</div>
+            </div>
+          </div>
         </div>
       </div>
-      <swiper
-        v-if="!isLoading"
-        :key="swiperKey"
-        :modules="modules"
-        class="onboardingSwiper"
-        @swiper="onSwiper"
-        @slideChange="onSlideChange"
-        @touchEnd="onTouchEnd"
-      >
-        <swiper-slide
-          v-for="slide in pageImages[currentPage].images"
-          :key="slide.id"
-          @click="handleClick"
-        >
-          <img :src="slide.image" alt="" />
-        </swiper-slide>
-        <button
-          class="swiper-button-prev onboarding__button-prev"
-          @click="prevSlide"
-          v-if="!isMobileRef.isMobile"
-        >
-          <img src="../../assets/images/arrow-back.svg" alt="" />
-          <span>Назад</span>
-        </button>
-      </swiper>
-
-      <div class="onboarding__content mob" v-if="isMobileRef.isMobile">
-        <h1
-          class="onboarding__title"
-          v-if="pageImages[currentPage].images[activeIndex]"
-          v-html="pageImages[currentPage].images[activeIndex].title"
-        ></h1>
-        <p
-          class="onboarding__subtitle"
-          v-if="pageImages[currentPage].images[activeIndex]"
-          v-html="pageImages[currentPage].images[activeIndex].subtitle"
-        ></p>
-        <div class="onboarding__buttons">
-          <div class="onboarding__next onboarding-button" @click="nextSlide">Далее</div>
-          <div class="onboarding__page-button" @click="nextPage">Следующая страница</div>
-        </div>
-      </div>
-
-      <div class="onboarding__content" v-if="!isMobileRef.isMobile">
+      <!-- мобильнаня версия -->
+      <div class="onboarding__container container" v-if="isMobileRef.isMobile">
         <div>
           <div class="onboarding__block">
             <div class="onboarding__title">{{ currentPageTitle }}</div>
@@ -80,12 +85,60 @@
             ></span>
           </div>
         </div>
-        <div class="onboarding__buttons">
-          <div class="onboarding__next onboarding-button" @click="nextSlide">Далее</div>
-          <div class="onboarding__page-button" @click="nextPage">Следующая страница</div>
+        <swiper
+          v-if="!isLoading"
+          :key="swiperKey"
+          :modules="modules"
+          class="onboardingSwiper"
+          @swiper="onSwiper"
+          @slideChange="onSlideChange"
+          @touchEnd="onTouchEnd"
+        >
+          <swiper-slide
+            v-for="slide in pageImages[currentPage].images"
+            :key="slide.id"
+            @click="handleClick"
+          >
+            <img :src="slide.image" alt="" />
+          </swiper-slide>
+          <button
+            class="swiper-button-prev onboarding__button-prev"
+            @click="prevSlide"
+            v-if="!isMobileRef.isMobile"
+          >
+            <img src="../../assets/images/arrow-back.svg" alt="" />
+            <span>Назад</span>
+          </button>
+        </swiper>
+        <div class="onboarding__content mob">
+          <h1
+            class="onboarding__title"
+            v-if="pageImages[currentPage].images[activeIndex]"
+            v-html="pageImages[currentPage].images[activeIndex].title"
+          ></h1>
+          <p
+            class="onboarding__subtitle"
+            v-if="pageImages[currentPage].images[activeIndex]"
+            v-html="pageImages[currentPage].images[activeIndex].subtitle"
+          ></p>
+          <div
+            class="onboarding__buttons"
+            v-if="
+              pageImages &&
+              currentPage === pageImages.length - 1 &&
+              activeIndex === pageImages[currentPage].images.length - 1
+            "
+          >
+            <div class="onboarding__finish onboarding-button">Завершить гайд</div>
+          </div>
+          <div class="onboarding__buttons" v-else>
+            <div class="onboarding__next onboarding-button" @click="nextSlide">Далее</div>
+            <div class="onboarding__page-button" @click="nextPage">Следующая страница</div>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
+    <v-footer />
   </div>
 </template>
 <script setup>
@@ -95,7 +148,8 @@ import 'swiper/css/pagination'
 import { Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { useIsMobile } from '@/composables/useIsMobile'
-import { is } from 'date-fns/locale'
+
+import vFooter from '../generalComponents/v-footer.vue'
 
 const images = import.meta.glob('@/assets/images/onboarding/**/*', { eager: true })
 
@@ -165,7 +219,7 @@ const prevPage = async () => {
   }
   await resetSwiper()
   currentPage.value = Math.max(0, currentPage.value - 1)
-  activeIndex.value = 0
+  activeIndex.value = pageImages.value[currentPage.value].images.length - 1 // Устанавливаем последний слайд
   currentPageTitle.value = pageImages.value[currentPage.value].title
 }
 
@@ -178,7 +232,6 @@ const prevSlide = () => {
 }
 
 const handleClick = (event) => {
-  console.log('кликнули')
   if (!swiperInstance.value) return
 
   const slideWidth = event.currentTarget.clientWidth
