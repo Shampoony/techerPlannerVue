@@ -32,7 +32,7 @@
     }
     @media (max-width: 768px) {
       flex-direction: column;
-      padding: 45px 24px 15px;
+      padding: 0 24px 15px !important;
     }
   }
   &__holder {
