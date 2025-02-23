@@ -129,7 +129,7 @@
               activeIndex === pageImages[currentPage].images.length - 1
             "
           >
-            <div class="onboarding__finish onboarding-button">Завершить гайд</div>
+            <a href="/home-teacher" class="onboarding__finish onboarding-button">Завершить гайд</a>
           </div>
           <div class="onboarding__buttons" v-else>
             <div class="onboarding__next onboarding-button" @click="nextSlide">Далее</div>

@@ -4,6 +4,9 @@
 
   .swiper-slide img {
     aspect-ratio: 460 / 330;
+    @media (max-width: 768px) {
+      aspect-ratio: auto 409 / 749;
+    }
   }
 }
 
