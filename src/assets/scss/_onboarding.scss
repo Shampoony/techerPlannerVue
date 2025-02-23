@@ -1,6 +1,10 @@
 .onboardingSwiper {
   max-width: 764px;
   margin: 0 !important;
+
+  .swiper-slide img {
+    aspect-ratio: 460 / 330;
+  }
 }
 
 .onboarding-button {
