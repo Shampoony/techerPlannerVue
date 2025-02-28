@@ -1,4 +1,5 @@
 import Test from '@/components/calendar/test.vue'
+import VCalendarIndex from '@/components/calendar/v-calendar-index.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const VCalendarDay = () => import('@/components/calendar/v-calendar-day.vue')
@@ -12,7 +13,7 @@ const calendarRoutes = [
   {
     path: '',
     name: 'home',
-    component: vCalendarMonth,
+    component: VCalendarIndex,
   },
   {
     path: 'day',

@@ -405,6 +405,7 @@ const isMonthEmpty = computed(() => {
 onMounted(() => {
   setLessonsOnDate()
   localStorage.setItem('upd', 1)
+  localStorage.setItem('activePage', 'month')
   activeDay.value = JSON.parse(localStorage.getItem('activeDay')) || []
 })
 </script>

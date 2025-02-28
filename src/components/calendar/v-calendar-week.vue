@@ -502,6 +502,7 @@ onMounted(() => {
   setLessonsFromUrl().then(() => {
     loadEvents(dayOfTheWeek.value)
   })
+  localStorage.setItem('activePage', 'week')
 })
 </script>
 

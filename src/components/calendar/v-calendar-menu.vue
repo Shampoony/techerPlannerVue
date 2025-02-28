@@ -290,11 +290,11 @@ const emit = defineEmits([
 const showBreakInput = ref(localStorage.getItem('breakMode'))
 
 const startDate = ref({})
+const monthInput = ref()
 
 const today = new Date()
 const selectedMonth = ref(`${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`)
 const selectedYear = ref(selectedMonth.value.slice(0, 4))
-const monthInput = ref()
 
 const selectedMonthName = ref()
 
@@ -342,6 +342,7 @@ const updateQueryParam = () => {
 const paginateMonth = (type) => {
   let month = parseInt(selectedMonth.value.split('-')[1])
   let year = parseInt(selectedYear.value)
+
   if (type == 'next') {
     if (month === 12) {
       month = 1
@@ -405,6 +406,7 @@ const changeBreakMode = () => {
 }
 const onMonthSelect = (modelData) => {
   monthInput.value = modelData
+  selectedMonth.value = `${modelData.year}-${modelData.month + 1}`
 
   emit('setMonth', modelData)
 }
