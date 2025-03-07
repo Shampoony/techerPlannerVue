@@ -62,7 +62,13 @@
             </div>
             <div class="onboarding__buttons" v-else>
               <div class="onboarding__next onboarding-button" @click="nextSlide">Далее</div>
-              <div class="onboarding__page-button" @click="nextPage">Следующая страница</div>
+              <div
+                class="onboarding__page-button"
+                :class="{ unactive: !isLastSlide }"
+                @click="nextPage"
+              >
+                Следующая страница
+              </div>
             </div>
           </div>
         </div>
@@ -142,18 +148,21 @@
   </div>
 </template>
 <script setup>
-import { ref, nextTick, onMounted } from 'vue'
 import 'swiper/css'
 import 'swiper/css/pagination'
+import { useRoute } from 'vue-router'
 import { Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { useIsMobile } from '@/composables/useIsMobile'
+import { ref, nextTick, onMounted, computed } from 'vue'
 
 import vFooter from '../generalComponents/v-footer.vue'
 
 const images = import.meta.glob('@/assets/images/onboarding/**/*', { eager: true })
 
 const modules = ref([Pagination])
+
+const route = useRoute()
 
 const swiperKey = ref(0)
 const activeIndex = ref(0)
@@ -204,23 +213,25 @@ const resetSwiper = async () => {
 }
 
 const nextPage = async () => {
-  if (!pageImages.value[currentPage.value + 1]) {
+  const nextPage = pageImages.value[parseInt(currentPage.value) + 1]
+  if (!nextPage || !isLastSlide.value) {
     return
   }
   await resetSwiper()
+  currentPageTitle.value = nextPage.title
   currentPage.value += 1
+  await nextTick() // Убедиться, что Vue обновил DOM
   activeIndex.value = 0
-  currentPageTitle.value = pageImages.value[currentPage.value].title
 }
 
 const prevPage = async () => {
   if (!pageImages.value[currentPage.value - 1]) {
     return
   }
-  await resetSwiper()
   currentPage.value = Math.max(0, currentPage.value - 1)
   activeIndex.value = pageImages.value[currentPage.value].images.length - 1 // Устанавливаем последний слайд
   currentPageTitle.value = pageImages.value[currentPage.value].title
+  swiperInstance.value.slideTo(activeIndex.value)
 }
 
 const prevSlide = () => {
@@ -260,7 +271,7 @@ const pageImages = ref([
     images: [
       {
         id: 1,
-        image: getImagePath('home/home-1.jpg'),
+        image: getImagePath('home/home-1.jpeg'),
         title: 'Ваш зарабаток',
         subtitle:
           'Выберите период (например, месяц) чтобы увидеть статистику загруженности и ваш средний чек',
@@ -463,6 +474,15 @@ const pageImages = ref([
   },
 ])
 
-onMounted(() => {})
+const isLastSlide = computed(() => {
+  const page = pageImages.value[parseInt(currentPage.value)]
+  return activeIndex.value == page.images.length - 1
+})
+
+onMounted(() => {
+  currentPage.value = parseInt(route.query['page']) || 0
+  activeIndex.value = parseInt(route.query['slide']) || 0
+  currentPageTitle.value = pageImages.value[currentPage.value].title
+})
 </script>
 <style scoped></style>

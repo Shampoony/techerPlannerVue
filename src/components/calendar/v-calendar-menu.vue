@@ -7,12 +7,14 @@
             :to="{ name: 'calendar-week' }"
             class="v-calendar-menu__picker-item picker__item"
             :class="{ active: type === 'week' }"
+            @click="setViewType('week')"
             >Неделя</router-link
           >
           <router-link
             :to="{ name: 'home' }"
             class="v-calendar-menu__picker-item picker__item"
             :class="{ active: type === 'month' }"
+            @click="setViewType('month')"
             >Месяц</router-link
           >
         </div>
@@ -211,12 +213,14 @@
             :to="{ name: 'calendar-week' }"
             class="v-calendar-menu__picker-item picker__item"
             :class="{ active: type === 'week' }"
+            @click="setViewType('week')"
             >Неделя</router-link
           >
           <router-link
             :to="{ name: 'home' }"
             class="v-calendar-menu__picker-item picker__item"
             :class="{ active: type === 'month' }"
+            @click="setViewType('week')"
             >Месяц</router-link
           >
         </div>
@@ -341,7 +345,7 @@ const updateQueryParam = () => {
 
 const paginateMonth = (type) => {
   let month = parseInt(selectedMonth.value.split('-')[1])
-  let year = parseInt(selectedYear.value)
+  let year = parseInt(selectedMonth.value.split('-')[0])
 
   if (type == 'next') {
     if (month === 12) {
@@ -350,7 +354,7 @@ const paginateMonth = (type) => {
     } else {
       month += 1
     }
-  } else {
+  } else if (type === 'prev') {
     if (month === 1) {
       month = 12
       year -= 1
@@ -395,7 +399,34 @@ const onWeekSelect = (modelData) => {
   emit('setWeek', modelData[0].toLocaleDateString('ru-RU'))
 }
 
+const checkWeek = () => {
+  const queryParams = route.query
+  if (queryParams.start_date) {
+    const date = queryParams['start_date'].replace(/\./g, '-') // Меняем точки на дефисы для правильного парсинга
+
+    // Форматируем строку в объект Date
+    const formattedDate = new Date(date.split('-').reverse().join('-'))
+    const options = { day: 'numeric', month: 'long' }
+
+    // Формируем дату начала недели
+    weekStart.value = formattedDate.toLocaleDateString('ru-RU', options)
+
+    // Добавляем 7 дней для вычисления даты конца недели
+    const endDate = new Date(formattedDate)
+    endDate.setDate(formattedDate.getDate() + 7)
+    weekEnd.value = endDate.toLocaleDateString('ru-RU', options)
+
+    // Устанавливаем startDate для выбора недели
+    startDate.value = [formattedDate, endDate]
+  }
+}
+
 /* ================= Общие ================= */
+
+const setDateFromUrl = () => {
+  checkMonth()
+  checkWeek()
+}
 
 const toggleModals = (modalName) => {
   modals.value[modalName] = !modals.value[modalName]
@@ -409,6 +440,38 @@ const onMonthSelect = (modelData) => {
   selectedMonth.value = `${modelData.year}-${modelData.month + 1}`
 
   emit('setMonth', modelData)
+}
+
+const checkMonth = () => {
+  if (route.query.selected_date) {
+    const [month, year] = route.query.selected_date.split('.').map(Number)
+    selectedMonthName.value = getMonthByIndex(month - 1)
+
+    if (!isNaN(month) && !isNaN(year)) {
+      monthInput.value = { month: month - 1, year: year }
+    }
+  } else if (!route.query.selected_date) {
+    const month = new Date().getMonth()
+    const year = new Date().getFullYear()
+    selectedMonthName.value = getMonthByIndex(month - 1)
+
+    if (!isNaN(month) && !isNaN(year)) {
+      monthInput.value = { month: month, year: year }
+    }
+  }
+}
+
+const checkIsModalFromUrl = () => {
+  if (route.query['modal'] === 'modal_add') {
+    modals.value.lessons = true
+    const { modal, ...newQuery } = route.query
+    router.replace({ query: newQuery })
+  }
+}
+
+const setViewType = (viewType) => {
+  console.log('Ллалав')
+  localStorage.setItem('activePage', viewType)
 }
 
 const updateWeekFromUrl = () => {
@@ -438,32 +501,7 @@ const prevAction = computed(() => {
   return props.type === 'month' ? () => paginateMonth('prev') : () => paginateWeek('prev')
 })
 onMounted(() => {
-  const queryParams = route.query
-  if (queryParams.start_date) {
-    const date = queryParams['start_date'].replace(/\./g, '-') // Меняем точки на дефисы для правильного парсинга
-
-    // Форматируем строку в объект Date
-    const formattedDate = new Date(date.split('-').reverse().join('-'))
-    const options = { day: 'numeric', month: 'long' }
-
-    // Формируем дату начала недели
-    weekStart.value = formattedDate.toLocaleDateString('ru-RU', options)
-
-    // Добавляем 7 дней для вычисления даты конца недели
-    const endDate = new Date(formattedDate)
-    endDate.setDate(formattedDate.getDate() + 7)
-    weekEnd.value = endDate.toLocaleDateString('ru-RU', options)
-
-    // Устанавливаем startDate для выбора недели
-    startDate.value = [formattedDate, endDate]
-  }
-  if (route.query.selected_date) {
-    const [month, year] = route.query.selected_date.split('.').map(Number)
-    selectedMonthName.value = getMonthByIndex(month - 1)
-
-    if (!isNaN(month) && !isNaN(year)) {
-      monthInput.value = { month: month - 1, year: year }
-    }
-  }
+  setDateFromUrl()
+  checkIsModalFromUrl()
 })
 </script>

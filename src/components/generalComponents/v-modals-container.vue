@@ -34,7 +34,11 @@ import vChangeModal from '../modals/v-change-modal.vue'
 import vTransferModal from '../modals/v-transfer-modal.vue'
 import vButtonsModal from '../modals/calendar/v-buttons-modal.vue'
 import vDeleteLessonModal from '../modals/calendar/v-delete-lesson-modal.vue'
-import { ref, defineExpose } from 'vue'
+
+import { ref, defineExpose, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 
 const toggleLessonModals = (modalName, lesson = null) => {
   if (lesson) {
@@ -42,14 +46,18 @@ const toggleLessonModals = (modalName, lesson = null) => {
   }
   modals.value[modalName] = !modals.value[modalName]
 }
+
 const modals = ref({
   buttons: false,
   delete_lesson: false,
   transfer_lesson: false,
   change_lesson: false,
 })
+
 const pickedLesson = ref({})
 defineExpose({
   toggleLessonModals,
 })
+
+onMounted(() => [])
 </script>

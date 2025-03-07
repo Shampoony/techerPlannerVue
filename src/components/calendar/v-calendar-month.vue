@@ -98,8 +98,8 @@
                 >
                   <td
                     class="calendar-row__item"
-                    :class="{ active: weekIndex == activeDay[0] && i == activeDay[1] }"
-                    @click="toggleActiveDay(weekIndex, i)"
+                    :class="{ active: week[i]?.day === activeDay }"
+                    @click="toggleActiveDay(week[i]?.day)"
                     v-for="i in 7"
                     :key="i"
                   >
@@ -245,7 +245,7 @@ const route = useRoute()
 
 const monthLessons = ref({})
 
-const activeDay = ref([])
+const activeDay = ref()
 
 const draggedItem = ref()
 
@@ -260,11 +260,8 @@ const getDateOfDay = (day) => {
   return `${String(day).padStart(2, 0)}.${date}`
 }
 
-const toggleActiveDay = (weekIndex, day) => {
-  activeDay.value[0] = parseInt(weekIndex)
-  activeDay.value[1] = day
-
-  localStorage.setItem('activeDay', JSON.stringify(activeDay.value))
+const toggleActiveDay = (day) => {
+  activeDay.value = day
 }
 
 const handleDragStart = (event, lesson, rowIndex, columnIndex, lessonIndex) => {
@@ -365,7 +362,11 @@ const setLessonsOnDate = () => {
     currentMonth.value = queryParams['selected_date'].split('.')[0]
     currentYear.value = queryParams['selected_date'].split('.')[1]
   } else {
-    window.location.search = `?selected_date=${String(currentMonth.value).padStart(2, 0)}.${currentYear.value}`
+    router.push({
+      query: {
+        selected_date: `${String(currentMonth.value).padStart(2, '0')}.${currentYear.value}`,
+      },
+    })
   }
 
   getLessonsOnMonth(currentYear.value, parseInt(currentMonth.value)).then((lessons) => {
@@ -375,10 +376,15 @@ const setLessonsOnDate = () => {
 /* computed */
 
 const activeDayLessons = computed(() => {
-  if (activeDay.value.length && monthLessons.value.schedule) {
-    const value = monthLessons.value.schedule[activeDay.value[0]]
+  if (activeDay.value && monthLessons.value.schedule) {
+    const value = Object.values(monthLessons.value.schedule).flatMap((week) =>
+      Object.values(week).filter((day) => {
+        return day.day == activeDay.value
+      }),
+    )
+    console.log()
     if (value) {
-      return value[activeDay.value[1]]
+      return value[0]
     }
   }
   return null
@@ -406,6 +412,7 @@ onMounted(() => {
   setLessonsOnDate()
   localStorage.setItem('upd', 1)
   localStorage.setItem('activePage', 'month')
-  activeDay.value = JSON.parse(localStorage.getItem('activeDay')) || []
+  const today = new Date()
+  activeDay.value = JSON.parse(today.getDate()) || []
 })
 </script>

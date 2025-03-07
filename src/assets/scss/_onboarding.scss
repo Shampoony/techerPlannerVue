@@ -115,6 +115,9 @@
   &__page-button {
     background-color: #e6ebf8;
     color: #1d4ecc;
+    &.unactive {
+      color: rgba($color: #1d4ecc, $alpha: 0.5);
+    }
   }
   &__button-prev {
     background-color: #e6ebf8;
