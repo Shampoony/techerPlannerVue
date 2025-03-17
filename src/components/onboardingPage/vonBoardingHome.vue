@@ -56,8 +56,8 @@
                 activeIndex === pageImages[currentPage].images.length - 1
               "
             >
-              <router-link to="/home-teacher" class="onboarding__finish onboarding-button"
-                >Завершить гайд</router-link
+              <a href="/home-teacher" class="onboarding__finish onboarding-button"
+                >Завершить гайд</a
               >
             </div>
             <div class="onboarding__buttons" v-else>
@@ -271,7 +271,7 @@ const pageImages = ref([
     images: [
       {
         id: 1,
-        image: getImagePath('home/home-1.jpeg'),
+        image: getImagePath('home/home-1.jpg'),
         title: 'Ваш зарабаток',
         subtitle:
           'Выберите период (например, месяц) чтобы увидеть статистику загруженности и ваш средний чек',

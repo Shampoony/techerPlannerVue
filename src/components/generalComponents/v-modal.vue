@@ -38,6 +38,10 @@ const close = () => {
   store.decrement()
 }
 
+defineExpose({
+  close,
+})
+
 onMounted(() => {
   store.increment()
 })

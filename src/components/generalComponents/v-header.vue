@@ -71,7 +71,7 @@
     </div>
   </header>
   <transition name="fade">
-    <v-modal
+    <!--  <v-modal
       :class="{ 'show-modal': modals['burgerModal'] }"
       :id="'burgerModal'"
       v-if="modals.burgerModal"
@@ -152,11 +152,19 @@
           </div>
         </div>
       </div>
-    </v-modal>
+    </v-modal> -->
+
+    <v-burger-modal
+      :class="{ 'show-modal': modals['burgerModal'] }"
+      :id="'burgerModal'"
+      v-if="modals.burgerModal"
+      @close="() => toggleModal('burgerModal')"
+    />
   </transition>
 </template>
 <script setup>
 import vModal from './v-modal.vue'
+import vBurgerModal from '../modals/v-burger-modal.vue'
 import vUserDrop from './v-user-drop.vue'
 import { onMounted, ref } from 'vue'
 
@@ -176,6 +184,7 @@ const switchMode = () => {
 }
 
 const toggleModal = (modalId) => {
+  console.log(modalId)
   modals.value[modalId] = !modals.value[modalId]
   console.log(modals.value[modalId], modalId)
 }

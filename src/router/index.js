@@ -1,12 +1,21 @@
-import Test from '@/components/calendar/test.vue'
-import VCalendarIndex from '@/components/calendar/v-calendar-index.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
+/* ================================================================== Импорты ================================================================== */
+
+/* Календарь */
 const VCalendarDay = () => import('@/components/calendar/v-calendar-day.vue')
 const VCalendarWeek = () => import('@/components/calendar/v-calendar-week.vue')
+const VCalendarIndex = () => import('@/components/calendar/v-calendar-index.vue')
 const vCalendarMonth = () => import('@/components/calendar/v-calendar-month.vue')
+
+/* Онбординг */
 const VonBoardingHome = () => import('@/components/onboardingPage/vonBoardingHome.vue')
 const vOnboardingStart = () => import('@/components/onboardingPage/v-onboarding-start.vue')
+
+/* Главная */
+const vHome = () => import('@/components/home/v-home.vue')
+
+/* ================================================================== Маршруты ================================================================== */
 
 /* Календарь */
 const calendarRoutes = [
@@ -27,6 +36,7 @@ const calendarRoutes = [
   },
 ]
 
+/* Онбординг */
 const onBoardingRoutes = [
   {
     path: 'guide',
@@ -37,6 +47,16 @@ const onBoardingRoutes = [
     path: '',
     name: 'onboarding',
     component: vOnboardingStart,
+  },
+]
+
+/* Главная учителя */
+
+const homeTeacherRoutes = [
+  {
+    path: '',
+    name: 'home_teacher',
+    component: vHome,
   },
 ]
 
@@ -56,6 +76,10 @@ const router = createRouter({
     {
       path: '/onboarding/',
       children: onBoardingRoutes,
+    },
+    {
+      path: '/home-teacher-test/',
+      children: homeTeacherRoutes,
     },
   ],
 })

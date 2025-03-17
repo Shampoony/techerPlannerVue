@@ -11,14 +11,15 @@ app.use(router)
 
 app.directive('click-outside', {
   beforeMount(el, binding) {
-    // Добавляем обработчик клика на сам элемент, чтобы не было его всплытия
-    el.addEventListener('click', (e) => e.stopPropagation())
-    // Добавляем обработчик клика по body, который вызывает переданную в директиву функцию
-    document.body.addEventListener('click', binding.value)
+    el.clickOutsideEvent = (event) => {
+      if (!(el === event.target || el.contains(event.target))) {
+        binding.value(event) // Вызываем переданную функцию
+      }
+    }
+    document.addEventListener('click', el.clickOutsideEvent)
   },
-  unmounted(el, binding) {
-    // Убираем обработчик события при удалении элемента
-    document.body.removeEventListener('click', binding.value)
+  unmounted(el) {
+    document.removeEventListener('click', el.clickOutsideEvent)
   },
 })
 

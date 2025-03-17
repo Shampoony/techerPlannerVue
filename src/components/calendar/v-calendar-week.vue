@@ -90,7 +90,10 @@
               <template #event="{ event }">
                 <div class="event" @click="toggleButtonsModal(event.data)">
                   <div class="event-header">
-                    <div class="calendar-card__content">
+                    <div
+                      class="calendar-card__content"
+                      :class="{ completed: event.data.completed }"
+                    >
                       <div class="calendar-card__lesson" :class="{ trial: event.data.trial }">
                         <p>{{ event.data.start_time }} - {{ event.data.end_time }}</p>
                         <p>{{ event.data.student_name }}</p>
@@ -277,8 +280,6 @@ const config = ref({
     const startDate = args.e.data.start.value.split('T')[0]
     const dayOfWeek = new Date(args.newStart.value).getDay()
 
-    console.log(dayOfWeek || 7)
-
     args.e.data.start_time = startTime.slice(0, 5)
     args.e.data.end_time = endTime.slice(0, 5)
 
@@ -325,7 +326,6 @@ const loadEvents = async (lessons) => {
       })
     }
   }
-  console.log(lessonsToEvent)
   events.value = lessonsToEvent
 }
 
@@ -353,7 +353,6 @@ const handleDrop = (event, targetColumnIndex) => {
     // Получаем список уроков из исходного и целевого столбцов
     const sourceLessons = dayOfTheWeek.value.week.days[fromColumnIndex].lessons
     const targetLessons = dayOfTheWeek.value.week.days[targetColumnIndex].lessons
-    console.log(weekDays.value)
     const targetDate = weekDays.value[targetColumnIndex].date
     const year = targetDate.getFullYear()
     const month = String(targetDate.getMonth() + 1).padStart(2, '0') // месяцы начинаются с 0
@@ -422,7 +421,6 @@ const isToday = (day) => {
 const toggleBreakMode = () => {
   breakMode.value = !breakMode.value
   localStorage.setItem('breakMode', breakMode.value)
-  console.log(dayOfTheWeek.value)
   loadEvents(dayOfTheWeek.value)
 }
 

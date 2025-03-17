@@ -11,7 +11,7 @@
             >Неделя</router-link
           >
           <router-link
-            :to="{ name: 'home' }"
+            to="/calendar"
             class="v-calendar-menu__picker-item picker__item"
             :class="{ active: type === 'month' }"
             @click="setViewType('month')"

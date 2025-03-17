@@ -7,8 +7,8 @@
       data-toggle="dropdown"
       aria-expanded="false"
     >
-      <img src="../../assets/images/user.svg" alt="" class="day-el" />
-      <img src="../../assets/images/user-night.svg" alt="" class="night-el" />
+      <img src="/src/assets/images/profile.svg" alt="" class="day-el" />
+      <img src="/src/assets/images/user-night.svg" alt="" class="night-el" />
     </button>
     <div class="v-user-drop__menu" v-if="isDropdownopen">
       <a class="v-user-drop__menu-item" href="">
