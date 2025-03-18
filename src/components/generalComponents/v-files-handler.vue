@@ -1,5 +1,5 @@
 <template>
-  <div class="v-file-handler" :data-instance-id="instanceId">
+  <div class="v-files-handler" :data-instance-id="instanceId">
     <!-- File upload input -->
     <input
       :id="`file-handler-input-${instanceId}`"
@@ -18,7 +18,7 @@
       :class="{ dragging: isDragging }"
     >
       <img src="/src/assets/images/file-upload.svg" alt="" />
-      <div class="v-files-handler__area-subtitle">
+      <div class="v-files-handler__drop-area-subtitle">
         <label :for="`file-handler-input-${instanceId}`">Загрузите файл </label>или перетащите в это
         поле
       </div>
@@ -214,72 +214,3 @@ defineExpose({
   instanceId,
 })
 </script>
-
-<style scoped>
-.hidden-input {
-  display: none;
-}
-
-.v-files-handler__drop-area {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  border: 2px dashed #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  margin-bottom: 16px;
-  transition: all 0.3s ease;
-}
-
-.v-files-handler__drop-area.dragging {
-  background-color: #e9e9e9;
-  border-color: #aaa;
-}
-
-.v-files-handler__area-subtitle {
-  margin-top: 8px;
-  color: #666;
-}
-
-.v-files-handler__area-subtitle label {
-  color: #1d4ecc;
-  cursor: pointer;
-}
-
-.v-files-handler__list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.v-files-handler__list-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.file__block {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.file__title {
-  margin: 0;
-  font-size: 14px;
-}
-
-.file-input {
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 4px;
-  background-color: #f0f0f0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-</style>

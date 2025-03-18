@@ -1,10 +1,12 @@
 <template>
   <div class="wrapper">
     <v-header-top />
-    <div class="wrapper__container">
+    <aside class="container">
       <v-pages-menu />
+    </aside>
+    <main class="main">
       <slot> </slot>
-    </div>
+    </main>
   </div>
 </template>
 <script setup>

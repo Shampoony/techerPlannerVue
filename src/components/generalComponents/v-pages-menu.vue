@@ -101,12 +101,28 @@
           <p class="v-pages-menu__notification">10</p>
         </div>
         <div class="v-pages-menu__button">
-          <img src="/src/assets/images//left-menu/notification.svg" alt="" />
+          <img src="/src/assets/images/left-menu/chat.svg" alt="" />
           Чат поддержки
         </div>
         <div class="v-pages-menu__button">
           <img src="/src/assets/images/left-menu/faq-icon.svg" alt="" />
-          Чат поддержки
+          FAQ
+        </div>
+      </div>
+
+      <div class="v-pages-menu__buttons flex-col">
+        <div class="blue-btn custom" @click="toggleModal('lesson')">
+          <div>
+            <img src="/src/assets/images/white-plus.svg" alt="" />
+          </div>
+          Занятие
+        </div>
+        <div class="trial-btn custom" @click="toggleModal('trial')">
+          <div>
+            <img src="/src/assets/images/green-plus.svg" alt="" />
+          </div>
+
+          Пробное занятие
         </div>
       </div>
     </div>
@@ -122,4 +138,26 @@
       </nav>
     </div>
   </div>
+
+  <transition name="fade">
+    <v-trial-modal v-if="modals.trial" @close="() => toggleModal('trial')" />
+  </transition>
+  <transition name="fade">
+    <v-lesson-modal v-if="modals.lesson" @close="() => toggleModal('lesson')" />
+  </transition>
 </template>
+<script setup>
+import { ref } from 'vue'
+
+import vTrialModal from '../modals/v-trial-modal.vue'
+import vLessonModal from '../modals/v-lesson-modal.vue'
+
+const modals = ref({
+  trial: false,
+  lesson: false,
+})
+
+const toggleModal = (modal) => {
+  modals.value[modal] = !modals.value[modal]
+}
+</script>

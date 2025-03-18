@@ -1,8 +1,8 @@
 <template>
   <v-base>
-    <main class="main">
-      <section class="v-home">
-        <div class="v-home__container container">
+    <section class="v-home">
+      <div class="container">
+        <div class="v-home__container layout">
           <div class="v-home__left">
             <div class="v-home__lesson">
               <div class="v-home__lesson-info">
@@ -212,8 +212,8 @@
           </div>
           <v-home-right />
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
   </v-base>
   <transition name="fade">
     <v-files-modal v-if="modals.files" @close="closeFilesModal" @saveFiles="handleSaveFiles" />

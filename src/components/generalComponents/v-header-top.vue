@@ -10,8 +10,8 @@
         </div>
 
         <div class="v-header-top__login">
-          <div class="switcher">
-            <input @change="switchMode" :checked="isNightMode" type="checkbox" />
+          <div class="switcher custom-switcher">
+            <input type="checkbox" @change="switchMode" :checked="isNightMode" />
           </div>
           <v-user-drop />
         </div>

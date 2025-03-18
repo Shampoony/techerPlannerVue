@@ -73,6 +73,14 @@ body {
   background-image: url('../images/night-icon-black.svg');
 }
 
+.layout {
+  margin-left: 350px;
+
+  @media (max-width: 1200px) {
+    margin-left: 0;
+  }
+}
+
 .container {
   max-width: 1920px;
   padding: 0 20px;
@@ -110,7 +118,11 @@ body {
 }
 
 .main {
-  margin-top: 34px;
+  margin-top: 100px;
+
+  @media (max-width: 1200px) {
+    margin-top: 34px;
+  }
 }
 
 .v-header-top + .main {
@@ -241,6 +253,12 @@ textarea {
   @media (max-width: 480px) {
     padding: 15px;
   }
+
+  &.custom {
+    color: #fff !important;
+
+    background-color: var(--custom-blue) !important;
+  }
 }
 
 .add-field {
@@ -333,10 +351,14 @@ textarea {
 .progress-bar {
   width: 100%;
   height: 5px;
-  background-color: var(--custom-black);
+  background-color: #e9eaeb;
   border-radius: 50px;
 
   margin: 10px 0;
+
+  .night__mode & {
+    background-color: var(--custom-black);
+  }
 
   &__completed {
     height: 100%;
@@ -752,7 +774,8 @@ header {
 }
 
 .v-header-top {
-  position: sticky;
+  position: fixed;
+  z-index: 101;
   top: 0;
   left: 0;
   width: 100%;
@@ -831,6 +854,28 @@ header {
   }
 }
 
+.custom-switcher {
+  width: 44px !important;
+  height: 24px !important;
+  top: 0 !important;
+  input[type='checkbox'] {
+    width: 44px !important;
+    height: 24px !important;
+    &::before {
+      background-image: url('../images/custom-sun.svg') !important;
+
+      width: 28px !important;
+      height: 28px !important;
+      left: 0 !important;
+    }
+    &:checked::before {
+      left: 15px !important;
+
+      background-image: url(../images/moon.svg) !important;
+    }
+  }
+}
+
 .switcher {
   width: 80px;
   height: auto;
@@ -875,7 +920,7 @@ header {
       border-radius: 50%;
       top: 0px;
       transform: scale(1.1);
-      transition: 0.5s;
+      transition: 0.3s;
       @media (max-width: 768px) {
         height: 20px;
         width: 20px;
@@ -1114,7 +1159,11 @@ header {
     background-color: #42b773;
   }
 
-  .night__mode & {
+  &.custom .button-plus {
+    color: #258d50 !important;
+  }
+
+  .night__mode &:not(.custom) {
     background-color: #fdf2b9;
     color: var(--white);
     border: none;
@@ -1142,6 +1191,12 @@ header {
   background-color: var(--white);
 
   font-size: 14px;
+
+  .custom & {
+    color: #fff !important;
+
+    background-color: transparent !important;
+  }
 }
 
 // Стилизация чекбокса
@@ -2779,11 +2834,13 @@ header {
 }
 
 .v-pages-menu {
-  position: sticky;
-  top: 20px;
+  padding-top: 60px;
+  position: fixed;
+  top: 0;
+  z-index: 100;
   background-color: var(--custom-white);
   width: 288px;
-  height: 938px;
+  height: 100vh;
 
   @media (max-width: 1200px) {
     display: none;
@@ -2809,11 +2866,15 @@ header {
     align-items: center;
     gap: 12px;
 
-    color: var(--black);
+    color: #1d4ecc;
     padding: 12px 0;
 
     cursor: pointer;
     position: relative;
+  }
+
+  .night__mode &__button {
+    color: var(--black);
   }
   &__notification {
     position: absolute;
@@ -2903,10 +2964,20 @@ header {
       height: 100%;
     }
   }
+  .blue-btn,
+  .trial-btn {
+    display: flex;
+    justify-content: center;
+    padding: 12px;
+
+    font-size: 17px;
+    font-weight: 700;
+  }
 }
 
 .v-pages-menu-mob {
   padding-top: 36px;
+  margin-top: 60px;
   display: none;
   @media (max-width: 1200px) {
     display: block;
@@ -2962,6 +3033,7 @@ header {
 }
 
 .v-files-modal {
+  background-color: var(--custom-black) !important;
   input[type='file'] {
     display: none;
   }
@@ -2998,11 +3070,27 @@ header {
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #e9eaeb;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .night__mode &__button:not(.blue-btn) {
+    background-color: var(--custom-dark-gray);
+    color: var(--black);
+  }
+
+  .night__mode & .blue-btn {
+    background-color: var(--custom-blue) !important;
+    color: #fff !important;
+    border-color: transparent;
   }
 }
 
 .v-files-handler {
   &__drop {
+    .night__mode &-area {
+      border-color: #ffffff14;
+    }
     &-area {
       width: 100%;
       padding: 16px;
@@ -3012,6 +3100,8 @@ header {
       flex-direction: column;
       justify-content: center;
 
+      gap: 20px;
+
       border-radius: 8px;
       border: 1px solid #e9eaeb;
 
@@ -3020,10 +3110,10 @@ header {
 
       &-subtitle {
         font-weight: 500;
-        color: #344055;
+        color: var(--custom-black-text);
       }
       label {
-        color: #1d4ecc;
+        color: var(--custom-blue);
       }
     }
   }
