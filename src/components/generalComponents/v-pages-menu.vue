@@ -93,36 +93,37 @@
           Корпоративные новости
         </a>
       </nav>
-
-      <div class="v-pages-menu__buttons">
-        <div class="v-pages-menu__button">
-          <img src="/src/assets/images/left-menu/notification.svg" alt="" />
-          Уведомления
-          <p class="v-pages-menu__notification">10</p>
-        </div>
-        <div class="v-pages-menu__button">
-          <img src="/src/assets/images/left-menu/chat.svg" alt="" />
-          Чат поддержки
-        </div>
-        <div class="v-pages-menu__button">
-          <img src="/src/assets/images/left-menu/faq-icon.svg" alt="" />
-          FAQ
-        </div>
-      </div>
-
-      <div class="v-pages-menu__buttons flex-col">
-        <div class="blue-btn custom" @click="toggleModal('lesson')">
-          <div>
-            <img src="/src/assets/images/white-plus.svg" alt="" />
+      <div class="flex flex-col gap-6">
+        <div class="v-pages-menu__buttons">
+          <div class="v-pages-menu__button">
+            <img src="/src/assets/images/left-menu/notification.svg" alt="" />
+            Уведомления
+            <p class="v-pages-menu__notification">10</p>
           </div>
-          Занятие
-        </div>
-        <div class="trial-btn custom" @click="toggleModal('trial')">
-          <div>
-            <img src="/src/assets/images/green-plus.svg" alt="" />
+          <div class="v-pages-menu__button">
+            <img src="/src/assets/images/left-menu/chat.svg" alt="" />
+            Чат поддержки
           </div>
+          <div class="v-pages-menu__button">
+            <img src="/src/assets/images/left-menu/faq-icon.svg" alt="" />
+            FAQ
+          </div>
+        </div>
 
-          Пробное занятие
+        <div class="v-pages-menu__buttons flex-col">
+          <div class="blue-btn custom" @click="toggleModal('lesson')">
+            <div>
+              <img src="/src/assets/images/white-plus.svg" alt="" />
+            </div>
+            Занятие
+          </div>
+          <div class="trial-btn custom" @click="toggleModal('trial')">
+            <div>
+              <img src="/src/assets/images/green-plus.svg" alt="" />
+            </div>
+
+            Пробное занятие
+          </div>
         </div>
       </div>
     </div>
