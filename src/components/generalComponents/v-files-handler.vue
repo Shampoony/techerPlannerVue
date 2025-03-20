@@ -75,10 +75,8 @@ const emit = defineEmits(['update:modelValue', 'file-added', 'file-removed'])
 // Внутреннее хранилище файлов с добавлением уникального идентификатора для каждого
 const internalFiles = ref([])
 
-// Функция добавления уникального идентификатора к файлам
 const addInstanceIdentifier = (files) => {
   return files.map((file) => {
-    // Создаем копию файла с добавлением уникального идентификатора
     return {
       ...file,
       uniqueId:
@@ -92,11 +90,9 @@ onMounted(() => {
   internalFiles.value = addInstanceIdentifier([...props.modelValue])
 })
 
-// Отслеживаем изменения в props.modelValue
 watch(
   () => props.modelValue,
   (newFiles) => {
-    // Добавляем уникальные идентификаторы только новым файлам
     const existingFileIds = new Set(internalFiles.value.map((f) => f.uniqueId))
     const newFilesWithId = addInstanceIdentifier(newFiles)
 
@@ -114,7 +110,6 @@ watch(
   { deep: true },
 )
 
-// Отслеживаем изменения во внутреннем хранилище и эмитим обновления
 watch(
   internalFiles,
   (newInternalFiles) => {

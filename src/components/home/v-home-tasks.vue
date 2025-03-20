@@ -17,11 +17,12 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import vHomeRightSecBase from './v-home-right-sec-base.vue'
 import vAddField from '../generalComponents/v-add-field.vue'
+import { getTeacherTasks } from '@/api/requests'
 
-const tasks = ref([{ id: 1, title: 'Оплата' }])
+const tasks = ref()
 const newTask = ref(null)
 
 const addTask = (value) => {
@@ -30,7 +31,16 @@ const addTask = (value) => {
     newTask.value = ''
   }
 }
+
+const fetchTeacherTasks = async () => {
+  const response = await getTeacherTasks()
+  tasks.value = response
+}
+
 const deleteTask = (task_id) => {
   tasks.value = tasks.value.filter((task) => task.id !== task_id)
 }
+onMounted(() => {
+  fetchTeacherTasks()
+})
 </script>

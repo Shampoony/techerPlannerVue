@@ -2,12 +2,20 @@
   <v-base>
     <section class="v-home">
       <div class="container">
-        <div class="v-home__container layout">
+        <div class="loader-container" v-show="isLoading">
+          <div class="loader"></div>
+        </div>
+
+        <div class="v-home__container layout" v-if="currentLesson && !isLoading">
           <div class="v-home__left">
             <div class="v-home__lesson">
               <div class="v-home__lesson-info">
                 <h1 class="v-home__lesson-title">
-                  Текущее занятие: <span>Елизавета 18:00 - 19:00</span>
+                  Текущее занятие:
+                  <span
+                    >{{ currentLesson.student_name }} {{ currentLesson.start_time }} -
+                    {{ currentLesson.end_time }}</span
+                  >
                 </h1>
                 <div class="flex gap-3">
                   <img
@@ -30,10 +38,17 @@
               </div>
               <div class="v-home__lesson-container">
                 <div class="v-home__lesson-block">
-                  <div class="v-home__lesson-problems v-home__lesson-sec">
+                  <div
+                    class="v-home__lesson-problems v-home__lesson-sec"
+                    v-if="previousProblems && previousProblems.length"
+                  >
                     <h2 class="v-home__subtitle subtitle">Проблемы прошлого занятия</h2>
                     <ul class="v-home__lesson-problems-list">
-                      <li class="v-home__lesson-problems-list-item problem">
+                      <li
+                        class="v-home__lesson-problems-list-item problem"
+                        v-for="problem in previousProblems"
+                        :key="problem.id"
+                      >
                         <div class="problem__close">
                           <img src="/src/assets/images/flash.svg" alt="" />
                         </div>
@@ -48,10 +63,11 @@
                     <ul class="v-home__lesson-themes-list">
                       <li
                         class="v-home__lesson-themes-list-item theme"
+                        :data-theme-id="theme.id"
                         v-for="theme in themes"
                         :key="theme.id"
                       >
-                        <span class="theme__title"> {{ theme.theme }} </span>
+                        <span class="theme__title"> {{ theme.name }} </span>
                         <div class="theme__close" @click="() => deleteTheme(theme.id)">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +98,7 @@
                       v-for="problem in currentProblems"
                       :key="problem.id"
                     >
-                      <span class="theme__title"> {{ problem.problem }} </span>
+                      <span class="theme__title"> {{ problem.problem_text }} </span>
                       <div class="theme__close" @click="() => deleteProblem(problem.id)">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -138,8 +154,9 @@
                     <!-- Заменяем блок со списком файлов на компонент v-file-handler -->
                     <v-files-handler
                       ref="fileHandler"
-                      v-model:internalFiles="filesList"
+                      :modelValue="filesList"
                       v-if="!noHomework"
+                      @file-removed="homeworkFileRemoved"
                     />
 
                     <div class="v-home__lesson-homework-deadline" v-if="!noHomework">
@@ -169,14 +186,24 @@
                             alt=""
                           />
                         </div>
-                        <button class="v-home__lesson-homework-button save">Сохранить</button>
+                        <button
+                          class="v-home__lesson-homework-button save"
+                          :class="{ unactive: !homeworkText.length }"
+                        >
+                          Сохранить
+                        </button>
                       </div>
                     </div>
                     <div class="flex items-center gap-3">
                       <input type="checkbox" id="no-homework" v-model="noHomework" />
                       <label for="no-homework">Без задания</label>
                     </div>
-                    <button class="v-home__lesson-homework-button save mob">Сохранить</button>
+                    <button
+                      class="v-home__lesson-homework-button save mob"
+                      :class="{ unactive: !homeworkText.length }"
+                    >
+                      Сохранить
+                    </button>
                   </div>
 
                   <div class="v-home__lesson-homework-prev" v-if="!newHomework">
@@ -205,6 +232,19 @@
                       @paste="handleTextPasteEvent"
                       placeholder="Ваш комментарий"
                     ></textarea>
+                    <div class="v-home__lesson-homework-footer">
+                      <div class="flex gap-2 items-center v-home__lesson-homework-mark">
+                        <span>Оценка</span>
+                        <v-styled-select :is-readonly="isHwCompleted" />
+                      </div>
+                      <button
+                        class="v-home__lesson-homework-button save"
+                        v-show="!isHwCompleted"
+                        :class="{ unactive: !homeworkText.length }"
+                      >
+                        Сохранить
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -221,7 +261,16 @@
 </template>
 <script setup>
 import { formatDate } from '@/utils'
-import { getCurrentLessons } from '@/api/requests'
+import {
+  deleteLessonProblem,
+  deleteLessonTopic,
+  getCurrentLessons,
+  getLessonProblems,
+  getLessonTopics,
+  getPreviousProblems,
+  setLessonProblems,
+  setLessonTopics,
+} from '@/api/requests'
 import { nextTick, onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue'
 import vBase from '../v-base.vue'
 import vHomeRight from './v-home-right.vue'
@@ -230,24 +279,31 @@ import VueDatePicker from '@vuepic/vue-datepicker'
 import vFilesModal from '../modals/v-files-modal.vue'
 import vAddField from '../generalComponents/v-add-field.vue'
 import vFilesHandler from '../generalComponents/v-files-handler.vue'
+import vStyledSelect from '../generalComponents/v-styled-select.vue'
 
 const filesList = ref([])
 const prevFilesList = ref([])
 const studentPrevFilesList = ref([])
 const fileHandler = ref(null)
-const themes = ref([{ id: 1, theme: 'Синусы' }])
-const currentProblems = ref([{ id: 1, problem: 'Не выполнено задание прошлого занятия' }])
+const themes = ref([])
+const currentProblems = ref([])
 const newTheme = ref(null)
 const deadline = ref(new Date())
 const prevDeadline = ref(new Date())
 const homeworkText = ref('')
-const currentLessons = ref([])
+const currentLesson = ref()
 const isKeyboardOpen = ref(false)
 const socket = null
 const notifications = ref([])
 const noHomework = ref(false)
 const nextLesson = ref(false)
+const isHwCompleted = ref(false)
 const newHomework = ref(true)
+
+const previousProblems = ref([])
+const lessonId = ref(null)
+
+const isLoading = ref(false)
 
 const modals = ref({
   files: false,
@@ -273,31 +329,52 @@ const toggleHomework = (value = true) => {
   newHomework.value = value
 }
 
-const deleteProblem = (deletedProblem) => {
+const deleteProblem = async (deletedProblem) => {
   currentProblems.value = currentProblems.value.filter((problem) => {
     return problem.id !== deletedProblem
   })
+  await deleteLessonProblem(deletedProblem)
 }
 
-const deleteTheme = (deletedTheme) => {
+const deleteTheme = async (deletedTheme) => {
   themes.value = themes.value.filter((theme) => {
     return theme.id !== deletedTheme
   })
+
+  await deleteLessonTopic(deletedTheme)
 }
 
-const submitTheme = (value) => {
+const submitTheme = async (value) => {
   if (value) {
     const maxId = themes.value.length > 0 ? Math.max(...themes.value.map((t) => t.id)) : 0
-    themes.value.push({ id: maxId + 1, theme: value })
+    themes.value.push({ id: maxId + 1, name: value })
+
+    const data = {
+      lesson_id: lessonId.value,
+      name: value,
+    }
+
+    await setLessonTopics(data)
+
+    fetchLessonTopics()
     newTheme.value = ''
   }
 }
 
-const submitProblem = (value) => {
+const submitProblem = async (value) => {
   if (value) {
+    console.log(value)
     const maxId =
       currentProblems.value.length > 0 ? Math.max(...currentProblems.value.map((p) => p.id)) : 0
-    currentProblems.value.push({ id: maxId + 1, problem: value })
+    currentProblems.value.push({ id: maxId + 1, problem_text: value })
+
+    const data = {
+      lesson_id: lessonId.value,
+      problems: [value],
+    }
+
+    await setLessonProblems(data)
+    fetchCurrentProblems()
   }
 }
 
@@ -315,12 +392,50 @@ const handleTextPasteEvent = (event) => {
 
 // Обработчик сохранения файлов из модального окна
 const handleSaveFiles = (files) => {
-  filesList.value = [...files]
+  filesList.value = [...files] // Обновляем состояние файлов
+  fileHandler.value.internalFiles = files // Явное обновление файлов в компоненте
+
+  // Принудительное обновление компонента через nextTick
+  nextTick(() => {
+    fileHandler.value?.$forceUpdate?.()
+  })
+
   closeFilesModal()
 }
 
 const loadCurrentLessons = async () => {
-  getCurrentLessons.value = await getCurrentLessons()
+  const lessons = await getCurrentLessons()
+  if (lessons.permanent_lessons.length) {
+    const [lesson_id, lesson] = Object.entries(lessons.permanent_lessons[0])[0]
+    currentLesson.value = lesson
+    lessonId.value = lesson_id
+  } else {
+    currentLesson.value = null
+  }
+}
+
+const fetchPreviousProblems = async () => {
+  const response = await getPreviousProblems(lessonId.value)
+  previousProblems.value = response
+}
+
+const fetchCurrentProblems = async () => {
+  const response = await getLessonProblems(lessonId.value)
+  currentProblems.value = response || []
+}
+
+const fetchLessonTopics = async () => {
+  const response = await getLessonTopics(lessonId.value)
+  themes.value = response
+}
+
+const loadData = async () => {
+  isLoading.value = true
+  await loadCurrentLessons()
+
+  await Promise.all([fetchCurrentProblems(), fetchLessonTopics(), fetchPreviousProblems()])
+
+  isLoading.value = false
 }
 
 const getNotifications = () => {
@@ -348,10 +463,16 @@ const getNotifications = () => {
   })
 }
 
+const homeworkFileRemoved = (file) => {
+  console.log(file, filesList.value)
+  filesList.value = filesList.value.filter((item) => item.id !== file.id)
+
+  console.log(filesList.value)
+}
+
 onMounted(() => {
   checkKeyboard()
-  getNotifications()
-  getCurrentLessons()
+  loadData()
 })
 
 onBeforeUnmount(() => {

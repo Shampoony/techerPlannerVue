@@ -1,16 +1,25 @@
 const domain_prod = 'https://api.teacherplanner.ru'
 const domain_test = 'https://test-api.teacherplanner.ru'
-
 const domain = domain_test
 import router from '@/router'
 import jsonOrder from 'json-order'
 
-async function makeGetRequest(endpoint) {
+// Общая функция для выполнения запросов
+async function makeRequest(endpoint, method = 'GET', body = null) {
   try {
-    const response = await fetch(`${domain}${endpoint}`, {
-      method: 'GET',
+    const options = {
+      method,
       credentials: 'include', // Important for all requests
-    })
+      headers: {},
+    }
+
+    if (body) {
+      options.headers['Content-Type'] = 'application/json'
+      options.body =
+        method === 'POST' || method === 'PUT' ? jsonOrder.stringify(body) : JSON.stringify(body)
+    }
+
+    const response = await fetch(`${domain}${endpoint}`, options)
 
     if (!response.ok) {
       const errorCode = response.status
@@ -18,15 +27,19 @@ async function makeGetRequest(endpoint) {
       throw new Error(`Код ошибки при запросе: ${errorCode}`)
     }
 
-    return await response.json()
+    return method === 'GET' ? await response.json() : response
   } catch (error) {
-    console.error(`Произошла ошибка при GET-запросе ${endpoint}:`, error)
+    console.error(`Произошла ошибка при ${method}-запросе ${endpoint}:`, error)
     throw error
   }
 }
 
-/*=================================================================== Учителя =============================================================== */
+// Существующий метод GET оставляем для обратной совместимости
+async function makeGetRequest(endpoint) {
+  return makeRequest(endpoint, 'GET')
+}
 
+/*=================================================================== Учителя =============================================================== */
 export async function getTeacherById(teacherId) {
   try {
     return await makeGetRequest(`/api/teachers/${teacherId}`)
@@ -44,7 +57,6 @@ export async function getMyInfo() {
 }
 
 /*=================================================================== Уроки =============================================================== */
-
 export async function getWeeks() {
   try {
     return await makeGetRequest('/api/weeks')
@@ -117,68 +129,147 @@ export async function getCurrentLessons() {
   }
 }
 
-/*=================================================================== Остальные методы без изменений =============================================================== */
+/* Пробелмы предыдущего занятяи */
 
+export async function getPreviousProblems(lesson_id) {
+  try {
+    return await makeGetRequest(`/api/lesson-last-problems/${lesson_id}`)
+  } catch (error) {
+    console.error('Произошла ошибка при получении списка проблем прошлого занятия', error)
+  }
+}
+
+/* Проблемы занятия */
+
+export async function getLessonProblems(lesson_id) {
+  try {
+    return await makeGetRequest(`/api/lesson-problems/${lesson_id}`)
+  } catch (error) {
+    console.error('Произошла ошибка при получении списка проблем урока', error)
+  }
+}
+
+export async function setLessonProblems(data) {
+  try {
+    return await makeRequest(`/api/create-lesson-problems`, 'POST', data)
+  } catch (error) {
+    console.error('Произошла ошибка при создании проблем урока', error)
+  }
+}
+
+export async function deleteLessonProblem(problem_id) {
+  try {
+    return await makeRequest(`/api/delete-problem/${problem_id}`, 'DELETE')
+  } catch (error) {
+    console.error('Произошла ошибка при удалении проблемы', error)
+  }
+}
+
+/* Домашние задания */
+
+export async function getLessonHomeWork(lesson_id) {
+  try {
+    return await makeGetRequest(`/api/lesson-homework/${lesson_id}`)
+  } catch (error) {
+    console.error('Произошла ошибка при получении списка домашних заданий урока', error)
+  }
+}
+
+export async function setLessonHomeWork(data) {
+  try {
+    return await makeRequest(`/api/create-homework`, 'POST', data)
+  } catch (error) {
+    console.error('Произошла ошибка при создании домашнего задания урока', error)
+  }
+}
+
+export async function deleteLessonHomework(homework_id) {
+  try {
+    return await makeRequest(`/api/delete-homework/${homework_id}`, 'DELETE')
+  } catch (error) {
+    console.error('Произошла ошибка при удалении домашнего задания', error)
+  }
+}
+
+/* Темы занятия */
+
+export async function getLessonTopics(lesson_id) {
+  try {
+    return await makeGetRequest(`/api/lesson-topics/${lesson_id}`)
+  } catch (error) {
+    console.error('Произошла ошибка при получении списка тем урока', error)
+  }
+}
+
+export async function setLessonTopics(data) {
+  try {
+    return await makeRequest(`/api/create-topic`, 'POST', data)
+  } catch (error) {
+    console.error('Произошла ошибка при создании проблем урока', error)
+  }
+}
+
+export async function deleteLessonTopic(topic_id) {
+  try {
+    return await makeRequest(`/api/delete-topic/${topic_id}`, 'DELETE')
+  } catch (error) {
+    console.error('Произошла ошибка при удалении проблемы', error)
+  }
+}
+
+/*=================================================================== Остальные методы с использованием общей функции =============================================================== */
 export async function deleteLessonById(lesson_id) {
   try {
-    const response = await fetch(`${domain}/api/lessons/${lesson_id}`, {
-      method: 'DELETE',
-      credentials: 'include', // ВАЖНО!
-    })
-    if (!response.ok) {
-      throw new Error(`Код ошибки при запросе: ${response.status}`)
-    } else {
-      router.go(0)
-    }
+    await makeRequest(`/api/lessons/${lesson_id}`, 'DELETE')
+    router.go(0)
   } catch (error) {
     console.error('Произошла ошибки при удалении урока', error)
   }
 }
 
+export async function getTeacherTasks() {
+  try {
+    await makeRequest(`/api/teacher-tasks`, 'GET')
+  } catch (error) {
+    console.error('Произошла ошибки при получении заданий учителя', error)
+  }
+}
+
+export async function setteacherTasks(data) {
+  try {
+    makeRequest(`/api/teacher-tasks`, 'POST', data)
+  } catch (error) {
+    console.error('Произошла ошибки при создании задач учителя', error)
+  }
+}
 export async function transferLesson(lesson_id, data, updateAfterTransfer = false) {
   try {
-    const response = await fetch(`${domain}/api/lessons/${lesson_id}`, {
-      method: 'PUT',
-      credentials: 'include', // ВАЖНО
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-
-    if (!response.ok) {
-      throw new Error(`Код ошибки при запросе: ${response.status}`)
-    } else {
-      if (updateAfterTransfer) {
-        router.go(0)
-      }
-      console.log('Запрос прошёл успешно')
+    const response = await makeRequest(`/api/lessons/${lesson_id}`, 'PUT', data)
+    if (updateAfterTransfer) {
+      router.go(0)
     }
-
+    console.log('Запрос прошёл успешно')
     return response
   } catch (error) {
     console.error('Произошла ошибки при переносе урока', error)
   }
 }
 
+export async function setTopic(data) {
+  try {
+    const response = await makeRequest('/api/create-topic/', 'POST', data)
+    console.log('Запрос прошёл успешно')
+    return response
+  } catch (error) {
+    console.error('Произошла ошибки при создании темы', error)
+  }
+}
+
 export async function setOneTimeLesson(data) {
   try {
     const requestData = data.requestBody || data
-    const response = await fetch(`${domain}/api/lesson-one-time`, {
-      method: 'POST',
-      credentials: 'include', // ВАЖНО
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonOrder.stringify(requestData),
-    })
-
-    if (!response.ok) {
-      throw new Error(`Код ошибки при запросе: ${response.status}`)
-    } else {
-      router.go(0)
-    }
-
+    const response = await makeRequest('/api/lesson-one-time', 'POST', requestData)
+    router.go(0)
     return response
   } catch (error) {
     console.error('Произошла ошибки при добавлении одноразового урока', error)
@@ -188,21 +279,8 @@ export async function setOneTimeLesson(data) {
 export async function setTrialLesson(data) {
   try {
     const requestData = data.requestBody || data
-    const response = await fetch(`${domain}/api/lesson-trial`, {
-      method: 'POST',
-      credentials: 'include', // ВАЖНО
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonOrder.stringify(requestData),
-    })
-
-    if (!response.ok) {
-      throw new Error(`Код ошибки при запросе: ${response.status}`)
-    } else {
-      router.go(0)
-    }
-
+    const response = await makeRequest('/api/lesson-trial', 'POST', requestData)
+    router.go(0)
     return response
   } catch (error) {
     console.error('Произошла ошибки при добавлении одноразового урока', error)
@@ -211,21 +289,8 @@ export async function setTrialLesson(data) {
 
 export async function setStableLesson(data) {
   try {
-    const response = await fetch(`${domain}/api/lessons`, {
-      method: 'POST',
-      credentials: 'include', // ВАЖНО
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonOrder.stringify(data),
-    })
-
-    if (!response.ok) {
-      throw new Error(`Код ошибки при запросе: ${response.status}`)
-    } else {
-      router.go(0)
-    }
-
+    const response = await makeRequest('/api/lessons', 'POST', data)
+    router.go(0)
     return response
   } catch (error) {
     console.error('Произошла ошибки при создании постоянного урока', error)
@@ -234,21 +299,8 @@ export async function setStableLesson(data) {
 
 export async function editRule(data) {
   try {
-    const response = await fetch(`${domain}/api/edit-rule`, {
-      method: 'PUT',
-      credentials: 'include', // ВАЖНО
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonOrder.stringify(data),
-    })
-
-    if (!response.ok) {
-      throw new Error(`Код ошибки при запросе: ${response.status}`)
-    } else {
-      router.go(0)
-    }
-
+    const response = await makeRequest('/api/edit-rule', 'PUT', data)
+    router.go(0)
     return response
   } catch (error) {
     console.error('Произошла ошибки при переносе урока', error)

@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <v-header-top />
-    <aside class="container">
+    <aside>
       <v-pages-menu />
     </aside>
     <main class="main">
