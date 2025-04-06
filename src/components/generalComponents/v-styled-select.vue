@@ -1,16 +1,15 @@
 <template>
-  <div
-    class="v-styled-select"
-    ref="selectContainer"
-    v-click-outside="() => (isDropdownMenu = false)"
-  >
+  <div class="v-styled-select" ref="selectContainer" v-click-outside="closeDropdown">
     <div
       class="v-styled-select__field"
       :class="{ readonly: isReadonly }"
       @click="toggleDropdownMenu"
     >
-      <input class="v-styled-select__value" type="text" v-model="value" readonly />
-      <div class="v-styled-select__image" :class="imageClass" v-if="!isReadonly">
+      <div class="v-styled-select__value">
+        <div v-if="isSvgValue" class="v-styled-select__icon" v-html="value.svg"></div>
+        <input class="" type="text" :value="inputValue" readonly />
+      </div>
+      <div class="v-styled-select__image" :class="imageClass" v-show="!isReadonly">
         <svg
           width="12"
           height="8"
@@ -28,7 +27,6 @@
         </svg>
       </div>
     </div>
-
     <transition name="fade">
       <ul
         class="v-styled-select__list"
@@ -42,7 +40,10 @@
           :key="index"
           @click="() => selectValue(item)"
         >
-          {{ item }}
+          <span v-if="typeof item === 'string' || typeof item === 'number'">
+            {{ item }}
+          </span>
+          <span v-else v-html="item.svg"></span>
         </li>
       </ul>
     </transition>
@@ -50,25 +51,53 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted, watch } from 'vue'
 
 const props = defineProps({
   items: {
     type: Array,
-    required: true,
+    required: false,
     default: () => [0, 1, 2, 3, 4, 5],
+  },
+  value: {
+    type: [Number, String],
   },
   isReadonly: {
     type: Boolean,
     default: false,
   },
+  defaultValue: {
+    type: [String, Number, Object],
+    default: null,
+  },
 })
 
-const value = ref(props.items[0])
+const emit = defineEmits(['update:modelValue'])
+
+const inputValue = computed(() => {
+  if (props.isReadonly && props.value) {
+    return props.value
+  } else {
+    return isSvgValue.value ? '' : value.value.text
+  }
+})
+// Функция для нормализации значения
+const normalizeValue = (val) => {
+  if (val === null || val === undefined) {
+    return typeof props.items[0] === 'object' ? props.items[0] : { text: props.items[0] }
+  }
+  return typeof val === 'object' ? val : { text: val }
+}
+
+const value = ref(normalizeValue(props.defaultValue))
+
 const isDropdownMenu = ref(false)
 const selectContainer = ref(null)
 const listRef = ref(null)
 const shouldOpenUp = ref(false)
+
+// Определяем, содержит ли текущее значение SVG
+const isSvgValue = computed(() => typeof value.value === 'object' && value.value.svg)
 
 // Определяем стили для списка (открытие вверх или вниз)
 const dropdownStyle = computed(() => ({
@@ -86,16 +115,21 @@ const imageClass = computed(() => ({
 const toggleDropdownMenu = async () => {
   if (props.isReadonly) return
   isDropdownMenu.value = !isDropdownMenu.value
-
   if (isDropdownMenu.value) {
     await nextTick()
     updateDropdownPosition()
   }
 }
 
+const closeDropdown = () => {
+  isDropdownMenu.value = false
+}
+
 // Выбираем значение
 const selectValue = (val) => {
-  value.value = val
+  const newValue = typeof val === 'object' ? val : { text: val }
+  value.value = newValue
+  emit('update:modelValue', newValue)
   isDropdownMenu.value = false
 }
 
@@ -117,4 +151,12 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', updateDropdownPosition)
 })
+
+// Следим за изменениями defaultValue
+watch(
+  () => props.defaultValue,
+  (newVal) => {
+    value.value = normalizeValue(newVal)
+  },
+)
 </script>

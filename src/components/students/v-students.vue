@@ -1,25 +1,344 @@
 <template>
   <v-base>
     <section class="v-students">
-      <div class="v-students__container container">
-        <div class="v-students__header">
-          <h1 class="v-students__title">Ученики</h1>
-          <div class="flex gap-3">
-            <button class="v-students__header-button">
-              <img src="/src/assets/images/upload-cloud.svg" alt="" />
-              <span> Массовове добавление учеников </span>
-            </button>
-            <button class="v-students__header-button">
-              <img src="/src/assets/images/plus-icon.svg" alt="" />
-              <span> Ученик </span>
-            </button>
+      <div class="container">
+        <div class="v-students__container layout">
+          <div class="v-students__header">
+            <div class="v-students__header-block">
+              <div class="flex gap-3 justify-between">
+                <h1 class="v-students__title text-title">Ученики</h1>
+              </div>
+              <div class="flex gap-4 justify-between">
+                <router-link :to="{ name: 'archive_students' }" class="v-students__menu-link mob">
+                  <img src="/src/assets/images/external-link.svg" alt="" />
+                  Архив
+                </router-link>
+                <div class="v-students__header-buttons">
+                  <button
+                    class="v-students__header-button custom-btn white"
+                    @click="() => toggleModals('massAddition')"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g clip-path="url(#clip0_9241_10005)">
+                        <path
+                          d="M13.3333 13.3332L9.99997 9.9999M9.99997 9.9999L6.66663 13.3332M9.99997 9.9999V17.4999M16.9916 15.3249C17.8044 14.8818 18.4465 14.1806 18.8165 13.3321C19.1866 12.4835 19.2635 11.5359 19.0351 10.6388C18.8068 9.7417 18.2862 8.94616 17.5555 8.37778C16.8248 7.80939 15.9257 7.50052 15 7.4999H13.95C13.6977 6.52427 13.2276 5.61852 12.5749 4.85073C11.9222 4.08295 11.104 3.47311 10.1817 3.06708C9.25943 2.66104 8.25709 2.46937 7.25006 2.50647C6.24304 2.54358 5.25752 2.80849 4.36761 3.28129C3.47771 3.7541 2.70656 4.42249 2.11215 5.23622C1.51774 6.04996 1.11554 6.98785 0.935783 7.9794C0.756025 8.97095 0.803388 9.99035 1.07431 10.961C1.34523 11.9316 1.83267 12.8281 2.49997 13.5832"
+                          stroke="#545F72"
+                          stroke-width="1.67"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_9241_10005">
+                          <rect width="20" height="20" fill="white" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+
+                    <span> Массовове добавление учеников </span>
+                  </button>
+                  <button
+                    class="v-students__header-button custom-btn blue"
+                    @click="() => toggleModals('addStudents')"
+                  >
+                    <img src="/src/assets/images/white-plus.svg" alt="" />
+                    <span> Ученик </span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
+          <div class="v-students__menu" v-if="!editMode">
+            <div class="v-students__menu-block">
+              <div class="v-students__menu-buttons">
+                <button
+                  class="v-students__menu-button"
+                  @click="() => toggleMenu('table')"
+                  :class="{ active: isTable }"
+                >
+                  Таблица
+                </button>
+
+                <button
+                  class="v-students__menu-button"
+                  @click="() => toggleMenu('cards')"
+                  :class="{ active: isCards }"
+                >
+                  Карточки
+                </button>
+              </div>
+              <div class="v-students__menu-buttons">
+                <button
+                  class="v-students__menu-button"
+                  @click="() => toggleMenuType('groups')"
+                  :class="{ active: isGroups }"
+                >
+                  Группы
+                </button>
+
+                <button
+                  class="v-students__menu-button"
+                  @click="() => toggleMenuType('students')"
+                  :class="{ active: isStudents }"
+                >
+                  Ученики
+                </button>
+              </div>
+            </div>
+            <div class="v-students__menu-block">
+              <router-link :to="{ name: 'archive_students' }" class="v-students__menu-link">
+                <img src="/src/assets/images/external-link.svg" alt="" />
+                Перейти в архив
+              </router-link>
+              <div class="v-students__menu-search">
+                <button class="v-students__menu-search-button">
+                  <img src="/src/assets/images/search-icon.svg" alt="" />
+                </button>
+                <input type="text" class="v-students__menu-search-input" placeholder="Поиск" />
+              </div>
+            </div>
+          </div>
+          <div class="v-students__menu" v-else>
+            <div class="flex gap-3" v-if="isCards">
+              <div class="styled-checkbox">
+                <input
+                  type="checkbox"
+                  id="select-all"
+                  @change="allCardsSelected"
+                  v-model="allCards"
+                />
+                <label class="white-bg" for="select-all"></label>
+              </div>
+              <label for="select-all" class="subtitle">Выбреть все</label>
+            </div>
+            <div class="v-students__menu-block">
+              <button class="custom-btn blue" @click="toggleGroupModal">
+                <img src="/src/assets/images/users-group.svg" alt="" />
+                <span> Создать группу </span>
+              </button>
+              <button class="custom-btn white">
+                <img src="/src/assets/images/upload-cloud.svg" alt="" />
+                <span> Архивировать </span>
+              </button>
+              <button class="custom-btn white" @click="deleteStudents">
+                <img src="/src/assets/images/upload-cloud-red.svg" alt="" />
+                <span class="text-red"> Удалить </span>
+              </button>
+            </div>
+          </div>
+          <div class="scrolltable" v-if="isTable">
+            <v-students-table
+              @all-selected="toggleEditMode"
+              ref="studentsTable"
+              :items="itemsToDisplay"
+              :type="studentsType"
+            />
+          </div>
+          <v-students-cards
+            ref="studentsCards"
+            v-if="isCards"
+            :items="itemsToDisplay"
+            @student-selected="toggleEditMode"
+            :type="studentsType"
+          />
         </div>
       </div>
     </section>
   </v-base>
+  <transition name="fade">
+    <v-add-students-modal v-if="modals.addStudents" @close="() => toggleModals('addStudents')" />
+  </transition>
+  <transition name="fade">
+    <v-mass-addition v-if="modals.massAddition" @close="() => toggleModals('massAddition')" />
+  </transition>
+  <transition name="fade">
+    <v-group-modal
+      v-if="modals.groupModal"
+      @close="() => toggleModals('groupModal')"
+      :students="selectedGroupStudents"
+    />
+  </transition>
+  <transition name="fade">
+    <v-delete-modal
+      v-if="modals.deleteModal"
+      @close="() => toggleModals('deleteModal')"
+      :type="currentType"
+      :student="selectedStudent"
+      :student_amount="studentsAmount"
+      :group_amount="groupAmount"
+    />
+  </transition>
 </template>
 <script setup>
+import { onMounted, ref, computed } from 'vue'
+
 import vBase from '../v-base.vue'
-import { ref } from 'vue'
+import vStudentsCards from './v-students-cards.vue'
+import vStudentsTable from './v-students-table.vue'
+
+import vGroupModal from '../modals/students/v-group-modal.vue'
+import vDeleteModal from '../modals/students/v-delete-modal.vue'
+import vMassAddition from '../modals/students/v-mass-addition.vue'
+import vAddStudentsModal from '../modals/students/v-add-students-modal.vue'
+
+const allCards = ref(false)
+
+const studentsCards = ref(null)
+const studentsTable = ref(null)
+
+const selectedStudents = ref([])
+
+const selectedGroupStudents = ref([])
+
+const isTable = ref(true)
+const isCards = ref(false)
+
+const isStudents = ref(true)
+const isGroups = ref(false)
+
+const editMode = ref(false)
+
+/* Для модального удаления */
+
+const currentType = computed(() => {
+  return isStudents.value ? 'students' : isGroups.value ? 'groups' : null
+})
+
+const selectedStudent = computed(() => {
+  if (selectedStudents.value.length < 1) {
+    const student = students.value.filter((student) => student.id === selectedStudents.value[0])
+    return student
+  }
+  return null
+})
+
+const studentsAmount = ref(null)
+const groupAmount = ref(null)
+
+const modals = ref({
+  addStudents: false,
+  massAddition: false,
+  groupModal: false,
+  deleteModal: false,
+})
+
+const students = ref([
+  {
+    id: 1,
+    name: 'Алексей',
+    contact: '8 982 449 66 89',
+    rate: '2000 ₽ / 1 час',
+    balance: '6 000 ₽',
+    homework: 'Оценено',
+    comment: 'С Алексеем занимаемся до мая',
+  },
+  {
+    id: 2,
+    name: 'Алексей',
+    contact: '8 982 449 66 89',
+    rate: '2000 ₽ / 1 час',
+    balance: '6 000 ₽',
+    homework: 'Оценено',
+    comment: 'С Алексеем занимаемся до мая',
+  },
+  {
+    id: 3,
+    name: 'Алексей',
+    contact: '8 982 449 66 89',
+    rate: '2000 ₽ / 1 час',
+    balance: '6 000 ₽',
+    homework: 'Оценено',
+    comment: 'С Алексеем занимаемся до мая',
+  },
+])
+
+const groups = ref([
+  {
+    id: 1,
+    name: 'ЕГЭ',
+    students_count: 10,
+    rate: '2000 ₽ / 1,5 часа',
+    balance: 1200,
+    homework: 'Ждёт ответа',
+    comment: 'Работаем по скидке 20% (для всех)',
+  },
+])
+
+const itemsToDisplay = computed(() => {
+  return isGroups.value ? groups.value : students.value
+})
+
+const studentsType = computed(() => {
+  return isGroups.value ? 'group' : 'students'
+})
+
+const allCardsSelected = () => {
+  studentsCards.value.selectAllStudents(allCards.value)
+  editMode.value = allCards.value
+}
+
+const toggleMenu = (menu) => {
+  isTable.value = menu === 'table'
+  isCards.value = menu === 'cards'
+  localStorage.setItem('menu', menu)
+}
+
+const toggleEditMode = (value, selectedCardsStudents) => {
+  editMode.value = value
+  selectedStudents.value = selectedCardsStudents
+}
+
+const toggleMenuType = (menuType) => {
+  isStudents.value = menuType === 'students'
+  isGroups.value = menuType === 'groups'
+  localStorage.setItem('menuType', menuType)
+}
+
+const toggleGroupModal = () => {
+  console.log(studentsTable.value.selectedGroupStudents)
+  const selectedGroupStudentsIds = isTable.value
+    ? studentsTable.value.selectedGroupStudents
+    : studentsCards.value.selectedGroupStudents
+  const filteredStudents = []
+  for (const studentId in selectedGroupStudentsIds) {
+    filteredStudents.push(students.value.filter((student) => student.id == studentId)[0])
+  }
+
+  selectedGroupStudents.value = filteredStudents
+  toggleModals('groupModal')
+}
+
+const toggleModals = (modalName) => {
+  console.log(modalName, modals.value[modalName])
+  modals.value[modalName] = !modals.value[modalName]
+}
+
+const deleteStudents = () => {
+  const deletedStudentsIds = Object.keys(selectedStudents.value).filter(
+    (studentId) => selectedStudents.value[studentId],
+  )
+
+  studentsAmount.value = deletedStudentsIds.length
+  console.log(selectedStudent.value)
+  modals.value.deleteModal = true
+}
+
+onMounted(() => {
+  const menu = localStorage.getItem('menu')
+  const menuType = localStorage.getItem('menuType')
+
+  if (menu) {
+    toggleMenu(menu)
+  }
+
+  if (menuType) {
+    toggleMenuType(menuType)
+  }
+})
 </script>

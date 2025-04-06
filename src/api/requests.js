@@ -20,6 +20,10 @@ async function makeRequest(endpoint, method = 'GET', body = null) {
     }
 
     const response = await fetch(`${domain}${endpoint}`, options)
+    console.log(response)
+    if (response.status >= 500) {
+      router.push({ name: 'error_500' })
+    }
 
     if (!response.ok) {
       const errorCode = response.status
@@ -30,6 +34,7 @@ async function makeRequest(endpoint, method = 'GET', body = null) {
     return method === 'GET' ? await response.json() : response
   } catch (error) {
     console.error(`Произошла ошибка при ${method}-запросе ${endpoint}:`, error)
+
     throw error
   }
 }

@@ -27,7 +27,9 @@
     </div>
   </form>
   <div class="add-field" ref="addFieldRef" v-click-outside="closeInputVisibility">
-    <button class="add-field__button" @click="toggleInputVisibility">Добавить</button>
+    <button class="add-field__button custom-btn light-blue" @click="toggleInputVisibility">
+      Добавить
+    </button>
     <div class="add-field__field" v-if="isVisible">
       <form method="POST" @submit.prevent="submit">
         <div class="add-field__block">

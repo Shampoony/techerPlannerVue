@@ -1,6 +1,11 @@
+import VStudentsArchive from '@/components/students/v-students-archive.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 /* ================================================================== Импорты ================================================================== */
+
+/* Ошибки */
+
+const vServerError = () => import('@/components/errorPages/v-server-error.vue')
 
 /* Календарь */
 const VCalendarDay = () => import('@/components/calendar/v-calendar-day.vue')
@@ -15,7 +20,21 @@ const vOnboardingStart = () => import('@/components/onboardingPage/v-onboarding-
 /* Главная */
 const vHome = () => import('@/components/home/v-home.vue')
 
+/* Ученики */
+const vStudents = () => import('@/components/students/v-students.vue')
+const VStudentPage = () => import('@/components/students/studentPage/v-student-page.vue')
+
 /* ================================================================== Маршруты ================================================================== */
+
+/* Ошибки */
+
+const errorRoutes = [
+  {
+    path: '500',
+    name: 'error_500',
+    component: vServerError,
+  },
+]
 
 /* Календарь */
 const calendarRoutes = [
@@ -60,6 +79,14 @@ const homeTeacherRoutes = [
   },
 ]
 
+/* Ученики */
+
+const studentsRoutes = [
+  { path: '', name: 'my_students', component: vStudents },
+  { path: 'archive', name: 'archive_students', component: VStudentsArchive },
+  { path: 'student/:id', name: 'student', component: VStudentPage },
+]
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -80,6 +107,14 @@ const router = createRouter({
     {
       path: '/home-teacher-test/',
       children: homeTeacherRoutes,
+    },
+    {
+      path: '/my-students-test/',
+      children: studentsRoutes,
+    },
+    {
+      path: '/error/',
+      children: errorRoutes,
     },
   ],
 })

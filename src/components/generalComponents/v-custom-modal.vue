@@ -1,11 +1,19 @@
 <template>
   <div
-    class="modal-overlay"
+    class="modal-overlay custom"
     @click="close"
     :class="{ unActive: isSecondOrMoreModal && index + 1 == store.modals_count }"
   >
     <div @click.stop class="modal-inner">
-      <slot></slot>
+      <div>
+        <slot name="modal"></slot>
+        <div class="flex gap-3">
+          <button class="custom-btn white" @click="close">Отменить</button>
+          <slot name="button">
+            <button class="custom-btn blue" @click="submitForm">Cохранить</button>
+          </slot>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -44,6 +52,7 @@ const submitForm = () => {
 
 defineExpose({
   close,
+  submitForm,
 })
 
 onMounted(() => {

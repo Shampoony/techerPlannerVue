@@ -2,7 +2,12 @@
   <div class="v-pages-menu">
     <div class="v-pages-menu__container">
       <nav class="v-pages-menu__nav">
-        <a href="" class="v-pages-menu__nav-link active">
+        <router-link
+          :to="{ name: 'home_teacher' }"
+          href=""
+          class="v-pages-menu__nav-link"
+          :class="{ active: isActive(['home_teacher']) }"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -18,9 +23,14 @@
               stroke-linejoin="round"
             />
           </svg>
-          Текущее занятие</a
+          Текущее занятие</router-link
         >
-        <a href="" class="v-pages-menu__nav-link">
+
+        <router-link
+          :to="{ name: 'my_students' }"
+          class="v-pages-menu__nav-link"
+          :class="{ active: isActive(['my_students', 'archive_students', 'student']) }"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -36,7 +46,7 @@
               stroke-linejoin="round"
             />
           </svg>
-          Ученики</a
+          Ученики</router-link
         >
         <a href="/calendar" class="v-pages-menu__nav-link">
           <svg
@@ -131,11 +141,23 @@
   <div class="v-pages-menu-mob">
     <div class="v-pages-menu-mob__container container">
       <nav class="v-pages-menu-mob__nav">
-        <a href="" class="v-pages-menu-mob__nav-link active"> Текущее занятие</a>
-        <a href="" class="v-pages-menu-mob__nav-link"> Ученики</a>
-        <a href="/calendar" class="v-pages-menu-mob__nav-link"> Календарь</a>
-        <a href="/calendar" class="v-pages-menu-mob__nav-link"> Финансы </a>
-        <a href="/calendar" class="v-pages-menu-mob__nav-link"> Корпоративные новости </a>
+        <router-link
+          :to="{ name: 'home_teacher' }"
+          class="v-pages-menu-mob__nav-link"
+          :class="{ active: isActive(['home_teacher']) }"
+        >
+          Текущее занятие</router-link
+        >
+        <router-link
+          :to="{ name: 'my_students' }"
+          class="v-pages-menu-mob__nav-link"
+          :class="{ active: isActive(['my_students', , 'student']) }"
+        >
+          Ученики</router-link
+        >
+        <router-link to="" class="v-pages-menu-mob__nav-link"> Календарь</router-link>
+        <router-link to="" class="v-pages-menu-mob__nav-link"> Финансы </router-link>
+        <router-link to="" class="v-pages-menu-mob__nav-link"> Корпоративные новости </router-link>
       </nav>
     </div>
   </div>
@@ -149,6 +171,7 @@
 </template>
 <script setup>
 import { ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 import vTrialModal from '../modals/v-trial-modal.vue'
 import vLessonModal from '../modals/v-lesson-modal.vue'
@@ -160,5 +183,13 @@ const modals = ref({
 
 const toggleModal = (modal) => {
   modals.value[modal] = !modals.value[modal]
+}
+
+// Определение активной ссылки
+const route = useRoute()
+const isActive = (routes) => {
+  console.log(routes)
+  const isRouteActive = routes.some((routeName) => route.name === routeName)
+  return isRouteActive
 }
 </script>

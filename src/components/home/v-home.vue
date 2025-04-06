@@ -151,7 +151,6 @@
                       placeholder="Введите текст домашнего задания. Для вставки файлов используйте Ctrl+V"
                     ></textarea>
 
-                    <!-- Заменяем блок со списком файлов на компонент v-file-handler -->
                     <v-files-handler
                       ref="fileHandler"
                       :modelValue="filesList"
@@ -432,8 +431,9 @@ const fetchLessonTopics = async () => {
 const loadData = async () => {
   isLoading.value = true
   await loadCurrentLessons()
-
-  await Promise.all([fetchCurrentProblems(), fetchLessonTopics(), fetchPreviousProblems()])
+  if (lessonId.value) {
+    await Promise.all([fetchCurrentProblems(), fetchLessonTopics(), fetchPreviousProblems()])
+  }
 
   isLoading.value = false
 }

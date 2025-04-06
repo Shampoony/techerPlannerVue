@@ -7,8 +7,12 @@
         <v-files-handler ref="fileHandler" :show-drop-area="true" @file-added="updateFiles" />
 
         <div class="v-files-modal__buttons">
-          <button class="v-files-modal__button" @click="closeModal">Отменить</button>
-          <button class="v-files-modal__button blue-btn" @click="saveFiles">Сохранить</button>
+          <button class="v-files-modal__button custom-btn white" @click="closeModal">
+            Отменить
+          </button>
+          <button class="v-files-modal__button custom-btn blue" @click="saveFiles">
+            Сохранить
+          </button>
         </div>
       </div>
     </div>
