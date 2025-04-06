@@ -115,7 +115,7 @@ const studentInfoItems = computed(() => {
     {
       title: 'Способ связи',
       value: props.student.contact,
-      icon: '/src/assets/images/telegram.svg',
+      icon: new URL('/src/assets/images/telegram.svg', import.meta.url).href,
     },
     {
       title: 'Ставка',
