@@ -23,30 +23,38 @@
     <tbody class="v-students-table__body">
       <tr class="v-students-table__body-row" v-for="item in items" :key="item.id">
         <td v-for="col in columns" :key="col.key">
-          <div class="v-students-table__body-item" :class="{ wrap: col.key === 'comment' }">
-            <template v-if="col.key === 'name' || col.key === 'title'">
-              <div class="styled-checkbox">
-                <input
-                  type="checkbox"
-                  :id="col.key + '-' + item.id"
-                  v-model="selectedStudents[item.id]"
-                  @change="() => toggleField(item.id)"
-                />
-                <label :for="col.key + '-' + item.id"></label>
-              </div>
-              {{ item[col.key] }}
-            </template>
-            <template v-else-if="col.key === 'contact'">
-              <img src="/src/assets/images/telegram.svg" alt="" />
-              <a href="" target="_blank" class="contact-link">{{ item[col.key] }}</a>
-            </template>
-            <template v-else-if="col.key === 'homework'">
-              <div class="homework-status overdue"><span></span>{{ item[col.key] }}</div>
-            </template>
-            <template v-else>
-              {{ item[col.key] }}
-            </template>
-          </div>
+          <router-link :to="{ name: 'student', params: { id: item.id } }">
+            <div class="v-students-table__body-item" :class="{ wrap: col.key === 'comment' }">
+              <template v-if="col.key === 'name' || col.key === 'title'">
+                <div class="styled-checkbox">
+                  <input
+                    type="checkbox"
+                    :id="col.key + '-' + item.id"
+                    v-model="selectedStudents[item.id]"
+                    @change="() => toggleField(item.id)"
+                  />
+                  <label :for="col.key + '-' + item.id"></label>
+                </div>
+                {{ item[col.key] }}
+              </template>
+              <template v-else-if="col.key === 'contact'">
+                <img src="/src/assets/images/telegram.svg" alt="" />
+                <a
+                  :href="'tel:' + item[col.key]"
+                  class="contact-link"
+                  @click.stop="handlePhoneClick(item[col.key])"
+                  target="_blank"
+                  >{{ item[col.key] }}</a
+                >
+              </template>
+              <template v-else-if="col.key === 'homework'">
+                <div class="homework-status overdue"><span></span>{{ item[col.key] }}</div>
+              </template>
+              <template v-else>
+                {{ item[col.key] }}
+              </template>
+            </div>
+          </router-link>
         </td>
         <td>
           <div class="v-students-table__body-item v-students-table__body-buttons">
@@ -113,6 +121,11 @@ const toggleField = (field) => {
 
   editMode.value = Object.values(selectedStudents.value).some((value) => value)
   emit('all-selected', editMode.value)
+}
+
+const handlePhoneClick = (phoneNumber) => {
+  // Начинаем звонок по номеру
+  window.location.href = `tel:${phoneNumber}`
 }
 
 onMounted(() => {
