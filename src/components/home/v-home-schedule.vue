@@ -6,10 +6,17 @@
         <div class="v-home-schedule__progress progress-bar">
           <div class="progress-bar__completed" style="width: 50%"></div>
         </div>
-        <p class="caption">2/4 занятий проведены</p>
+        <p class="caption">
+          {{ todayLessons.completed_lessons }}/{{ todayLessons.total_lessons }} занятий проведены
+        </p>
 
         <ul class="v-home-schedule__list">
-          <li class="v-home-schedule-list-item schedule-item">
+          <li
+            :class="{ completed: lesson.status === 'completed' }"
+            class="v-home-schedule-list-item schedule-item"
+            v-for="lesson in todayLessons.lessons"
+            :key="lesson.id"
+          >
             <div class="flex gap-2">
               <div class="schedule-item__img">
                 <svg
@@ -33,7 +40,7 @@
 
             <h3 class="schedule-item__description">18:00</h3>
           </li>
-          <li class="v-home-schedule-list-item schedule-item completed">
+          <!--   <li class="v-home-schedule-list-item schedule-item completed">
             <div class="flex gap-2">
               <div class="schedule-item__img">
                 <svg
@@ -104,12 +111,26 @@
             </div>
 
             <h3 class="schedule-item__description">18:00</h3>
-          </li>
+          </li> -->
         </ul>
       </template>
     </v-home-right-sec-base>
   </div>
 </template>
 <script setup>
+import { ref, onMounted } from 'vue'
+import { getTodayLessons } from '@/api/requests'
+
 import vHomeRightSecBase from './v-home-right-sec-base.vue'
+
+const todayLessons = ref([])
+
+const loadData = async () => {
+  const lessons = await getTodayLessons()
+  todayLessons.value = lessons || []
+}
+
+onMounted(() => {
+  loadData()
+})
 </script>

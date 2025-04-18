@@ -12,7 +12,7 @@
             />
             <label :for="'student' + student.id"></label>
           </div>
-          <p class="subtitle">{{ student.name }}</p>
+          <p class="subtitle">{{ student.student_name }}</p>
         </div>
         <div class="flex gap-4" v-if="!isRepair">
           <button
@@ -23,7 +23,7 @@
           </button>
           <button
             class="student-card__header-button"
-            @click.prevent.stop="$emit('delete', student.id)"
+            @click.prevent.stop="$emit('delete', student)"
           >
             <img src="/src/assets/images/trash.svg" alt="Удалить" />
           </button>
@@ -33,9 +33,11 @@
         <slot name="info-items">
           <!-- Слот по умолчанию для info-items -->
           <div v-for="(item, key) in studentInfoItems" :key="key">
-            <div class="student-card__info-item" v-if="item.title == 'Статус ДЗ'">
+            <div class="student-card__info-item" v-if="item.title == 'Дз'">
               <p class="student-card__info-title">{{ item.title }}</p>
-              <div class="homework-status"><span></span>{{ item.value }}</div>
+              <div class="status" :class="getHomeworkClass(item.value)">
+                <span></span>{{ item.value }}
+              </div>
             </div>
             <div class="student-card__info-item" v-else>
               <p class="student-card__info-title">{{ item.title }}</p>
@@ -82,6 +84,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { getHomeworkClass } from '@/utils'
 
 const props = defineProps({
   student: {
@@ -127,7 +130,7 @@ const studentInfoItems = computed(() => {
     },
     {
       title: 'Дз',
-      value: props.student.homework,
+      value: props.student.homework_status,
     },
     {
       title: 'Комментарий',

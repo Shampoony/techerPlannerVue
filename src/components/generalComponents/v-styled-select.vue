@@ -6,8 +6,8 @@
       @click="toggleDropdownMenu"
     >
       <div class="v-styled-select__value">
-        <div v-if="isSvgValue" class="v-styled-select__icon" v-html="value.svg"></div>
-        <input class="" type="text" :value="inputValue" readonly />
+        <input class="" type="text" :value="displayValue" readonly v-if="!hasSvg" />
+        <span v-if="hasSvg" v-html="svgContent"></span>
       </div>
       <div class="v-styled-select__image" :class="imageClass" v-show="!isReadonly">
         <svg
@@ -38,80 +38,179 @@
           class="v-styled-select__list-item"
           v-for="(item, index) in items"
           :key="index"
-          @click="() => selectValue(item)"
+          :class="{
+            selected: !isMultiselect ? isSelected(item) : false,
+          }"
+          @click="!isMultiselect ? selectSingle(item) : null"
         >
-          <span v-if="typeof item === 'string' || typeof item === 'number'">
-            {{ item }}
-          </span>
-          <span v-else v-html="item.svg"></span>
+          <template v-if="isMultiselect">
+            <label class="checkbox-label" :for="'item-' + (item.id || index)">
+              <div class="styled-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'item-' + (item.id || index)"
+                  :checked="isSelected(item)"
+                  @change="() => toggleItem(item)"
+                />
+                <label :for="'item-' + (item.id || index)"> </label>
+              </div>
+              <span v-if="!item.svg">
+                {{ getItemDisplayText(item) }}
+              </span>
+              <span v-else v-html="item.svg"></span>
+            </label>
+          </template>
+          <template v-else>
+            <span v-if="!item.svg">
+              {{ getItemDisplayText(item) }}
+            </span>
+            <span v-else v-html="item.svg"></span>
+          </template>
         </li>
       </ul>
     </transition>
   </div>
 </template>
-
 <script setup>
 import { ref, computed, nextTick, onMounted, onUnmounted, watch } from 'vue'
-
 const props = defineProps({
   items: {
     type: Array,
-    required: false,
-    default: () => [0, 1, 2, 3, 4, 5],
+    default: () => [],
   },
   value: {
-    type: [Number, String],
+    type: [Array, Object, String, Number],
+    default: () => [],
   },
   isReadonly: {
     type: Boolean,
     default: false,
   },
+  isMultiselect: {
+    type: Boolean,
+    default: false,
+  },
   defaultValue: {
-    type: [String, Number, Object],
+    type: [Array, Object, String, Number],
     default: null,
   },
 })
-
 const emit = defineEmits(['update:modelValue'])
-
-const inputValue = computed(() => {
-  if (props.isReadonly && props.value) {
-    return props.value
-  } else {
-    return isSvgValue.value ? '' : value.value.text
-  }
-})
-// Функция для нормализации значения
-const normalizeValue = (val) => {
-  if (val === null || val === undefined) {
-    return typeof props.items[0] === 'object' ? props.items[0] : { text: props.items[0] }
-  }
-  return typeof val === 'object' ? val : { text: val }
-}
-
-const value = ref(normalizeValue(props.defaultValue))
-
 const isDropdownMenu = ref(false)
 const selectContainer = ref(null)
 const listRef = ref(null)
 const shouldOpenUp = ref(false)
+// Получить отображаемый текст элемента
+const getItemDisplayText = (item) => {
+  if (item === null || item === undefined) return ''
+  if (typeof item === 'string' || typeof item === 'number') return item
+  if (item.name) return item.name
+  if (item.student_name) return item.student_name
+  if (item.text) return item.text
+  return item.id || ''
+}
+// Получить уникальный идентификатор элемента
+const getItemId = (item) => {
+  if (item === null || item === undefined) return null
+  if (typeof item === 'object' && item.id !== undefined) return item.id
+  return item
+}
+// Список выбранных значений
+const selectedValues = ref([])
+// Инициализация выбранных значений
+const initializeSelectedValues = () => {
+  if (props.isMultiselect) {
+    // Для мультиселекта - массив объектов
+    if (Array.isArray(props.defaultValue) && props.defaultValue.length > 0) {
+      // Используем defaultValue если он предоставлен
+      selectedValues.value = [...props.defaultValue]
+      // Эмитим событие с выбранными значениями из defaultValue
+      emit('update:modelValue', [...selectedValues.value])
+    } else if (props.items.length > 0) {
+      // Выбираем первый элемент по умолчанию для мультиселекта только если нет defaultValue
+      selectedValues.value = [props.items[0]]
+      // Эмитим событие с первым выбранным элементом
+      emit('update:modelValue', [...selectedValues.value])
+    } else {
+      selectedValues.value = []
+    }
+  } else {
+    // Для одиночного выбора - массив с одним объектом
+    if (props.defaultValue !== null) {
+      // Используем defaultValue если он предоставлен
+      selectedValues.value = [props.defaultValue]
+      // Эмитим событие с defaultValue
+      emit('update:modelValue', props.defaultValue)
+    } else if (props.items.length > 0) {
+      // Выбираем первый элемент по умолчанию для одиночного выбора только если нет defaultValue
+      selectedValues.value = [props.items[0]]
+      // Эмитим событие с первым выбранным элементом
+      emit('update:modelValue', props.items[0])
+    } else {
+      selectedValues.value = []
+    }
+  }
+}
+// Проверка наличия SVG в выбранном значении
+const hasSvg = computed(() => {
+  if (selectedValues.value.length === 0) {
+    return props.items.length > 0 && props.items[0].svg ? true : false
+  }
+  return selectedValues.value.some((item) => item && item.svg)
+})
+// Получение содержимого SVG
+const svgContent = computed(() => {
+  if (selectedValues.value.length === 0) {
+    return props.items.length > 0 && props.items[0].svg ? props.items[0].svg : ''
+  }
+  const svgItem = selectedValues.value.find((item) => item && item.svg)
+  if (svgItem) return svgItem.svg
+  return ''
+})
 
-// Определяем, содержит ли текущее значение SVG
-const isSvgValue = computed(() => typeof value.value === 'object' && value.value.svg)
-
-// Определяем стили для списка (открытие вверх или вниз)
-const dropdownStyle = computed(() => ({
-  top: shouldOpenUp.value ? 'auto' : '100%',
-  bottom: shouldOpenUp.value ? '100%' : 'auto',
-}))
-
-// Логика вращения стрелки
-const imageClass = computed(() => ({
-  openUp: shouldOpenUp.value,
-  open: isDropdownMenu.value,
-}))
-
-// Открываем/закрываем выпадающий список
+// Получение текстового представления для input
+const displayValue = computed(() => {
+  if (selectedValues.value.length === 0) {
+    const firstItem = props.items[0]
+    if (!firstItem) return ''
+    return firstItem.svg ? '' : getItemDisplayText(firstItem)
+  }
+  return selectedValues.value
+    .filter((item) => !item.svg)
+    .map((item) => getItemDisplayText(item))
+    .join(', ')
+})
+// Выбран ли элемент
+const isSelected = (item) => {
+  const itemId = getItemId(item)
+  return selectedValues.value.some((selectedItem) => {
+    const selectedId = getItemId(selectedItem)
+    if (itemId !== null && selectedId !== null) {
+      return selectedId === itemId
+    }
+    // Для строк и других примитивов
+    return selectedItem === item
+  })
+}
+// Переключение (для чекбоксов в мультиселекте)
+const toggleItem = (item) => {
+  const index = selectedValues.value.findIndex(
+    (selectedItem) => getItemId(selectedItem) === getItemId(item),
+  )
+  if (index >= 0) {
+    selectedValues.value.splice(index, 1)
+  } else {
+    selectedValues.value.push(item)
+  }
+  emit('update:modelValue', [...selectedValues.value])
+}
+// Выбор одного значения (одиночный режим)
+const selectSingle = (item) => {
+  selectedValues.value = [item]
+  emit('update:modelValue', item)
+  isDropdownMenu.value = false
+}
+// Открытие/закрытие списка
 const toggleDropdownMenu = async () => {
   if (props.isReadonly) return
   isDropdownMenu.value = !isDropdownMenu.value
@@ -120,20 +219,18 @@ const toggleDropdownMenu = async () => {
     updateDropdownPosition()
   }
 }
-
 const closeDropdown = () => {
   isDropdownMenu.value = false
 }
-
-// Выбираем значение
-const selectValue = (val) => {
-  const newValue = typeof val === 'object' ? val : { text: val }
-  value.value = newValue
-  emit('update:modelValue', newValue)
-  isDropdownMenu.value = false
-}
-
-// Проверяем, куда лучше открывать список
+// Стиль выпадения списка
+const dropdownStyle = computed(() => ({
+  top: shouldOpenUp.value ? 'auto' : '100%',
+  bottom: shouldOpenUp.value ? '100%' : 'auto',
+}))
+const imageClass = computed(() => ({
+  openUp: shouldOpenUp.value,
+  open: isDropdownMenu.value,
+}))
 const updateDropdownPosition = () => {
   if (selectContainer.value && listRef.value) {
     const rect = selectContainer.value.getBoundingClientRect()
@@ -142,21 +239,70 @@ const updateDropdownPosition = () => {
     shouldOpenUp.value = listHeight > spaceBelow
   }
 }
-
-// Навешиваем обработчики событий
 onMounted(() => {
   window.addEventListener('resize', updateDropdownPosition)
+  initializeSelectedValues()
 })
-
 onUnmounted(() => {
   window.removeEventListener('resize', updateDropdownPosition)
 })
-
-// Следим за изменениями defaultValue
+// Следим за изменениями в списке элементов
+watch(
+  () => props.items,
+  (newItems) => {
+    // Проверяем, есть ли defaultValue
+    if (props.isMultiselect) {
+      if (
+        !(Array.isArray(props.defaultValue) && props.defaultValue.length > 0) &&
+        selectedValues.value.length === 0 &&
+        newItems.length > 0
+      ) {
+        // Если нет defaultValue и нет выбранных значений, выбираем первый элемент
+        selectedValues.value = [newItems[0]]
+        emit('update:modelValue', [...selectedValues.value])
+      }
+    } else {
+      if (props.defaultValue === null && selectedValues.value.length === 0 && newItems.length > 0) {
+        // Если нет defaultValue и нет выбранных значений, выбираем первый элемент
+        selectedValues.value = [newItems[0]]
+        emit('update:modelValue', newItems[0])
+      }
+    }
+  },
+  { immediate: true },
+)
+// Подхватываем внешние изменения defaultValue
 watch(
   () => props.defaultValue,
   (newVal) => {
-    value.value = normalizeValue(newVal)
+    if (props.isMultiselect) {
+      if (Array.isArray(newVal) && newVal.length > 0) {
+        selectedValues.value = [...newVal]
+        emit('update:modelValue', [...selectedValues.value])
+      } else if (selectedValues.value.length === 0 && props.items.length > 0) {
+        // Если defaultValue пустой, но есть элементы, выбираем первый
+        selectedValues.value = [props.items[0]]
+        emit('update:modelValue', [...selectedValues.value])
+      }
+    } else {
+      if (newVal !== null) {
+        selectedValues.value = [newVal]
+        emit('update:modelValue', newVal)
+      } else if (selectedValues.value.length === 0 && props.items.length > 0) {
+        // Если defaultValue пустой, но есть элементы, выбираем первый
+        selectedValues.value = [props.items[0]]
+        emit('update:modelValue', props.items[0])
+      }
+    }
+  },
+  { deep: true },
+)
+// Реагирование на изменение режима isMultiselect
+watch(
+  () => props.isMultiselect,
+  () => {
+    initializeSelectedValues()
   },
 )
 </script>
+<style scoped></style>

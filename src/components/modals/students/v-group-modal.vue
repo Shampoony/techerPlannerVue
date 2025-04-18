@@ -4,8 +4,8 @@
       <div class="v-group-modal">
         <h2 class="modal-title">Создание группы</h2>
         <form @submit.prevent="submitForm">
-          <div class="modal-col mb-5">
-            <span class="modal-field-subtitle">Название группы</span>
+          <div class="modal-field col">
+            <span class="modal-field__title">Название группы</span>
             <input
               type="text"
               class="custom-input"

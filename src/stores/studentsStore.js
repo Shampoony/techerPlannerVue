@@ -1,5 +1,9 @@
 // store/modalsStore.js
 import { defineStore } from 'pinia'
+import { useRoute } from 'vue-router'
+import { getAllStudents, getMyStudents, getStudentAnalytics } from '@/api/requests'
+
+const route = useRoute()
 
 export const useStudentsStore = defineStore('students', {
   state: () => ({
@@ -49,7 +53,48 @@ export const useStudentsStore = defineStore('students', {
     ],
 
     selectedCurrency: '₽',
+
+    students: [],
+
+    groups: [
+      {
+        id: 1,
+        name: 'ЕГЭ',
+        students_count: 10,
+        rate: '2000 ₽ / 1,5 часа',
+        balance: 1200,
+        homework: 'Ждёт ответа',
+        comment: 'Работаем по скидке 20% (для всех)',
+        students: [{ id: 1, name: 'Алексей' }],
+      },
+      {
+        id: 2,
+        name: 'ОГЭ',
+        students_count: 10,
+        rate: '2000 ₽ / 1,5 часа',
+        balance: 1200,
+        homework: 'Ждёт ответа',
+        comment: 'Работаем по скидке 20% (для всех)',
+        students: [{ id: 2, name: 'Тимур' }],
+      },
+    ],
+
+    studentAnalytics: null,
   }),
   getters: {},
-  actions: {},
+  actions: {
+    async getStudents() {
+      if (!this.students.length) {
+        const students = await getMyStudents()
+        this.students = students
+      }
+    },
+    async setStudentAnalytics() {
+      const route = useRoute()
+      const studentId = route.params.id
+      console.log(studentId)
+      if (studentId && this.studentAnalytics === null)
+        this.studentAnalytics = await getStudentAnalytics(studentId)
+    },
+  },
 })

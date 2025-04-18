@@ -21,8 +21,18 @@ const vOnboardingStart = () => import('@/components/onboardingPage/v-onboarding-
 const vHome = () => import('@/components/home/v-home.vue')
 
 /* Ученики */
+const vChartTest = () => import('@/components/modals/v-chart-test.vue')
 const vStudents = () => import('@/components/students/v-students.vue')
 const VStudentPage = () => import('@/components/students/studentPage/v-student-page.vue')
+
+/* Финансы */
+const vFinance = () => import('@/components/finance/v-finance.vue')
+
+/* Новости */
+const vNews = () => import('@/components/newsPage/v-news.vue')
+
+/* Авторизация / Регистрация */
+const vLogin = () => import('@/components/user/v-login.vue')
 
 /* ================================================================== Маршруты ================================================================== */
 
@@ -87,9 +97,32 @@ const studentsRoutes = [
   { path: 'student/:id', name: 'student', component: VStudentPage },
 ]
 
+/* Финансы */
+
+const financeRoutes = [
+  {
+    path: '',
+    name: 'finance',
+    component: vFinance,
+  },
+]
+
+const userRoutes = [
+  {
+    path: 'login/',
+    name: 'login',
+    component: vLogin,
+  },
+]
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/chart/test',
+      name: 'chart-test',
+      component: vChartTest,
+    },
     {
       path: '/calendar/',
       children: calendarRoutes,
@@ -111,6 +144,19 @@ const router = createRouter({
     {
       path: '/my-students-test/',
       children: studentsRoutes,
+    },
+    {
+      path: '/finance/',
+      children: financeRoutes,
+    },
+    {
+      path: '/news/',
+      name: 'news',
+      component: vNews,
+    },
+    {
+      path: '/user/',
+      children: userRoutes,
     },
     {
       path: '/error/',

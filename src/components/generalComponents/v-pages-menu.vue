@@ -66,7 +66,11 @@
           </svg>
           Календарь</a
         >
-        <a href="/calendar" class="v-pages-menu__nav-link">
+        <router-link
+          :to="{ name: 'finance' }"
+          class="v-pages-menu__nav-link"
+          :class="{ active: isActive(['finance']) }"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -83,8 +87,12 @@
             />
           </svg>
           Финансы
-        </a>
-        <a href="/calendar" class="v-pages-menu__nav-link">
+        </router-link>
+        <router-link
+          :to="{ name: 'news' }"
+          class="v-pages-menu__nav-link"
+          :class="{ active: isActive(['news']) }"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -101,7 +109,7 @@
             />
           </svg>
           Корпоративные новости
-        </a>
+        </router-link>
       </nav>
       <div class="flex flex-col gap-6">
         <div class="v-pages-menu__buttons">
@@ -156,8 +164,20 @@
           Ученики</router-link
         >
         <router-link to="" class="v-pages-menu-mob__nav-link"> Календарь</router-link>
-        <router-link to="" class="v-pages-menu-mob__nav-link"> Финансы </router-link>
-        <router-link to="" class="v-pages-menu-mob__nav-link"> Корпоративные новости </router-link>
+        <router-link
+          :to="{ name: 'finance' }"
+          class="v-pages-menu-mob__nav-link"
+          :class="{ active: isActive(['finance']) }"
+        >
+          Финансы
+        </router-link>
+        <router-link
+          :to="{ name: 'news' }"
+          class="v-pages-menu-mob__nav-link"
+          :class="{ active: isActive(['news']) }"
+        >
+          Корпоративные новости
+        </router-link>
       </nav>
     </div>
   </div>
@@ -188,7 +208,6 @@ const toggleModal = (modal) => {
 // Определение активной ссылки
 const route = useRoute()
 const isActive = (routes) => {
-  console.log(routes)
   const isRouteActive = routes.some((routeName) => route.name === routeName)
   return isRouteActive
 }

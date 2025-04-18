@@ -1,10 +1,29 @@
 <template>
-  <div class="v-homework-stat">
+  <div class="v-homework-stat" v-if="homeWorkStat">
     <h2 class="v-homework-stat__title text-section-title">Статистика домашнего задания</h2>
     <div class="v-homework-stat__block">
-      <p class="v-homework-stat__text">Задано 10/10 или 100% <span>(+ 2 доп. ДЗ)</span></p>
-      <p class="v-homework-stat__text">Задано 9/10 или 90%</p>
+      <p class="v-homework-stat__text">
+        Задано {{ homeWorkStat.total_homework_given || 0 }}/
+        {{ homeWorkStat.total_lessons || 0 }} или {{ homeWorkStat.homework_given_percentage || 0 }}%
+        <span>(+ 2 доп. ДЗ)</span>
+      </p>
+      <p class="v-homework-stat__text">
+        Выполнено {{ homeWorkStat.total_homework_submitted || 0 }}/
+        {{ homeWorkStat.total_homework_assigned || 0 }} или
+        {{ homeWorkStat.homework_submitted_percentage || 0 }}%
+      </p>
     </div>
   </div>
 </template>
-<script setup></script>
+<script setup>
+import { onMounted, computed } from 'vue'
+import { useCurrentStudentStore } from '@/stores/currentStudentStore'
+
+const store = useCurrentStudentStore()
+
+const homeWorkStat = computed(() => store.studentAnalytics)
+
+onMounted(() => {
+  store.setStudentAnalytics()
+})
+</script>

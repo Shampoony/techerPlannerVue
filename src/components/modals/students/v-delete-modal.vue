@@ -2,10 +2,17 @@
   <v-custom-modal ref="customModal">
     <template #modal>
       <div class="v-delete-modal">
-        <h1 class="modal-title">
-          {{ formattedText }}
-        </h1>
-        <div class="cpation">Информация о учениках будет удалена безвозратно.</div>
+        <h1 class="modal-title" v-html="formattedText"></h1>
+        <div class="caption">Информация о учениках будет удалена безвозратно.</div>
+        <div class="v-delete-modal__rule">
+          <div class="flex gap-3">
+            <div class="styled-checkbox">
+              <input v-model="deleteInfo" type="checkbox" :id="'delete-info'" />
+              <label :for="'delete-info'"></label>
+            </div>
+            <label for="delete">Удалить информацию о всех учениках выбранной группы</label>
+          </div>
+        </div>
       </div>
     </template>
     <template #button>
@@ -17,63 +24,71 @@
 import { ref, computed, watch } from 'vue'
 
 import vCustomModal from '@/components/generalComponents/v-custom-modal.vue'
+
+import { useSelectedStudentsStore } from '@/stores/selectedStudentsStore'
+
 const props = defineProps({
   group: Object,
-  student: Object,
+  student: Number,
+  type: String,
   student_amount: Number,
   group_amount: Number,
 })
+
+const deleteInfo = ref(false)
+
+const store = useSelectedStudentsStore()
 
 const customModal = ref(null)
 
 const defaultPhrase = ref('Вы уверены, что хотите удалить')
 
 const currentAmount = computed(() => {
-  return props.student_amount || props.group_amount ? 'singular' : 'plural'
+  /*  return props.student_amount || props.group_amount ? 'singular' : 'plural' */
+  if (store.student.length > 1) {
+    return 'plural'
+  } else if (store.student.length === 1) {
+    return 'singular'
+  } else {
+    return 'none'
+  }
 })
 
 watch(
-  () => [props.student_amount, props.group_amount, props.type],
+  () => [props.student_amount, props.group_amount, props.type, props.student],
   () => {
-    console.log('Props changed:', props.type, props.student_amount, props.group_amount)
+    console.log(
+      'Props changed:',
+      props.type,
+      props.student_amount,
+      props.group_amount,
+      props.student,
+    )
   },
   { immediate: true },
 )
 
 const formattedText = computed(() => {
   let additionalyPhrase = ''
-  let hasFirstItem = false
 
-  if (props.student && currentAmount.value === 'singular') {
-    additionalyPhrase += `ученика (${props.student.name})?`
-    hasFirstItem = true
+  if (store.student.length === 1 && props.type === 'students') {
+    additionalyPhrase += `ученика <p> (${store.student[0].name})?</p>`
   }
-  if (props.student && currentAmount.value === 'plural') {
-    additionalyPhrase += `выбранных учеников (${props.student_amount})?`
-    hasFirstItem = true
+  if (store.student.length > 1 && props.type === 'students') {
+    additionalyPhrase += `выбранных учеников <p>(${store.student.length})?</p>`
   }
-  if (props.group && currentAmount.value === 'singular') {
-    if (hasFirstItem) {
-      additionalyPhrase = additionalyPhrase.slice(0, -1) // Удаляем знак вопроса, если он есть
-      additionalyPhrase += ` и группу (${props.group.name})?`
-    } else {
-      additionalyPhrase += `группу (${props.group.name})?`
-      hasFirstItem = true
-    }
+  if (props.type === 'groups' && store.student.length === 1) {
+    additionalyPhrase += `группу <p>(${store.student[0].name})?</p>`
   }
-  if (props.group && currentAmount.value === 'plural') {
-    if (hasFirstItem) {
-      additionalyPhrase = additionalyPhrase.slice(0, -1) // Удаляем знак вопроса, если он есть
-      additionalyPhrase += ` и группы (${props.group_amount})?`
-    } else {
-      additionalyPhrase += `группы (${props.group_amount})?`
-    }
+  if (props.type === 'groups' && store.student.length > 1) {
+    additionalyPhrase += `группы <p>(${store.student.length})?</p>`
   }
 
   return defaultPhrase.value + ' ' + additionalyPhrase
 })
 
 const submitForm = () => {
-  customModal.value.submitForm()
+  console.log(props.type)
+  /*  customModal.value.submitForm() */
 }
 </script>

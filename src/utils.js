@@ -3,6 +3,9 @@ import { ru } from 'date-fns/locale'
 
 import { startOfWeek, endOfWeek } from 'date-fns'
 
+import { useGeneralStore } from '@/stores/generalStore'
+import { computed } from 'vue'
+
 export const stableOrder = [
   'student_id',
   'goal',
@@ -154,4 +157,28 @@ export function addTimeWithDuration(timeStr, durationMinutes) {
 
   // Форматируем результат в "HH:MM"
   return [String(hours).padStart(2, '0'), String(minutes).padStart(2, '0')].join(':')
+}
+
+export function getHomeworkClass(value) {
+  if (value === 'Выполнено') return 'green'
+  return ''
+}
+
+export function prettyPrice(price) {
+  return price.toLocaleString()
+}
+
+export function getColors() {
+  const store = useGeneralStore()
+
+  const nightMode = store.nightMode
+
+  return {
+    blue: nightMode ? '#1F5EFF' : '#1D4ECC',
+    lightBlue: '#E4EFFF',
+    blueStroke: nightMode ? '#2D313B' : '#CCD8F8',
+    gray: 'rgba(113, 118, 128, 0.2)',
+    blackText: nightMode ? '#fff' : '#344055',
+    transperentBlackText: 'rgba(52, 64, 85, 0.56)',
+  }
 }

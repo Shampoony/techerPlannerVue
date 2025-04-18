@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, onMounted, computed } from 'vue'
+import { defineProps, defineEmits, onMounted, computed, onUnmounted } from 'vue'
 import { useModalsStore } from '@/stores/modalsStore'
 
 const store = useModalsStore()
@@ -57,6 +57,10 @@ defineExpose({
 
 onMounted(() => {
   store.increment()
+})
+
+onUnmounted(() => {
+  store.decrement()
 })
 </script>
 

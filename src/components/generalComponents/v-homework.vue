@@ -1,4 +1,3 @@
-// HomeworkComponent.vue
 <template>
   <div class="v-home__lesson-homework v-home__lesson-sec">
     <div class="v-home__lesson-homework-row">
@@ -52,7 +51,11 @@
             </VueDatePicker>
           </div>
           <div class="flex gap-3 items-center">
-            <input id="next-lesson" type="checkbox" v-model="nextLesson" />
+            <div class="styled-checkbox">
+              <input id="next-lesson" type="checkbox" v-model="nextLesson" />
+              <label for="next-lesson"></label>
+            </div>
+
             <label for="next-lesson">До следующего занятия</label>
           </div>
         </div>
@@ -70,7 +73,11 @@
         </div>
       </div>
       <div class="flex items-center gap-3" v-if="mode === 'all'">
-        <input type="checkbox" id="no-homework" v-model="noHomework" />
+        <div class="styled-checkbox">
+          <input type="checkbox" id="no-homework" v-model="noHomework" />
+          <label for="no-homework"></label>
+        </div>
+
         <label for="no-homework">Без задания</label>
       </div>
       <button
@@ -109,7 +116,11 @@
       <div class="v-home__lesson-homework-footer">
         <div class="flex gap-2 items-center v-home__lesson-homework-mark">
           <span>Оценка</span>
-          <v-styled-select :is-readonly="isHwCompleted" :value="mark" />
+          <v-styled-select
+            :is-readonly="isHwCompleted"
+            :default-value="mark"
+            :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]"
+          />
         </div>
         <button
           class="v-home__lesson-homework-button save"

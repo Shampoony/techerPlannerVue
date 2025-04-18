@@ -20,7 +20,6 @@ async function makeRequest(endpoint, method = 'GET', body = null) {
     }
 
     const response = await fetch(`${domain}${endpoint}`, options)
-    console.log(response)
     if (response.status >= 500) {
       router.push({ name: 'error_500' })
     }
@@ -33,7 +32,7 @@ async function makeRequest(endpoint, method = 'GET', body = null) {
 
     return method === 'GET' ? await response.json() : response
   } catch (error) {
-    console.error(`Произошла ошибка при ${method}-запросе ${endpoint}:`, error)
+    console.error(`Произошла ошибка при ${method}-запросе ${endpoint}:`)
 
     throw error
   }
@@ -44,7 +43,34 @@ async function makeGetRequest(endpoint) {
   return makeRequest(endpoint, 'GET')
 }
 
+/*=================================================================== Ученики =============================================================== */
+
+export async function getStudentAnalytics(student_id) {
+  try {
+    return await makeRequest(`/api/analutics-student/${student_id}`)
+  } catch (error) {
+    console.error('Произошла ошибка при получении данных для аналитики ученика', error)
+  }
+}
+
+export async function getStudentById(student_id) {
+  try {
+    return await makeRequest(`/api/student-profile/${student_id}`)
+  } catch (error) {
+    console.error('Произошла ошиббка при получении профиля ученика', error)
+  }
+}
+
 /*=================================================================== Учителя =============================================================== */
+
+export async function getEarningsForDay() {
+  try {
+    return await makeGetRequest(`/api/earned-for-today`)
+  } catch (error) {
+    console.error('Произошла ошибка при получении зарабтка учителя за день', error)
+  }
+}
+
 export async function getTeacherById(teacherId) {
   try {
     return await makeGetRequest(`/api/teachers/${teacherId}`)
@@ -86,6 +112,14 @@ export async function getLessonsOnWeek(startDate) {
   }
 }
 
+export async function getTodayLessons() {
+  try {
+    return await makeRequest('/api/today-lessons')
+  } catch (error) {
+    console.error('Произошла ошибка при получении уроков на сегодня', error)
+  }
+}
+
 export async function getLessonsOnDay(date) {
   try {
     return await makeGetRequest(`/api/lessons/day?date=${date}`)
@@ -104,7 +138,7 @@ export async function getMyLessons(date) {
 
 export async function getMyStudents() {
   try {
-    return await makeGetRequest('/api/all-students-in-teacher')
+    return await makeGetRequest('/api/all-students-teachers')
   } catch (error) {
     console.error('Произошла ошибка при получении списка моих студентов', error)
   }
@@ -150,7 +184,7 @@ export async function getLessonProblems(lesson_id) {
   try {
     return await makeGetRequest(`/api/lesson-problems/${lesson_id}`)
   } catch (error) {
-    console.error('Произошла ошибка при получении списка проблем урока', error)
+    console.error('Произошла ошибка при получении списка проблем урока')
   }
 }
 
@@ -206,6 +240,14 @@ export async function getLessonTopics(lesson_id) {
   }
 }
 
+export async function getAllStudents() {
+  try {
+    return await makeRequest('/api/all-students-teachers')
+  } catch (error) {
+    console.error('Произошла ошибка получения всех учеников для учителя', error)
+  }
+}
+
 export async function setLessonTopics(data) {
   try {
     return await makeRequest(`/api/create-topic`, 'POST', data)
@@ -240,7 +282,7 @@ export async function getTeacherTasks() {
   }
 }
 
-export async function setteacherTasks(data) {
+export async function setTeacherTasks(data) {
   try {
     makeRequest(`/api/teacher-tasks`, 'POST', data)
   } catch (error) {

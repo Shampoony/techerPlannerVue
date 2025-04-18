@@ -2,7 +2,7 @@
   <div class="v-student-details">
     <div class="v-student-details__info">
       <h2 class="v-student-details__title text-title">Детали об ученике</h2>
-      <div class="flex gap-9">
+      <div class="v-student-details__form">
         <div class="v-student-details__info-column">
           <div class="v-student-details__info-field">
             <p class="v-student-details__info-subtitle">Имя ученика</p>
@@ -11,6 +11,7 @@
               class="custom-input"
               v-model="editedStudent.name"
               @input="checkChanges"
+              placeholder="Имя ученика"
             />
           </div>
           <div class="v-student-details__info-field">
@@ -20,6 +21,7 @@
               class="custom-input"
               v-model="editedStudent.contact"
               @input="checkChanges"
+              placeholder="Номер телефона"
             />
           </div>
           <div class="v-student-details__info-field">
@@ -29,6 +31,7 @@
               class="custom-input"
               v-model="editedStudent.parentName"
               @input="checkChanges"
+              placeholder="Имя родителя"
             />
           </div>
           <div class="v-student-details__info-field">
@@ -38,6 +41,7 @@
               class="custom-input"
               v-model="editedStudent.parentContact"
               @input="checkChanges"
+              placeholder="Номер родителей"
             />
           </div>
           <div class="v-student-details__info-field">
@@ -47,6 +51,7 @@
               class="custom-input"
               v-model="editedStudent.source"
               @input="checkChanges"
+              placeholder="Источник"
             />
           </div>
         </div>
@@ -58,16 +63,22 @@
               class="custom-input"
               v-model="editedStudent.goal"
               @input="checkChanges"
+              placeholder="Цель занятий"
             />
           </div>
           <div class="v-student-details__info-field">
             <p class="v-student-details__info-subtitle">Способ связи</p>
-            <input
-              type="text"
-              class="custom-input"
-              v-model="editedStudent.communicationMethod"
-              @input="checkChanges"
-            />
+            <div class="v-student-details__info-type-connect">
+              <input
+                type="text"
+                class="custom-input"
+                v-model="editedStudent.communicationMethod"
+                @input="checkChanges"
+                placeholder="Способ связи"
+              />
+              <v-styled-select :items="typeConnectItems" />
+            </div>
+            <p>Контакты ученика указываются с его согласия и видны исключительно преподавателю.</p>
           </div>
           <div class="v-student-details__info-field">
             <p class="v-student-details__info-subtitle">Ставка</p>
@@ -77,6 +88,7 @@
                 class="custom-input"
                 v-model="editedStudent.rate"
                 @input="checkChanges"
+                placeholder="Ставка"
               />
               <v-styled-select
                 :items="rateItems"
@@ -98,7 +110,7 @@
           class="v-student-details__info-text"
           v-model="editedStudent.comment"
           @input="checkChanges"
-          placeholder="Кометарий о ученике (виден только вам)"
+          placeholder="Комментарий о ученике (виден только вам)"
         ></textarea>
       </div>
       <div class="flex justify-end">
@@ -128,16 +140,20 @@
 import { onMounted, ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStudentsStore } from '@/stores/studentsStore'
+import { useCurrentStudentStore } from '@/stores/currentStudentStore'
 import VStyledSelect from '@/components/generalComponents/v-styled-select.vue'
 
 const route = useRoute()
 const store = useStudentsStore()
+const currentStudentStore = useCurrentStudentStore()
+
 const rateItems = store.rate
 const currencyItems = store.currency
-const timeZoneItems = store.timeZone
 const typeConnectItems = store.typeConnect
 
-const student = ref({
+const student = computed(() => {
+  return currentStudentStore.student
+}) /* ref({
   id: 1,
   name: 'Алексей',
   contact: '8 982 449 66 89',
@@ -152,20 +168,23 @@ const student = ref({
   source: 'Профи.ру',
   goal: 'Подготовка к ОГЭ',
   communicationMethod: 'Способ связи',
-})
+}) */
 
 const editedStudent = ref({ ...student.value })
 
 const hasChanges = computed(() => {
-  return Object.keys(student.value).some((key) => student.value[key] !== editedStudent.value[key])
+  if (student.value) {
+    return Object.keys(student).some((key) => student.value[key] !== editedStudent.value[key])
+  }
+  return false
 })
-
 const checkChanges = (value, key) => {
-  editedStudent.value[key] = value.text
+  editedStudent.value[key] = typeof value === 'object' ? value.text : value
 }
 
 onMounted(() => {
   const userId = route.params.id
-  console.log(userId)
+  currentStudentStore.setStudentId(userId)
+  currentStudentStore.setStudentDetails()
 })
 </script>

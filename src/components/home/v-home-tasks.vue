@@ -18,23 +18,27 @@
 </template>
 <script setup>
 import { onMounted, ref } from 'vue'
+import { getTeacherTasks, setTeacherTasks } from '@/api/requests'
+
 import vHomeRightSecBase from './v-home-right-sec-base.vue'
 import vAddField from '../generalComponents/v-add-field.vue'
-import { getTeacherTasks } from '@/api/requests'
 
-const tasks = ref()
+const tasks = ref([])
 const newTask = ref(null)
 
 const addTask = (value) => {
+  console.log(value)
   if (value) {
-    tasks.value.push({ id: 2, title: value })
+    const data = { title: value }
+    tasks.value.push(data)
     newTask.value = ''
+    setTeacherTasks(data)
   }
 }
 
 const fetchTeacherTasks = async () => {
   const response = await getTeacherTasks()
-  tasks.value = response
+  tasks.value = response || []
 }
 
 const deleteTask = (task_id) => {

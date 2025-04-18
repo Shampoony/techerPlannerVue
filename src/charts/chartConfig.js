@@ -1,3 +1,16 @@
+import { ref } from 'vue'
+
+const nightMode = ref(localStorage.getItem('nightMode') === 'true')
+console.log(nightMode.value)
+
+export const colors = {
+  blue: nightMode.value ? '#1F5EFF' : '#1D4ECC',
+  lightBlue: '#E4EFFF',
+  blueStroke: nightMode.value ? '#2D313B' : '#CCD8F8',
+  gray: 'rgba(113, 118, 128, 0.2)',
+  blackText: nightMode.value ? '#fff' : '#344055',
+  transperentBlackText: 'rgba(52, 64, 85, 0.56)',
+}
 export const chartData = {
   labels: [
     '05.02.2025',
@@ -16,9 +29,15 @@ export const chartData = {
     {
       label: 'Результаты',
       data: [2, 3, 4, 5, 3, 4, 2],
-      borderColor: '#1D4ECC',
-      backgroundColor: '#1D4ECC',
-      tension: 0.4,
+      borderColor: colors.blue,
+      backgroundColor: colors.blue,
+      tension: 0.1,
+
+      pointRadius: 5,
+      pointBackgroundColor: colors.lightBlue,
+      pointBorderColor: colors.blue,
+      pointBorderWidth: 3,
+      pointStyle: 'circle',
     },
   ],
 }
@@ -29,7 +48,7 @@ export const chartOptions = {
   layout: {
     padding: {
       left: 0,
-      right: 20, // Отступ справа для всей области графика
+      right: 20,
       top: 0,
       bottom: 0,
     },
@@ -47,6 +66,7 @@ export const chartOptions = {
       grid: {
         display: true,
         drawBorder: false, // Убираем границу сетки
+        color: colors.gray,
       },
       border: {
         display: false,
@@ -67,7 +87,6 @@ export const chartOptions = {
       ticks: {
         display: false,
         stepSize: 1,
-        padding: 10, // Отступ между метками и осью Y (слева от меток)
         font: {
           size: 15,
           family: 'Inter',
@@ -77,6 +96,7 @@ export const chartOptions = {
       grid: {
         display: true,
         drawBorder: false, // Убираем границу сетки
+        color: colors.gray,
       },
       border: {
         display: false,

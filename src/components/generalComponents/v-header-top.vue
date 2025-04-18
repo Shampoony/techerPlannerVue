@@ -5,8 +5,12 @@
         <h2 class="v-header-top__nav-title">Teacher Planner</h2>
 
         <!-- @click="toggleModal('burgerModal')" -->
-        <div class="burger menu-opener">
-          <span></span>
+        <div class="buttons-mob">
+          <v-user-drop />
+          <div class="flex gap-2">
+            <img src="/src/assets/images/left-menu/notification.svg" alt="" />
+            <p class="notifications">10</p>
+          </div>
         </div>
 
         <div class="v-header-top__login">
@@ -28,16 +32,21 @@
   </transition>
 </template>
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 
 import vUserDrop from './v-user-drop.vue'
 import vBurgerModal from '../modals/v-burger-modal.vue'
+import { useGeneralStore } from '@/stores/generalStore'
+
+const store = useGeneralStore()
 
 const modals = ref({
   burgerModal: false,
 })
 
-const isNightMode = ref(localStorage.getItem('nightMode') == 'true')
+const isNightMode = computed(() => {
+  return store.nightMode
+})
 
 const toggleModal = (modalId) => {
   console.log(modalId)
@@ -47,8 +56,7 @@ const toggleModal = (modalId) => {
 
 const switchMode = () => {
   document.body.classList.toggle('night__mode')
-  localStorage.setItem('nightMode', document.body.classList.contains('night__mode'))
-  isNightMode.value = !isNightMode.value
+  store.setNightMode(document.body.classList.contains('night__mode'))
 }
 
 onMounted(() => {

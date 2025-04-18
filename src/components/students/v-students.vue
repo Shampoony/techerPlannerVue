@@ -2,11 +2,11 @@
   <v-base>
     <section class="v-students">
       <div class="container">
-        <div class="v-students__container layout">
+        <div class="v-students__container layout" v-show="students.length">
           <div class="v-students__header">
             <div class="v-students__header-block">
               <div class="flex gap-3 justify-between">
-                <h1 class="v-students__title text-title">Ученики</h1>
+                <h1 class="v-students__title text-title">{{ currentTitle }}</h1>
               </div>
               <div class="flex gap-4 justify-between">
                 <router-link :to="{ name: 'archive_students' }" class="v-students__menu-link mob">
@@ -118,11 +118,11 @@
               <label for="select-all" class="subtitle">Выбреть все</label>
             </div>
             <div class="v-students__menu-block">
-              <button class="custom-btn blue" @click="toggleGroupModal">
+              <button class="custom-btn blue" @click="toggleGroupModal" v-show="isStudents">
                 <img src="/src/assets/images/users-group.svg" alt="" />
                 <span> Создать группу </span>
               </button>
-              <button class="custom-btn white">
+              <button class="custom-btn white" @click="() => toggleModals('archive')">
                 <img src="/src/assets/images/upload-cloud.svg" alt="" />
                 <span> Архивировать </span>
               </button>
@@ -132,9 +132,11 @@
               </button>
             </div>
           </div>
-          <div class="scrolltable" v-if="isTable">
+          <div class="scrolltable" v-show="isTable && students.length">
             <v-students-table
-              @all-selected="toggleEditMode"
+              @student-selected="toggleEditMode"
+              @edit-item="editItem"
+              @toggle-modal="toggleModals"
               ref="studentsTable"
               :items="itemsToDisplay"
               :type="studentsType"
@@ -142,31 +144,40 @@
           </div>
           <v-students-cards
             ref="studentsCards"
-            v-if="isCards"
+            v-show="isCards && students.length"
             :items="itemsToDisplay"
             @student-selected="toggleEditMode"
             :type="studentsType"
+            @toggle-modal="toggleModals"
           />
+          <div class="loader-container" v-show="!students.length && isLoading">
+            <div class="loader"></div>
+          </div>
+        </div>
+        <div class="layout" v-show="!students.length && !isLoading">
+          <div class="null-screen">
+            <h1>Ещё не добавлено ни одного занятия</h1>
+          </div>
         </div>
       </div>
     </section>
   </v-base>
   <transition name="fade">
-    <v-add-students-modal v-if="modals.addStudents" @close="() => toggleModals('addStudents')" />
+    <v-add-students-modal v-show="modals.addStudents" @close="() => toggleModals('addStudents')" />
   </transition>
   <transition name="fade">
-    <v-mass-addition v-if="modals.massAddition" @close="() => toggleModals('massAddition')" />
+    <v-mass-addition v-show="modals.massAddition" @close="() => toggleModals('massAddition')" />
   </transition>
   <transition name="fade">
     <v-group-modal
-      v-if="modals.groupModal"
+      v-show="modals.groupModal"
       @close="() => toggleModals('groupModal')"
       :students="selectedGroupStudents"
     />
   </transition>
   <transition name="fade">
     <v-delete-modal
-      v-if="modals.deleteModal"
+      v-show="modals.deleteModal"
       @close="() => toggleModals('deleteModal')"
       :type="currentType"
       :student="selectedStudent"
@@ -174,9 +185,21 @@
       :group_amount="groupAmount"
     />
   </transition>
+  <transition name="fade">
+    <v-archive-student
+      v-show="modals.archive"
+      @close="() => toggleModals('archive')"
+      :type="currentType"
+    />
+  </transition>
+  <transition name="fade">
+    <v-edit-group-modal v-show="modals.editGroup" @close="() => toggleModals('editGroup')" />
+  </transition>
 </template>
 <script setup>
+import { useRouter } from 'vue-router'
 import { onMounted, ref, computed } from 'vue'
+import { useStudentsStore } from '@/stores/studentsStore'
 
 import vBase from '../v-base.vue'
 import vStudentsCards from './v-students-cards.vue'
@@ -185,8 +208,9 @@ import vStudentsTable from './v-students-table.vue'
 import vGroupModal from '../modals/students/v-group-modal.vue'
 import vDeleteModal from '../modals/students/v-delete-modal.vue'
 import vMassAddition from '../modals/students/v-mass-addition.vue'
+import vEditGroupModal from '../modals/students/v-edit-group-modal.vue'
 import vAddStudentsModal from '../modals/students/v-add-students-modal.vue'
-
+import vArchiveStudent from '../modals/students/v-archive-student-modal.vue'
 const allCards = ref(false)
 
 const studentsCards = ref(null)
@@ -204,6 +228,9 @@ const isGroups = ref(false)
 
 const editMode = ref(false)
 
+const router = useRouter()
+const store = useStudentsStore()
+
 /* Для модального удаления */
 
 const currentType = computed(() => {
@@ -213,7 +240,7 @@ const currentType = computed(() => {
 const selectedStudent = computed(() => {
   if (selectedStudents.value.length < 1) {
     const student = students.value.filter((student) => student.id === selectedStudents.value[0])
-    return student
+    return [student]
   }
   return null
 })
@@ -222,41 +249,13 @@ const studentsAmount = ref(null)
 const groupAmount = ref(null)
 
 const modals = ref({
+  archive: false,
+  editGroup: false,
   addStudents: false,
   massAddition: false,
   groupModal: false,
   deleteModal: false,
 })
-
-const students = ref([
-  {
-    id: 1,
-    name: 'Алексей',
-    contact: '8 982 449 66 89',
-    rate: '2000 ₽ / 1 час',
-    balance: '6 000 ₽',
-    homework: 'Оценено',
-    comment: 'С Алексеем занимаемся до мая',
-  },
-  {
-    id: 2,
-    name: 'Алексей',
-    contact: '8 982 449 66 89',
-    rate: '2000 ₽ / 1 час',
-    balance: '6 000 ₽',
-    homework: 'Оценено',
-    comment: 'С Алексеем занимаемся до мая',
-  },
-  {
-    id: 3,
-    name: 'Алексей',
-    contact: '8 982 449 66 89',
-    rate: '2000 ₽ / 1 час',
-    balance: '6 000 ₽',
-    homework: 'Оценено',
-    comment: 'С Алексеем занимаемся до мая',
-  },
-])
 
 const groups = ref([
   {
@@ -267,16 +266,44 @@ const groups = ref([
     balance: 1200,
     homework: 'Ждёт ответа',
     comment: 'Работаем по скидке 20% (для всех)',
+    students: [{ id: 1, name: 'Алексей' }],
+  },
+  {
+    id: 2,
+    name: 'ОГЭ',
+    students_count: 10,
+    rate: '2000 ₽ / 1,5 часа',
+    balance: 1200,
+    homework: 'Ждёт ответа',
+    comment: 'Работаем по скидке 20% (для всех)',
+    students: [{ id: 2, name: 'Тимур' }],
   },
 ])
+
+const students = ref(store.students)
+
+const currentTitle = computed(() => {
+  return currentType.value === 'students' ? 'Ученики' : 'Группы'
+})
 
 const itemsToDisplay = computed(() => {
   return isGroups.value ? groups.value : students.value
 })
 
 const studentsType = computed(() => {
-  return isGroups.value ? 'group' : 'students'
+  return isGroups.value ? 'groups' : 'students'
 })
+
+const isLoading = ref(false)
+
+const editItem = (item) => {
+  if (isGroups.value) {
+    toggleModals('editGroup')
+  } else {
+    console.log(item)
+    router.push({ name: 'student', params: { id: item.id } })
+  }
+}
 
 const allCardsSelected = () => {
   studentsCards.value.selectAllStudents(allCards.value)
@@ -315,6 +342,7 @@ const toggleGroupModal = () => {
 }
 
 const toggleModals = (modalName) => {
+  console.log(modalName, '- ОКНО')
   console.log(modalName, modals.value[modalName])
   modals.value[modalName] = !modals.value[modalName]
 }
@@ -325,13 +353,22 @@ const deleteStudents = () => {
   )
 
   studentsAmount.value = deletedStudentsIds.length
-  console.log(selectedStudent.value)
   modals.value.deleteModal = true
+}
+
+const loadData = async () => {
+  isLoading.value = true
+  await store.getStudents()
+  students.value = store.students
+  isLoading.value = false
 }
 
 onMounted(() => {
   const menu = localStorage.getItem('menu')
   const menuType = localStorage.getItem('menuType')
+
+  isGroups.value = menuType === 'groups'
+  isStudents.value = menuType === 'students'
 
   if (menu) {
     toggleMenu(menu)
@@ -340,5 +377,6 @@ onMounted(() => {
   if (menuType) {
     toggleMenuType(menuType)
   }
+  loadData()
 })
 </script>

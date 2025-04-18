@@ -5,7 +5,6 @@
         <div class="loader-container" v-show="isLoading">
           <div class="loader"></div>
         </div>
-
         <div class="v-home__container layout" v-if="currentLesson && !isLoading">
           <div class="v-home__left">
             <div class="v-home__lesson">
@@ -13,8 +12,11 @@
                 <h1 class="v-home__lesson-title">
                   Текущее занятие:
                   <span
-                    >{{ currentLesson.student_name }} {{ currentLesson.start_time }} -
-                    {{ currentLesson.end_time }}</span
+                    >{{ currentLesson.student_name }}
+                    <span class="v-home__lesson-time">
+                      {{ currentLesson.start_time }} -
+                      {{ currentLesson.end_time }}
+                    </span></span
                   >
                 </h1>
                 <div class="flex gap-3">
@@ -120,136 +122,16 @@
                   </ul>
                   <v-add-field @submit="submitProblem" :placeholder="'Проблема'" />
                 </div>
-                <div class="v-home__lesson-homework v-home__lesson-sec">
-                  <div class="v-home__lesson-homework-row">
-                    <h2 class="v-home__subtitle subtitle">Домашнее задание</h2>
-                    <div class="v-home__lesson-homework-buttons">
-                      <div
-                        class="v-home__lesson-homework-header-button"
-                        :class="{ active: !newHomework }"
-                        @click="() => toggleHomework(false)"
-                      >
-                        Предыдущее
-                      </div>
-
-                      <div
-                        class="v-home__lesson-homework-header-button"
-                        :class="{ active: newHomework }"
-                        @click="toggleHomework"
-                      >
-                        Новое
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="v-home__lesson-homework-new" v-if="newHomework">
-                    <textarea
-                      v-if="!noHomework"
-                      class="v-home__lesson-homework-text"
-                      v-model="homeworkText"
-                      @paste="handleTextPasteEvent"
-                      placeholder="Введите текст домашнего задания. Для вставки файлов используйте Ctrl+V"
-                    ></textarea>
-
-                    <v-files-handler
-                      ref="fileHandler"
-                      :modelValue="filesList"
-                      v-if="!noHomework"
-                      @file-removed="homeworkFileRemoved"
-                    />
-
-                    <div class="v-home__lesson-homework-deadline" v-if="!noHomework">
-                      <div class="v-home__lesson-homework-block">
-                        <div class="flex gap-3 items-center" v-if="!nextLesson">
-                          Дедлайн
-                          <VueDatePicker
-                            v-model="deadline"
-                            :locale="'ru-ru'"
-                            :auto-apply="true"
-                            :format="formatDate"
-                          >
-                            <template #clear-icon="{ clear }"> </template>
-                          </VueDatePicker>
-                        </div>
-                        <div class="flex gap-3 items-center">
-                          <input id="next-lesson" type="checkbox" v-model="nextLesson" />
-                          <label for="next-lesson">До следующего занятия</label>
-                        </div>
-                      </div>
-                      <div class="inline-flex gap-3 h-full">
-                        <div class="file-input" @click="openFilesModal">
-                          <img class="day-el" src="/src/assets/images/add-file-day.svg" alt="" />
-                          <img
-                            class="night-el"
-                            src="/src/assets/images/add-file-night.svg"
-                            alt=""
-                          />
-                        </div>
-                        <button
-                          class="v-home__lesson-homework-button save"
-                          :class="{ unactive: !homeworkText.length }"
-                        >
-                          Сохранить
-                        </button>
-                      </div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                      <input type="checkbox" id="no-homework" v-model="noHomework" />
-                      <label for="no-homework">Без задания</label>
-                    </div>
-                    <button
-                      class="v-home__lesson-homework-button save mob"
-                      :class="{ unactive: !homeworkText.length }"
-                    >
-                      Сохранить
-                    </button>
-                  </div>
-
-                  <div class="v-home__lesson-homework-prev" v-if="!newHomework">
-                    <div class="v-home__lesson-homework-prev-header">
-                      <p class="block-description">
-                        Выполнить задания №22, №23, №24 (стр. 100) из учебника, письменно.
-                      </p>
-                      <div class="flex gap-3 items-center" v-if="!nextLesson">
-                        <p class="block-description">Дедлайн</p>
-                        <input
-                          class="styled-datepicker green"
-                          type="date"
-                          readonly
-                          v-model="prevDeadline"
-                        />
-                      </div>
-                    </div>
-
-                    <v-files-handler v-model:files="prevFilesList" />
-                    <h3 class="v-home__lesson-homework-prev-title">Ответ ученика</h3>
-                    <v-files-handler v-model:files="studentPrevFilesList" />
-                    <textarea
-                      v-if="!noHomework"
-                      class="v-home__lesson-homework-text"
-                      v-model="homeworkText"
-                      @paste="handleTextPasteEvent"
-                      placeholder="Ваш комментарий"
-                    ></textarea>
-                    <div class="v-home__lesson-homework-footer">
-                      <div class="flex gap-2 items-center v-home__lesson-homework-mark">
-                        <span>Оценка</span>
-                        <v-styled-select :is-readonly="isHwCompleted" />
-                      </div>
-                      <button
-                        class="v-home__lesson-homework-button save"
-                        v-show="!isHwCompleted"
-                        :class="{ unactive: !homeworkText.length }"
-                      >
-                        Сохранить
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <v-homework />
               </div>
             </div>
           </div>
           <v-home-right />
+        </div>
+        <div class="layout" v-show="!currentLesson && !isLoading">
+          <div class="null-screen">
+            <h1>Ещё не добавлено ни одного занятия</h1>
+          </div>
         </div>
       </div>
     </section>
@@ -259,7 +141,6 @@
   </transition>
 </template>
 <script setup>
-import { formatDate } from '@/utils'
 import {
   deleteLessonProblem,
   deleteLessonTopic,
@@ -274,31 +155,18 @@ import { nextTick, onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue'
 import vBase from '../v-base.vue'
 import vHomeRight from './v-home-right.vue'
 import '@vuepic/vue-datepicker/dist/main.css'
-import VueDatePicker from '@vuepic/vue-datepicker'
 import vFilesModal from '../modals/v-files-modal.vue'
 import vAddField from '../generalComponents/v-add-field.vue'
-import vFilesHandler from '../generalComponents/v-files-handler.vue'
-import vStyledSelect from '../generalComponents/v-styled-select.vue'
+import vHomework from '../generalComponents/v-homework.vue'
 
 const filesList = ref([])
-const prevFilesList = ref([])
-const studentPrevFilesList = ref([])
 const fileHandler = ref(null)
 const themes = ref([])
 const currentProblems = ref([])
 const newTheme = ref(null)
-const deadline = ref(new Date())
-const prevDeadline = ref(new Date())
-const homeworkText = ref('')
 const currentLesson = ref()
 const isKeyboardOpen = ref(false)
-const socket = null
-const notifications = ref([])
-const noHomework = ref(false)
-const nextLesson = ref(false)
-const isHwCompleted = ref(false)
-const newHomework = ref(true)
-
+let ws = null
 const previousProblems = ref([])
 const lessonId = ref(null)
 
@@ -315,17 +183,8 @@ const checkKeyboard = () => {
   })
 }
 
-const openFilesModal = () => {
-  modals.value.files = true
-  console.log(modals.value.files)
-}
-
 const closeFilesModal = () => {
   modals.value.files = false
-}
-
-const toggleHomework = (value = true) => {
-  newHomework.value = value
 }
 
 const deleteProblem = async (deletedProblem) => {
@@ -352,10 +211,8 @@ const submitTheme = async (value) => {
       lesson_id: lessonId.value,
       name: value,
     }
-
     await setLessonTopics(data)
 
-    fetchLessonTopics()
     newTheme.value = ''
   }
 }
@@ -373,19 +230,7 @@ const submitProblem = async (value) => {
     }
 
     await setLessonProblems(data)
-    fetchCurrentProblems()
-  }
-}
-
-// Обработчик события вставки для текстового поля (textarea)
-const handleTextPasteEvent = (event) => {
-  // Используем метод из компонента v-file-handler
-  if (fileHandler.value) {
-    const hasFiles = fileHandler.value.handlePaste(event)
-    // Если были обнаружены файлы, предотвращаем обычную вставку текста
-    if (hasFiles) {
-      event.preventDefault()
-    }
+    /*  fetchCurrentProblems() */
   }
 }
 
@@ -411,6 +256,8 @@ const loadCurrentLessons = async () => {
   } else {
     currentLesson.value = null
   }
+
+  console.log(lessons)
 }
 
 const fetchPreviousProblems = async () => {
@@ -425,7 +272,7 @@ const fetchCurrentProblems = async () => {
 
 const fetchLessonTopics = async () => {
   const response = await getLessonTopics(lessonId.value)
-  themes.value = response
+  themes.value = response || []
 }
 
 const loadData = async () => {
@@ -437,51 +284,38 @@ const loadData = async () => {
 
   isLoading.value = false
 }
+function connectWebSocket() {
+  ws = new WebSocket('wss://test-api.teacherplanner.ru/ws/lesson_notifications/')
 
-const getNotifications = () => {
-  let socket
-  onMounted(() => {
-    // Подключаем WebSocket (меняем адрес на свой)
-    socket = new WebSocket('ws://localhost:8000/ws/notifications/')
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      console.log('Получено уведомление:', data)
-      if (data.event === 'lesson_started') {
-        notifications.value.push(`✅ Урок ${data.lesson_id} начался!`)
-      } else if (data.event === 'lesson_ended') {
-        notifications.value.push(`🏁 Урок ${data.lesson_id} завершился!`)
-      } else if (data.event === 'lesson_reminder') {
-        notifications.value.push(`🔔 Напоминание: Урок ${data.lesson_id} скоро начнется!`)
-      }
+  ws.onmessage = (event) => {
+    if (event.data !== 'ping') {
+      console.log('Новое сообщение:', event.data)
     }
-    socket.onerror = (error) => {
-      console.error('WebSocket Ошибка:', error)
-    }
-    socket.onclose = () => {
-      console.log('WebSocket соединение закрыто.')
-    }
-  })
+  }
+
+  ws.onclose = () => {
+    console.log('Соединение закрыто, переподключение...')
+    setTimeout(connectWebSocket, 1000)
+  }
+
+  ws.onerror = (error) => {
+    console.log('Ошибка сокета:', error)
+    ws.close() // Закрыть соединение при ошибке
+  }
 }
-
-const homeworkFileRemoved = (file) => {
-  console.log(file, filesList.value)
-  filesList.value = filesList.value.filter((item) => item.id !== file.id)
-
-  console.log(filesList.value)
+const getNotifications = () => {
+  connectWebSocket() // Инициализация соединения
 }
 
 onMounted(() => {
   checkKeyboard()
   loadData()
+  getNotifications()
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', checkKeyboard)
 })
 
-onUnmounted(() => {
-  if (socket) {
-    socket.close()
-  }
-})
+onUnmounted(() => {})
 </script>
