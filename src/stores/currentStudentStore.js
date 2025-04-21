@@ -17,7 +17,6 @@ export const useCurrentStudentStore = defineStore('currentStudent', {
       }
     },
     async setStudentDetails() {
-      console.log(this.student, this.studentId)
       if (this.student === null && this.studentId) {
         // подгрузка деталей ученика
         this.student = await getStudentById(this.studentId)

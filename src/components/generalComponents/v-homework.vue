@@ -116,16 +116,22 @@
       <div class="v-home__lesson-homework-footer">
         <div class="flex gap-2 items-center v-home__lesson-homework-mark">
           <span>Оценка</span>
-          <v-styled-select
-            :is-readonly="isHwCompleted"
-            :default-value="mark"
-            :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]"
-          />
+          <template v-if="isHwCompleted">
+            <v-styled-select :is-readonly="isHwCompleted" :default-value="mark" />
+          </template>
+          <template v-else>
+            <v-styled-select
+              :is-readonly="false"
+              :default-value="mark"
+              @update:model-value="(value) => selectMark(value)"
+              :items="[2, 3, 4, 5]"
+            />
+          </template>
         </div>
         <button
           class="v-home__lesson-homework-button save"
           v-show="!isHwCompleted"
-          :class="{ unactive: !homeworkText.length }"
+          :class="{ unactive: !hasChanges }"
         >
           Сохранить
         </button>
@@ -168,6 +174,7 @@ const homeworkText = ref('')
 const noHomework = ref(false)
 const nextLesson = ref(false)
 const newHomework = ref(props.mode === 'all')
+const selectedMark = ref(null)
 
 const modals = ref({
   files: false,
@@ -198,6 +205,14 @@ const isDeadlineOverdue = computed(() => {
   }
   return null
 })
+
+const hasChanges = computed(() => {
+  return homeworkText.value.length > 0 || (selectedMark.value !== null && selectedMark.value !== 2)
+})
+
+const selectMark = (value) => {
+  selectedMark.value = value
+}
 
 const openFilesModal = () => {
   modals.value.files = true

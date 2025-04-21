@@ -1,20 +1,24 @@
 <template>
-  <div class="chart-container" ref="container" @mousemove="handleMouseMove">
-    <Bar :data="chartData" :options="chartOptions" />
+  <div class="v-compare-chart" ref="container" @mousemove="handleMouseMove">
+    <div class="v-compare-chart__wrapper">
+      <div class="v-compare-chart__container">
+        <Bar :data="chartData" :options="chartOptions" />
 
-    <transition name="fade">
-      <div
-        v-if="tooltip.visible"
-        class="custom-tooltip"
-        :style="{ left: tooltip.x + 30 + 'px', top: tooltip.y - 20 + 'px' }"
-      >
-        <div class="tooltip-body">{{ tooltip.value }}</div>
-        <div class="tooltip-arrow"></div>
-      </div>
-    </transition>
-    <div class="labels-container">
-      <div v-for="(label, index) in labels" :key="index" class="label-item">
-        <div class="label-content">{{ label }}</div>
+        <transition name="fade">
+          <div
+            v-if="tooltip.visible"
+            class="custom-tooltip"
+            :style="{ left: tooltip.x + 30 + 'px', top: tooltip.y - 20 + 'px' }"
+          >
+            <div class="tooltip-body">{{ tooltip.value }}</div>
+            <div class="tooltip-arrow"></div>
+          </div>
+        </transition>
+        <div class="labels-container">
+          <div v-for="(label, index) in labels" :key="index" class="label-item">
+            <div class="label-content">{{ label }}</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -175,10 +179,24 @@ const chartOptions = {
 </script>
 
 <style>
-.chart-container {
+.v-compare-chart {
   position: relative;
   height: 350px;
   width: 100%;
+}
+
+.v-compare-chart__wrapper {
+  overflow-x: auto;
+  height: 370px;
+}
+
+.v-compare-chart__wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.v-compare-chart__container {
+  min-width: 900px;
+  height: 80%;
 }
 
 .labels-container {

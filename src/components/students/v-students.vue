@@ -163,14 +163,23 @@
     </section>
   </v-base>
   <transition name="fade">
-    <v-add-students-modal v-show="modals.addStudents" @close="() => toggleModals('addStudents')" />
+    <v-add-students-modal
+      v-show="modals.addStudents"
+      :class="{ 'modal-active': modals.addStudents }"
+      @close="() => toggleModals('addStudents')"
+    />
   </transition>
   <transition name="fade">
-    <v-mass-addition v-show="modals.massAddition" @close="() => toggleModals('massAddition')" />
+    <v-mass-addition
+      v-show="modals.massAddition"
+      :class="{ 'modal-active': modals.massAddition }"
+      @close="() => toggleModals('massAddition')"
+    />
   </transition>
   <transition name="fade">
     <v-group-modal
       v-show="modals.groupModal"
+      :class="{ 'modal-active': modals.groupModal }"
       @close="() => toggleModals('groupModal')"
       :students="selectedGroupStudents"
     />
@@ -178,6 +187,7 @@
   <transition name="fade">
     <v-delete-modal
       v-show="modals.deleteModal"
+      :class="{ 'modal-active': modals.deleteModal }"
       @close="() => toggleModals('deleteModal')"
       :type="currentType"
       :student="selectedStudent"
@@ -188,12 +198,17 @@
   <transition name="fade">
     <v-archive-student
       v-show="modals.archive"
+      :class="{ 'modal-active': modals.archive }"
       @close="() => toggleModals('archive')"
       :type="currentType"
     />
   </transition>
   <transition name="fade">
-    <v-edit-group-modal v-show="modals.editGroup" @close="() => toggleModals('editGroup')" />
+    <v-edit-group-modal
+      v-show="modals.editGroup"
+      :class="{ 'modal-active': modals.editGroup }"
+      @close="() => toggleModals('editGroup')"
+    />
   </transition>
 </template>
 <script setup>

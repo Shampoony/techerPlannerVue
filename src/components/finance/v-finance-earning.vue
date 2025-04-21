@@ -6,25 +6,9 @@
           <div class="v-finance__chart-title text-section-title">График заработка</div>
 
           <div class="v-finance__chart-pagination">
-            <svg width="20" height="20" viewBox="0 0 20 20">
-              <path
-                d="M12.5 5L7.5 10L12.5 15"
-                stroke="#717680"
-                stroke-width="1.66667"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            <img src="/src/assets/images/arrow-left-finance.svg" alt="" />
             2024
-            <svg width="20" height="20" viewBox="0 0 20 20">
-              <path
-                d="M7.5 15L12.5 10L7.5 5"
-                stroke="#717680"
-                stroke-width="1.66667"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            <img src="/src/assets/images/arrow-right-finance.svg" alt="" />
           </div>
 
           <div class="v-finance__chart-forecast">
@@ -42,25 +26,10 @@
             @update:model-value="onSelectChartType"
           />
           <div class="v-finance__chart-pagination mob">
-            <svg width="20" height="20" viewBox="0 0 20 20">
-              <path
-                d="M12.5 5L7.5 10L12.5 15"
-                stroke="#717680"
-                stroke-width="1.66667"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            <img src="/src/assets/images/arrow-left-finance.svg" alt="" />
+
             2024
-            <svg width="20" height="20" viewBox="0 0 20 20">
-              <path
-                d="M7.5 15L12.5 10L7.5 5"
-                stroke="#717680"
-                stroke-width="1.66667"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+            <img src="/src/assets/images/arrow-right-finance.svg" alt="" />
           </div>
         </div>
       </div>

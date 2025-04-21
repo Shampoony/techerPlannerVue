@@ -6,6 +6,12 @@
       @click="toggleDropdownMenu"
     >
       <div class="v-styled-select__value">
+        <img
+          src="/src/assets/images/studentIcon.svg"
+          alt=""
+          class="mr-2"
+          v-if="props.studentIcon"
+        />
         <input class="" type="text" :value="displayValue" readonly v-if="!hasSvg" />
         <span v-if="hasSvg" v-html="svgContent"></span>
       </div>
@@ -83,6 +89,10 @@ const props = defineProps({
     default: () => [],
   },
   isReadonly: {
+    type: Boolean,
+    default: false,
+  },
+  studentIcon: {
     type: Boolean,
     default: false,
   },

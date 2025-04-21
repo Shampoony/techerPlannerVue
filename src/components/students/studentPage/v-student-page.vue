@@ -4,14 +4,14 @@
       <div class="container">
         <div class="v-student-page__container layout">
           <div class="route">
-            <router-link :to="{ name: 'my_students' }"> Ученики </router-link>
+            <router-link :to="{ name: 'my_students' }"> Ученики</router-link>
             <div>/</div>
-            <div>Алексей</div>
+            <div>{{ student?.student_name }}</div>
           </div>
 
           <div class="v-student-page__menu">
             <div class="v-student-page__menu-top">
-              <h1 class="text-title">Алексей</h1>
+              <h1 class="text-title">{{ student?.student_name }}</h1>
               <div class="v-student-page__menu-buttons">
                 <button class="custom-btn white" @click="() => toggleModal('pay')">
                   <svg
@@ -66,29 +66,51 @@
           </div>
 
           <!-- Заменяем множественные v-if на динамический компонент -->
-          <component :is="currentComponent" />
+          <component :is="currentComponent" @toggle-modal="toggleModal" :student="student" />
         </div>
       </div>
     </div>
   </v-base>
   <transition name="fade">
-    <v-pay-modal v-if="modals.pay" @close="() => toggleModal('pay')" />
+    <v-pay-modal
+      v-if="modals.pay"
+      :class="{ 'modal-open': modals.pay }"
+      @close="() => toggleModal('pay')"
+    />
   </transition>
   <transition name="fade">
-    <v-add-result-modal v-if="modals.result" @close="() => toggleModal('result')" />
+    <v-add-result-modal
+      v-if="modals.result"
+      :class="{ 'modal-open': modals.result }"
+      @close="() => toggleModal('result')"
+    />
   </transition>
   <transition name="fade">
-    <v-delete-modal v-if="modals.deleteModal" @close="() => toggleModal('deleteModal')" />
+    <v-delete-modal
+      v-if="modals.deleteModal"
+      :class="{ 'modal-open': modals.deleteModal }"
+      @close="() => toggleModal('deleteModal')"
+    />
   </transition>
   <transition name="fade">
     <v-homework-op-modal
       v-if="modals.homeWorkOpModal"
+      :class="{ 'modal-open': modals.homeWorkOpModal }"
       @close="() => toggleModal('homeWorkOpModal')"
+    />
+  </transition>
+  <transition name="fade">
+    <v-themes-modal
+      v-if="modals.themes"
+      :class="{ 'modal-open': modals.themes }"
+      @close="() => toggleModal('themes')"
     />
   </transition>
 </template>
 <script setup>
-import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { getStudentById } from '@/api/requests'
 
 import vBase from '@/components/v-base.vue'
 import vStudentDetails from './v-student-details.vue'
@@ -96,8 +118,11 @@ import vStudentHomework from './v-student-homework.vue'
 import vStudentAnalytics from './v-student-analytics.vue'
 
 import vPayModal from '@/components/modals/v-pay-modal.vue'
+import vThemesModal from '@/components/modals/v-themes-modal.vue'
 import vHomeworkOpModal from '@/components/modals/v-homework-op-modal.vue'
 import vAddResultModal from '@/components/modals/students/v-add-result-modal.vue'
+
+const route = useRoute()
 
 const activeSec = ref(localStorage.getItem('activeSec') || 'Детали')
 const sectionsTitles = ref(['Детали', 'Домашнее задание', 'Аналитика'])
@@ -116,9 +141,12 @@ const currentComponent = computed(() => {
   }
 })
 
+const student = ref()
+
 const modals = ref({
   pay: false,
   result: false,
+  themes: false,
   deleteModal: false,
   homeWorkOpModal: false,
 })
@@ -131,4 +159,13 @@ const setActiveSection = (section) => {
 const toggleModal = (modal) => {
   modals.value[modal] = !modals.value[modal]
 }
+
+const loadData = async () => {
+  const userId = route.params.id
+  student.value = await getStudentById(userId)
+}
+
+onMounted(() => {
+  loadData()
+})
 </script>

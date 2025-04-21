@@ -27,6 +27,7 @@ const VStudentPage = () => import('@/components/students/studentPage/v-student-p
 
 /* Финансы */
 const vFinance = () => import('@/components/finance/v-finance.vue')
+const VHistoryOperations = () => import('@/components/finance/v-history-operations.vue')
 
 /* Новости */
 const vNews = () => import('@/components/newsPage/v-news.vue')
@@ -104,6 +105,11 @@ const financeRoutes = [
     path: '',
     name: 'finance',
     component: vFinance,
+  },
+  {
+    path: '/history',
+    name: 'history_operations',
+    component: VHistoryOperations,
   },
 ]
 

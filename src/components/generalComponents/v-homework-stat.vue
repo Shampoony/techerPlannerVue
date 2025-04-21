@@ -25,5 +25,6 @@ const homeWorkStat = computed(() => store.studentAnalytics)
 
 onMounted(() => {
   store.setStudentAnalytics()
+  console.log(store.studentAnalytics)
 })
 </script>

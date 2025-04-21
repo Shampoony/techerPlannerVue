@@ -9,7 +9,7 @@
             <input
               type="text"
               class="custom-input"
-              v-model="editedStudent.name"
+              v-model="editedStudent.student_name"
               @input="checkChanges"
               placeholder="Имя ученика"
             />
@@ -19,7 +19,7 @@
             <input
               type="text"
               class="custom-input"
-              v-model="editedStudent.contact"
+              v-model="editedStudent.phone_number"
               @input="checkChanges"
               placeholder="Номер телефона"
             />
@@ -29,7 +29,7 @@
             <input
               type="text"
               class="custom-input"
-              v-model="editedStudent.parentName"
+              v-model="editedStudent.parent_name"
               @input="checkChanges"
               placeholder="Имя родителя"
             />
@@ -39,7 +39,7 @@
             <input
               type="text"
               class="custom-input"
-              v-model="editedStudent.parentContact"
+              v-model="editedStudent.parent_phone_number"
               @input="checkChanges"
               placeholder="Номер родителей"
             />
@@ -92,8 +92,8 @@
               />
               <v-styled-select
                 :items="rateItems"
-                :default-value="editedStudent.time"
-                @update:modelValue="(value) => checkChanges(value, 'time')"
+                :default-value="timeRate"
+                @update:modelValue="(value) => checkChanges(value, 'time_rate')"
               />
               <v-styled-select
                 :items="currencyItems"
@@ -138,43 +138,35 @@
 
 <script setup>
 import { onMounted, ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
 import { useStudentsStore } from '@/stores/studentsStore'
-import { useCurrentStudentStore } from '@/stores/currentStudentStore'
 import VStyledSelect from '@/components/generalComponents/v-styled-select.vue'
 
-const route = useRoute()
 const store = useStudentsStore()
-const currentStudentStore = useCurrentStudentStore()
 
 const rateItems = store.rate
 const currencyItems = store.currency
 const typeConnectItems = store.typeConnect
 
-const student = computed(() => {
-  return currentStudentStore.student
-}) /* ref({
-  id: 1,
-  name: 'Алексей',
-  contact: '8 982 449 66 89',
-  rate: '2000 ₽ / 1 час',
-  time: '2 часа',
-  currency: '$ (доллар)',
-  balance: '6 000 ₽',
-  homework: 'Оценено',
-  comment: 'С Алексеем занимаемся до мая',
-  parentName: 'Мария',
-  parentContact: '8 982 499 72 32',
-  source: 'Профи.ру',
-  goal: 'Подготовка к ОГЭ',
-  communicationMethod: 'Способ связи',
-}) */
+const props = defineProps({
+  student: Object,
+})
 
-const editedStudent = ref({ ...student.value })
+const timeRate = computed(() => {
+  if (editedStudent.value && editedStudent.value.time_rate) {
+    return editedStudent.value.time_rate
+  }
+  return ''
+})
+
+const currentStudent = ref({ ...props.student, comment: '' })
+
+const editedStudent = ref({ ...props.student, comment: '' })
 
 const hasChanges = computed(() => {
-  if (student.value) {
-    return Object.keys(student).some((key) => student.value[key] !== editedStudent.value[key])
+  if (currentStudent.value) {
+    return Object.keys(currentStudent.value).some(
+      (key) => currentStudent.value[key] !== editedStudent.value[key],
+    )
   }
   return false
 })
@@ -182,9 +174,5 @@ const checkChanges = (value, key) => {
   editedStudent.value[key] = typeof value === 'object' ? value.text : value
 }
 
-onMounted(() => {
-  const userId = route.params.id
-  currentStudentStore.setStudentId(userId)
-  currentStudentStore.setStudentDetails()
-})
+onMounted(() => {})
 </script>

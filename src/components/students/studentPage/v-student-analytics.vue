@@ -3,7 +3,7 @@
     <div class="v-student-analytics__container">
       <div class="v-student-analytics__prev">
         <div class="flex justify-between">
-          <h1 class="text-title">Прошедшие задания</h1>
+          <h1 class="text-title">Задания</h1>
 
           <div class="flex gap-3">
             <img
@@ -40,29 +40,18 @@
                 <div class="prev-lesson__info-row">
                   <h4 class="prev-lesson__subtitle">Темы</h4>
                   <div class="prev-lesson__block">
+                    <div class="theme" v-show="!lesson.themes.length">
+                      <span class="theme__title" @click="() => openModal('themes')">
+                        + Добавить тему</span
+                      >
+                    </div>
                     <div
                       class="prev-lesson__theme theme"
+                      @click="() => openModal('themes')"
                       v-for="theme in lesson.themes"
                       :key="theme.id"
                     >
                       <span class="theme__title"> {{ theme.theme }} </span>
-                      <div class="theme__close" @click="() => deleteTheme(theme.id)">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="12"
-                          height="12"
-                          viewBox="0 0 12 12"
-                          fill="none"
-                        >
-                          <path
-                            d="M9 3L3 9M3 3L9 9"
-                            stroke="#1D4ECC"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -89,7 +78,9 @@
                       <span></span>{{ lesson.homework_status }}
                     </div>
                     <template v-if="lesson.homework_status === 'Не добавлено'">
-                      <div class="contact-link">ДЗ задано вне платформы?</div>
+                      <div class="contact-link" @click="() => openModal('homeWorkOpModal')">
+                        ДЗ задано вне платформы?
+                      </div>
                     </template>
                   </div>
                 </div>
@@ -99,10 +90,7 @@
         </swiper>
       </div>
       <div class="v-student-analytics__charts">
-        <div
-          class="v-student-analytics__chart"
-          v-show="studentAnalytics && !studentAnalytics.chart_homeworks?.length"
-        >
+        <div class="v-student-analytics__chart">
           <h2 class="v-student-analytics__chart-title text-section-title">
             Прогресс оценок ученика за домашнее задание
           </h2>
@@ -116,10 +104,7 @@
             <Line v-if="chartData" :data="chartData" :options="chartOptions" />
           </div>
         </div>
-        <div
-          class="v-student-analytics__chart"
-          v-show="studentAnalytics && !studentAnalytics.chart_homeworks.chart_results?.length"
-        >
+        <div class="v-student-analytics__chart">
           <h2 class="v-student-analytics__chart-title text-section-title">
             Прогресс оценок ученика за экзамены
           </h2>
@@ -142,10 +127,9 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useCurrentStudentStore } from '@/stores/currentStudentStore' /* Chart js */
+import { getStudentAnalytics } from '@/api/requests'
+import { useCurrentStudentStore } from '@/stores/currentStudentStore'
 import { chartData, chartOptions } from '../../../charts/chartConfig'
-
-import vHomeworkStat from '@/components/generalComponents/v-homework-stat.vue'
 
 import {
   Chart as ChartJS,
@@ -159,12 +143,17 @@ import {
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
 
+import { defineEmits } from 'vue'
+
 /* Swiper */
-import { Navigation } from 'swiper/modules'
-import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/css'
 import 'swiper/css/navigation'
-import { getStudentAnalytics } from '@/api/requests'
+import { Navigation } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+
+import vHomeworkStat from '@/components/generalComponents/v-homework-stat.vue'
+
+const emit = defineEmits(['toggle-modal'])
 
 const modules = [Navigation]
 const store = useCurrentStudentStore()
@@ -193,9 +182,9 @@ const route = useRoute()
 const lessons = [
   {
     date: '13 марта',
-    themes: [{ id: 1, theme: 'Синусы' }],
+    themes: [],
     problems: [{ id: 1, problem: 'Использует калькулятор' }],
-    homework_status: 'Не выполнено',
+    homework_status: 'Не добавлено',
   },
   {
     date: '13 марта',
@@ -204,6 +193,10 @@ const lessons = [
     homework_status: 5,
   },
 ]
+
+const openModal = (modal) => {
+  emit('toggle-modal', modal)
+}
 
 const studentAnalytics = ref(null)
 const studentId = ref(null)
