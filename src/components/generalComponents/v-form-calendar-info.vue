@@ -1,27 +1,10 @@
 <template>
   <form action="" class="v-form-calendar-info">
-    <div class="modal-row time" v-if="!removeDate">
-      <div class="modal-row__title">Время занятия</div>
-      <div class="time__block modal-row__block">
-        <VueTimepicker
-          @update:modelValue="handleTimeUpdate"
-          v-model="timeInputs[1].start"
-          placeholder="--:--"
-          :clearable="false"
-          :manual-input="true"
-        />
-        <VueTimepicker
-          v-model="timeInputs[1].end"
-          :placeholder="timeInputs[1].end"
-          :clearable="false"
-        />
-      </div>
-    </div>
-    <div class="modal-row" v-if="!removeDate">
-      <div class="modal-row__title">Дата</div>
-      <div class="modal-row__block">
+    <div class="v-form-calendar-info__row">
+      <div class="modal-field col v-form-calendar-info__date" v-if="!removeDate">
+        <div class="modal-field__title">Дата</div>
         <VueDatePicker
-          class="datepicker"
+          class="custom-datepicker"
           :format="formatDay"
           :locale="'ru-ru'"
           v-model="date"
@@ -30,7 +13,26 @@
           <template #clear-icon="{ clear }"> </template>
         </VueDatePicker>
       </div>
+      <div class="modal-field col time" v-if="!removeDate">
+        <div class="modal-field__title">Время</div>
+        <div class="time__row">
+          <VueTimepicker
+            @update:modelValue="handleTimeUpdate"
+            v-model="timeInputs[1].start"
+            placeholder="--:--"
+            :clearable="false"
+            :manual-input="true"
+          />
+          <VueTimepicker
+            v-model="timeInputs[1].end"
+            :placeholder="timeInputs[1].end"
+            :clearable="false"
+          />
+        </div>
+      </div>
     </div>
+
+
     <div class="periodicity" v-if="removeDate">
       <h2 class="periodicity__title title">Периодичность</h2>
       <ul class="periodicity__list">
@@ -59,9 +61,15 @@
         </VueDatePicker>
       </div>
     </div>
-    <div class="modal-row">
-      <div class="modal-row__title">Напоминание за, минут</div>
-      <div class="modal-row__block">
+    <div class="modal-field col">
+      <div class="flex items-center gap-3 my-6">
+        <div class="styled-checkbox">
+          <input id="remind" type="checkbox" v-model="lessonReminder"/>
+          <label for="remind"></label>
+        </div>
+        <label for="remind"> Напоминать о занятии </label>
+      </div>
+        <div class="custom-radio-container" v-if="lessonReminder">
         <div class="custom-radio" v-for="value in [5, 10, 15]" :key="value">
           <input
             :id="'reminder-' + value"
@@ -72,27 +80,12 @@
             @click="toggleRadio('reminder', value)"
           />
 
-          <label :for="'reminder-' + value">{{ value }}</label>
+          <label :for="'reminder-' + value">за {{ value }} минут </label>
         </div>
       </div>
+
     </div>
-    <div class="modal-row">
-      <div class="modal-row__title">Перерыв после, минут</div>
-      <div class="modal-row__block">
-        <div class="custom-radio" v-for="value in [5, 10, 15]" :key="value">
-          <input
-            :id="'break-' + value"
-            type="radio"
-            name="break"
-            :value="value"
-            :checked="break_group === value"
-            @click="toggleRadio('break_group', value)"
-          />
-          <label :for="'break-' + value">{{ value }}</label>
-        </div>
-      </div>
-    </div>
-    <button class="blue-btn" type="submit" @click.prevent="submitForm">Добавить</button>
+
   </form>
 </template>
 
@@ -108,24 +101,25 @@ import 'vue3-timepicker/dist/VueTimepicker.css'
 import '@vuepic/vue-datepicker/dist/main.css'
 import VueDatePicker from '@vuepic/vue-datepicker'
 
-const reminder = ref(null)
+const reminder = ref(5)
 const break_group = ref(null)
 const date = ref(new Date())
 const nextDate = ref(new Date())
 nextDate.value.setDate(date.value.getDate() + 1)
 const repeatUntill = ref(new Date())
 const costLesson = ref()
+const lessonReminder = ref(false)
 
 const emit = defineEmits(['formSubmited'])
 
 const periodicityDays = ref([
-  { id: 1, text: 'ПН', active: false, day_of_week: 1 },
-  { id: 2, text: 'ВТ', active: false, day_of_week: 2 },
-  { id: 3, text: 'СР', active: false, day_of_week: 3 },
-  { id: 4, text: 'ЧТ', active: false, day_of_week: 4 },
-  { id: 5, text: 'ПТ', active: false, day_of_week: 5 },
-  { id: 6, text: 'СБ', active: false, day_of_week: 6 },
-  { id: 7, text: 'ВС', active: false, day_of_week: 7 },
+  { id: 1, text: 'ПН', full_name: 'Понедельник', active: false, day_of_week: 1 },
+  { id: 2, text: 'ВТ', full_name: 'Вторник', active: false, day_of_week: 2 },
+  { id: 3, text: 'СР', full_name: 'Среда', active: false, day_of_week: 3 },
+  { id: 4, text: 'ЧТ', full_name: 'Четверг', active: false, day_of_week: 4 },
+  { id: 5, text: 'ПТ', full_name: 'Пятница', active: false, day_of_week: 5 },
+  { id: 6, text: 'СБ', full_name: 'Суббота', active: false, day_of_week: 6 },
+  { id: 7, text: 'ВС', full_name: 'Воскресенье', active: false, day_of_week: 7 },
 ])
 
 const timeInputs = ref({
@@ -136,10 +130,14 @@ const timeInputs = ref({
 })
 const today = new Date()
 const submitForm = () => {
+  if(timeInputs.value[1].start === '--:--' || !timeInputs.value[1].end  === '--:--' ) {
+    alert('Заполните все поля формы!')
+    return
+  }
   // Проверяем все ключевые значения на undefined или null
   const lessonData = {
     student_id: 0,
-    day_of_week_id: date.value ? date.value.getDay() + 1 : null,
+    day_of_week_id: date.value ? date.value.getDay()  : null,
     start_time: timeInputs.value[1].start + ':00.000Z',
     end_time: timeInputs.value[1].end + ':00.000Z',
     reminder_minutes: reminder.value || 0,
@@ -180,6 +178,10 @@ const handleTimeUpdate = (newValue) => {
 
 const props = defineProps({
   removeDate: Boolean,
+})
+
+defineExpose({
+  submitForm
 })
 
 onMounted(() => {

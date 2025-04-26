@@ -1,7 +1,7 @@
 <template>
   <div class="v-calendar">
-    <v-calendar-month v-if="currenPage === 'month'" />
-    <v-calendar-week v-if="currenPage === 'week'" />
+    <v-calendar-month v-if="currenPage === 'home'" />
+    <v-calendar-week v-if="currenPage === 'calendar-week'" />
   </div>
 </template>
 <script setup>
@@ -10,5 +10,5 @@ import VCalendarMonth from './v-calendar-month.vue'
 
 import { ref } from 'vue'
 
-const currenPage = ref(localStorage.getItem('activePage') || 'month')
+const currenPage = ref(localStorage.getItem('activePage') || 'home')
 </script>

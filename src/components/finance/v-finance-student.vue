@@ -6,25 +6,21 @@
         <v-styled-select :items="myStudents" />
       </div>
 
-      <!-- Дата и чекбокс -->
-      <div class="datepicker-wrapper">
         <VueDatePicker
           v-model="date"
-          :locale="ruLocale"
+          :locale="'ru-RU'"
+          :clearable="true"
+          :format="formatDateRange"
           :action-buttons="['cancel', 'submit']"
           cancel-text="Отмена"
           select-text="Выбрать"
-          class="custom-datepicker"
+          class="range custom-datepicker"
           range
           @update-month-year="onMonthChange"
-        />
-
-        <label class="month-checkbox">
-          <input type="checkbox" v-model="selectFullMonth" @change="handleMonthCheckbox" />
-          Выбрать весь месяц
-        </label>
+        >
+        <template #clear-icon="{ clear }"> </template>
+      </VueDatePicker>
       </div>
-    </div>
 
     <!-- Аналитика -->
     <div class="v-finance-student__analysis">
@@ -35,7 +31,8 @@
           :key="'plus' + i"
         >
           <div class="finance-analytics-card__img">
-            <img src="/src/assets/images/finance-plus.svg" alt="" />
+            <img class="day-el" src="/src/assets/images/finance-plus.svg" alt="" />
+            <img class="night-el" src="/src/assets/images/finance-plus-night.svg" alt="" />
           </div>
           <div class="finance-analytics-card__info">
             <p class="finance-analytics-card__subtitle">Заработано</p>
@@ -50,7 +47,8 @@
       <ul class="v-finance-student__list">
         <li class="v-finance-student__list-item finance-analytics-card">
           <div class="finance-analytics-card__img">
-            <img src="/src/assets/images/finance-minus.svg" alt="" />
+            <img class="day-el" src="/src/assets/images/finance-minus.svg" alt="" />
+            <img class="night-el" src="/src/assets/images/finance-minus-night.svg" alt="" />
           </div>
           <div class="finance-analytics-card__info">
             <p class="finance-analytics-card__subtitle">Заработано</p>
@@ -76,6 +74,7 @@
 </template>
 
 <script setup>
+import { formatDateRange } from '@/utils'
 import { ref, onMounted, computed } from 'vue'
 import { useStudentsStore } from '@/stores/studentsStore'
 
@@ -114,20 +113,3 @@ function handleMonthCheckbox() {
 
 onMounted(() => {})
 </script>
-
-<style scoped>
-.datepicker-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-.month-checkbox {
-  font-size: 14px;
-  color: #333;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-</style>

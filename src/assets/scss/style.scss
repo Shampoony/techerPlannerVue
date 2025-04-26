@@ -240,7 +240,7 @@ textarea {
 
   &.light-red {
     background-color: #fff3f0;
-    color: #fff;
+    color: #FF3A3A;
     svg path {
       stroke: #ff3a3a;
     }
@@ -328,7 +328,7 @@ textarea {
 }
 
 .text-title {
-  font-size: clamp(1.25rem, 1.192rem + 0.26vw, 1.5rem);
+  font-size: clamp(1.25rem, 1.192rem + 0.26vw, 1.5rem) !important;
   font-weight: 700;
   line-height: 30px;
   color: var(--black);
@@ -474,8 +474,11 @@ textarea {
 }
 
 .custom-datepicker {
-  width: 123px !important;
+  width: 147px !important;
   height: 100%;
+
+  font-size: 13px;
+  font-weight: 500;
   border: 1px solid #e9eaeb;
   border-radius: 8px;
 
@@ -489,6 +492,10 @@ textarea {
     }
   }
 
+  &.range {
+    min-width: 230px;
+  }
+
   input {
     padding: 8px 16px !important;
     padding-left: 12px !important;
@@ -496,12 +503,26 @@ textarea {
     background-repeat: no-repeat;
     background-position: 95%;
     border-radius: 8px !important;
+    color: rgba($color: #344055, $alpha: 0.56) !important;
+
   }
 
+  .night__mode & input {
+    color: var(--custom-black-text) !important;
+  }
+  
+
   .dp__calendar_item {
+    transition: .1s ease-in-out;
     @media (hover: hover) {
       &:not(.dp__range_start):hover > div {
+        background-color: #d9d9d9 !important;
+
+      }
+
+      .night__mode &:not(.dp__range_start):hover > div {
         background-color: #3b414a !important;
+
       }
     }
   }
@@ -573,6 +594,14 @@ textarea {
     box-shadow: 0px 8px 8px -4px #0a0d1208;
 
     box-shadow: 0px 20px 24px -4px #0a0d121f;
+
+    @media(max-width: 480px) {
+     /*  position: fixed; 
+      bottom: 0 !important;
+      left: 0 !important;
+      top: auto !important;
+      width: 100% !important; */
+    }
   }
 
   .dp__calendar_header_separator {
@@ -764,27 +793,40 @@ input {
 }
 
 .picker {
-  background-color: var(--white);
-
+  background-color: var(--custom-white);
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
   width: 100%;
-  height: 48px;
-  padding: 5px;
+  height: 40px;
 
-  border-radius: 50px;
+  border-radius: 8px;
+
+  box-shadow: 0px 1px 2px 0px #0a0d120f;
+
+  box-shadow: 0px 1px 3px 0px #0a0d121a;
+
+  border: 1px solid #E9EAEB;
+
+  .night__mode & {
+    border-color: #2D313B !important;
+  }
+
   &__item {
     padding: 10px;
+    height: 100%;
     width: 100%;
-    border-radius: 50px;
 
     text-align: center;
     font-size: 16px;
     cursor: pointer;
+
+    color: #717680;
+    font-weight: 500;
+
+    
     @media (max-width: 510px) {
-      padding: 10px;
       font-size: 14px;
     }
 
@@ -792,11 +834,18 @@ input {
       font-size: 12px;
     }
   }
+
+  &__item:first-child {
+    border-radius: 8px 0 0 8px;
+  }
+  &__item:last-child {
+    border-radius: 0 8px 8px 0;
+  }
   &__item.active {
-    background-color: var(--grey);
+    background-color: var(--custom-light-gray-color);
   }
   .night__mode &__item.active {
-    background-color: #202020 !important;
+    background-color: var(--custom-black) !important;
   }
   .night__mode &-item.active {
     background-color: var(--blue);
@@ -842,7 +891,6 @@ input {
 
     .custom-btn {
       width: 100%;
-      margin-top: 22px;
     }
   }
 
@@ -899,9 +947,10 @@ input {
   }
 
   &-field {
+    width: 100%;
     &__title {
       font-weight: 500;
-      color: #717680;
+      color: var(--custom-black-text);
     }
 
     &__block {
@@ -939,8 +988,12 @@ input {
   &__block {
     display: flex;
     gap: 7.5px;
-    height: 52px;
+    height: 44px;
     width: 100%;
+  }
+  &__row {
+    display: flex;;
+    gap: 8px;
   }
   &__picker {
     width: 50%;
@@ -1322,12 +1375,26 @@ header {
 
   &.mob {
     display: none;
+    margin-top: 0;
     @media (max-width: 480px) {
       display: block;
     }
     .v-calendar-menu {
+      &__date {
+        display: flex;
+        justify-content: space-between;
+
+        margin-top: 24px;
+        margin-bottom: 12px;
+      }
       &__picker {
-        border: 1px solid var(--grey) !important;
+
+        @media(max-width: 480px) {
+          width: 100%;
+        }
+      }
+      &__meanings {
+        justify-content: center;
       }
       &__block {
         display: flex;
@@ -1358,6 +1425,7 @@ header {
           font-family: 'Inter', sans-serif;
           font-weight: 500;
           padding: 0 20px;
+          color: var(--custom-black-text);
         }
         &-back {
           transform: rotate(180deg);
@@ -1374,13 +1442,15 @@ header {
     @media (max-width: 1024px) {
       height: 40px;
     }
+
+    @media(max-width: 684px) {
+      flex-direction: column;
+    }
   }
   * {
-    font-size: 16px;
-    color: var(--black);
-    @media (max-width: 1300px) {
+   /*  @media (max-width: 1300px) {
       font-size: 12px !important;
-    }
+    } */
   }
   &__date-subtitle {
     font-size: 12px;
@@ -1388,32 +1458,65 @@ header {
     text-align: center;
   }
 
-  &__select {
+  &__top {
     display: flex;
+    justify-content: space-between;
+    height: 40px;
+  }
+
+  &__meanings {
+    gap: 32px;
+    align-items: end;
+  }
+
+  &__meaning {
+    white-space: nowrap;
+    display: flex;
+    gap: 12px;
     align-items: center;
-    @media (max-width: 768px) {
-      display: none;
-      &.mob {
-        display: flex !important;
-      }
+
+    font-weight: 500;
+    color: var(--custom-black-text);
+    & > div {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+
+      margin-bottom: 2px;
     }
-    &.mob {
-      display: none;
-      height: 40px;
+
+    &.green > div {
+      background-color: #258d50;
     }
-    &.mob &-button-image {
-      top: 16px;
+
+    &.blue > div {
+      background-color: var(--custom-blue);
     }
+  }
+
+  &__select {
+    max-width: 260px;
+    display: inline-flex;
+    align-items: center;
+
+    input {
+      font-weight: 600;
+      color: #717680 !important;
+    }
+   
+   
+   
     &-buttons {
       display: flex;
       gap: 2px;
       height: 100%;
+
     }
 
     &-button {
       gap: 16px;
 
-      background-color: var(--white);
+      background-color: var(--custom-white);
 
       cursor: pointer;
       position: relative;
@@ -1421,31 +1524,26 @@ header {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0;
+      padding: 0 16px;
+      height: 40px;
       p {
         white-space: nowrap;
       }
       &-image {
         position: absolute;
-        top: 20px;
+        top: 15px;
         right: 20px;
       }
-      &:nth-child(1) {
-        border-radius: 20px 0 0 20px;
-        position: relative;
-        img {
-          width: 14px;
-          right: 10px;
-          top: 20px;
-        }
-      }
-      &:nth-child(2) {
-        width: clamp(2.625rem, 2.054rem + 0.89vw, 3.125rem);
-      }
-      &:nth-child(3) {
-        border-radius: 0 20px 20px 0;
-        width: clamp(2.5rem, 1.929rem + 0.89vw, 3rem);
-      }
+    }
+
+    &-button:first-child {
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+    }
+
+    &-button:last-child {
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
     }
   }
   &__checkbox {
@@ -1465,7 +1563,7 @@ header {
   }
   &__picker {
     width: 180px;
-    height: 48px;
+    height: 40px;
     @media (max-width: 1024px) {
       height: 40px;
     }
@@ -1477,9 +1575,11 @@ header {
 
     width: 45%;
     max-width: 365px;
-    /*  @media (max-width: 675px) {
-      width: 55%;
-    } */
+
+     
+    @media(max-width: 768px) {
+      display: none;
+    }
   }
   &__button {
     display: flex;
@@ -1739,13 +1839,13 @@ header {
   position: relative;
 
   &__content {
+    position: relative;
     overflow-x: auto;
   }
   &__table {
     border-collapse: collapse;
     border: none;
 
-    background-color: var(--white);
   }
   .calendar {
     &-row {
@@ -1772,8 +1872,8 @@ header {
     min-width: 100%;
     &-header__item {
       border: 0;
-      font-size: 10px;
-      color: var(--dark-white);
+      color: var(--custom-dark-gray);
+      font-size: 12px;
       font-weight: 500;
       text-align: center;
 
@@ -1796,9 +1896,17 @@ header {
       }
 
       &__item.active {
-        background-color: #eaf0ff;
+        background-color: #F6F7F9 !important;
+        border: 1px solid #E9EAEB !important;
+        border-radius: 14px !important;
         border-radius: 8px;
       }
+
+      .night__mode &__item.active {
+        border-color: transparent !important;
+        background-color: #FFFFFF14 !important;
+      }
+      
       &__item-content {
         min-height: 100% !important;
       }
@@ -1824,12 +1932,17 @@ header {
         font-size: 14px;
       }
 
-      &__lesson {
+      .v-calendar &__lesson {
         border-radius: 50%;
-        width: 6px;
-        height: 6px;
+        width: 6px !important;
+        height: 6px !important;
+        background-color: var(--custom-blue) !important;
 
-        padding: 0;
+        padding: 0 !important;
+      }
+
+      .v-calendar &__lesson.trial {
+        background-color: #258D50 !important;
       }
 
       &__lesson.break {
@@ -1850,42 +1963,72 @@ header {
   .mob-page & {
     margin-bottom: 50px;
   }
-  th,
   td {
-    background-color: var(--white);
-    border: 3px solid #eaedf5;
+    background-color: var(--custom-black);
   }
-  .night__mode & th,
-  .night__mode & td {
-    border: 3px solid #202020 !important;
+
+  th {
+    padding: 0;
   }
+
   td {
     padding: 24px 8px;
     width: clamp(5.75rem, -0.417rem + 12.85vw, 15rem);
   }
   &-header {
-    .night__mode .mob-page &__item {
-      background-color: #202020;
-    }
-    &__item {
-      font-size: 20px;
-      font-weight: 500;
-      color: var(--blue);
-      text-transform: uppercase;
-      padding: 16px 8px;
-      text-align: left;
+    th + th {
+      .calendar-header__item {
+        border-left: 0;
+      }
     }
 
-    &__item + &__item {
-      border-left: 3px solid #eaedf5;
+
+    &__item {
+      background-color: #f3f4f6;
+      color: var(--custom-dark-gray);
+      font-size: 12px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      padding: 13px 20px;
+
+      text-transform: uppercase;
+
+      width: 100%; 
+    }
+
+    .night__mode &__item {
+      border: 2px solid #FFFFFF14;
+      color: #fff;
+    }
+
+
+    @media(max-width: 480px) {
+      &__item {
+        background-color: transparent !important;
+        border-left: 0 !important;
+
+      }
+    }
+    .night__mode &__item {
+      background-color: var(--custom-black);
+      border-color: #FFFFFF14 !important;
+      border-spacing: 1px;
+    }
+
+    & th:first-child &__item:first-child {
+      border-top-left-radius: 9px;
     }
   }
   &-row {
-    .night__mode .mob-page &__item {
-      background-color: #202020;
-    }
+   
     &__item {
-      height: 188px;
+      max-width: 62px;
+      width: 100%;
+      padding: 10px 5px;
+      border: 1px solid transparent !important;
 
       @media (max-width: 480px) {
         height: auto !important;
@@ -1893,13 +2036,8 @@ header {
     }
     &__item.active {
       background-color: #eaf0ff !important;
-      & .calendar-card {
-        color: var(--white) !important;
-      }
-    }
-    &__item.active .calendar-card__num {
-      background-color: var(--blue) !important;
-      padding: 2px 5px;
+      color: var(--custom-black-text);
+      
     }
     .night__mode &__item.active {
       background-color: #4c4c4c !important;
@@ -1939,14 +2077,14 @@ header {
       opacity: 0.3;
     }
   }
-  &__lesson {
+  & &__lesson {
     width: 100%;
     border-radius: 5px !important;
 
-    background-color: var(--blue);
+    background-color: #e4efff !important;
     color: var(--white);
 
-    padding: 5px;
+    padding: 10px 12px;
     text-align: center;
 
     font-size: 16px;
@@ -1956,24 +2094,42 @@ header {
 
     cursor: pointer;
 
+
     &.trial {
-      background-color: #b5f5bf !important;
-      border: 1px solid #b5f5bf;
-      color: #5a8c59;
-      @media (max-width: 480px) {
-        background-color: #48ad72 !important;
-      }
+      background-color: #e7ffeb !important;
     }
-    .night__mode &.trial {
-      background-color: #fdf2b9 !important;
-      border: none;
-      color: var(--white);
-    }
+
+
     &.break {
       background-color: transparent !important;
       border: 1px dashed var(--blue);
       color: var(--black);
     }
+  }
+  
+  .night__mode &  &__lesson {
+    background-color: #FFFFFF3D !important;
+
+    &.trial {
+      background-color: #B6EAB5 !important;
+    }
+  }
+
+  &__lesson-time {
+    color: #717680;
+    font-weight: 500;
+    font-size: 12px;
+    text-align: left;
+  }
+
+  .night__mode &__lesson-time {
+    color: rgba($color: #fff, $alpha: .64);
+  }
+
+  &__lesson-name {
+    color: var(--custom-black-text);
+    text-align: left;
+    margin-top: 8px;
   }
 
   &__break {
@@ -1982,6 +2138,9 @@ header {
   }
 }
 .v-trial-modal {
+  &__field {
+    margin-top: 36px !important;
+  }
   .custom-checkbox-label {
     @media (max-width: 480px) {
       justify-content: center;
@@ -2036,7 +2195,6 @@ header {
   }
   &__break {
     .calendar_default_cell_inner {
-      border-bottom: 1px solid rgba($color: #cfcece, $alpha: 0.5) !important;
     }
     .calendar_default_rowheader_inner {
       padding-top: 0 !important;
@@ -2048,6 +2206,12 @@ header {
 }
 
 .modal-add {
+  $parent: &;
+  @at-root .modal-inner:has(#{$parent}) {
+    max-width: 480px;
+    width: 100%;
+  }
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2057,23 +2221,30 @@ header {
 
   max-width: 648px;
 
+
   .modal-title {
     margin-bottom: 32px;
   }
 
   &__picker {
     margin-bottom: 32px;
-    background-color: var(--grey);
-    .picker__item.active {
-      background-color: var(--white);
-    }
     @media (max-width: 480px) {
       margin-bottom: 24px;
     }
   }
-  .time__block {
-    width: 65%;
+
+  &__select {
+    width: 100%;
+    align-items: start;
+
+    .v-styled-select {
+      width: 100%;
+      height: 44px;
+    }
+
   }
+
+  
   .modal-row {
     @media (max-width: 480px) {
       flex-direction: column;
@@ -2091,22 +2262,32 @@ header {
 }
 
 .modal-transfer {
+  $parent: &;
+  @at-root .modal-inner:has(#{$parent}) {
+    max-width: 480px;
+    width: 100%;
+  }
   &__container {
     @media (max-width: 480px) {
       flex-direction: column;
     }
   }
   &__block {
-    width: 50%;
+    width: 100%;
     display: flex;
-    flex-direction: column;
     gap: 8px;
+
+    margin-bottom: 24px;
     @media (max-width: 450px) {
       width: 100%;
     }
   }
   button {
     margin-top: 20px;
+  }
+  .modal-field {
+    margin-top: 0;
+    width: auto;
   }
 }
 
@@ -2186,9 +2367,39 @@ header {
 }
 .v-form-calendar-info {
   width: 100%;
+
+  .custom-radio-container {
+    height: 40px;
+  }
   .blue-btn {
     margin-top: 16px;
   }
+
+  &__date {
+    max-width: 150px;
+  }
+
+
+  .time {
+    width: 100% !important;
+  }
+
+  &__row {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    width: 100%;
+
+    margin-top: 16px;
+    > * {
+      margin-top: 0 !important;
+      width: 100%;
+    }
+
+  }
+
+
+  
 }
 
 .periodicity {
@@ -2203,15 +2414,17 @@ header {
   }
   &__list {
     width: 100%;
-    background-color: var(--grey);
-    padding: 8px;
-    gap: 12px;
     margin-bottom: 16px;
 
     border-radius: 10px;
 
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+
+
+    border: 1px solid #E9EAEB;
+    box-shadow: 0px 1px 2px 0px #0A0D120D;
+
 
     @media (max-width: 768px) {
       grid-template-columns: repeat(6, 1fr);
@@ -2229,15 +2442,20 @@ header {
       display: inline-block;
       background-color: var(--white);
 
-      border-radius: 8px;
-      padding: 8px 25px;
+      padding: 10px 0;
       color: var(--dark-white);
 
       cursor: pointer;
       text-align: center;
     }
+    &-item + &-item {
+      border-left: 1px solid #E9EAEB;
+    }
+    .night__mode &-item + &-item {
+      border-color: transparent;
+    }
     &-item.active {
-      background-color: transparent;
+      background-color: #F3F4F6;
     }
     .night__mode &-item.active {
       background-color: #202020;
@@ -2254,10 +2472,9 @@ header {
     justify-content: space-between;
     align-items: center;
     &-title {
-      text-transform: uppercase;
-      background-color: var(--grey);
-      padding: 8px 25px;
-      border-radius: 10px;
+      font-weight: 500;
+      border-radius: 14px;
+      color: var(--custom-black-text);
     }
     .time {
       width: 65%;
@@ -2435,16 +2652,23 @@ header {
 
 .v-buttons-modal,
 .v-delete-lesson-modal {
+  $parent: &;
+  @at-root .modal-inner:has(#{$parent}) {
+    max-width: 480px;
+    width: 100%;
+  }
+
   width: 100%;
   max-width: 648px;
   &__container {
     display: flex;
+    flex-direction: column;
     gap: 8px;
     margin-top: 24px;
   }
   &__button {
     width: 100%;
-    height: 76px;
+    height: 44px;
 
     font-weight: 700;
     font-size: 18px;
@@ -2470,6 +2694,25 @@ header {
       flex-direction: column;
     }
   }
+
+  &__schedule {
+    margin-top: 16px;
+
+    text-align: center;
+    text-decoration: underline;
+    color: var(--custom-black-text);
+
+  }
+}
+
+.v-change-modal {
+  margin-bottom: 40px;
+}
+
+.v-delete-lesson-modal {
+  &__container {
+    margin-bottom: 24px;
+  }
 }
 
 .v-calendar-week-mob {
@@ -2485,17 +2728,8 @@ header {
 }
 
 .day {
-  background-color: var(--white) !important;
-  box-shadow: 0px 2px 5px 0px #132c6a26;
-  background-color: var(--white) !important;
-
-  padding: 20px 10px 0;
-  border-radius: 8px;
-
   .night__mode & {
     background-color: transparent !important;
-    color: var(--black);
-    border: 1px solid #4c4c4c;
   }
   &__header {
     display: flex;
@@ -2504,10 +2738,9 @@ header {
     padding-bottom: 20px;
   }
   &__date {
-    opacity: 0.4;
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    line-height: 14.52px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--custom-black-text);
   }
   &__content {
     display: flex;
@@ -2516,14 +2749,15 @@ header {
 
     padding-bottom: 20px;
   }
+
   &__lesson {
     display: flex;
-    &-circle {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: var(--blue);
-    }
+    align-items: start;
+    flex-direction: column;
+    
+    padding: 14px 16px;
+    border-radius: 8px;
+    background-color: #E4EFFF;
     &-time.trial &-circle {
       background-color: #42b773;
     }
@@ -2531,43 +2765,34 @@ header {
       background-color: #202020;
     }
     &-time {
-      color: var(--blue);
-      background-color: #e8edfb;
-      border-radius: 50px;
-      font-size: 11px;
+      display: flex;
 
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      min-width: 110px;
-
-      gap: 5px;
-
-      padding: 5px;
-      &.trial {
-        color: #258d50 !important;
-        background-color: #e2ffe7 !important;
-      }
-
-      .night__mode &.trial {
-        background-color: #fdf2b9 !important;
-        color: #202020 !important;
-      }
-    }
-
-    .night__mode &-time {
-      background-color: #4c4c4c;
+      font-size: 12px;
+      font-weight: 500;
+      color: #717680;
     }
 
     &-name {
-      font-family: 'Inter', sans-serif;
-      margin-left: 15px;
-      font-weight: 500;
-      font-size: 14px;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--custom-black-text);
 
-      display: flex;
-      align-items: center;
+      margin-bottom: 8px;
+
     }
+
+    .night__mode & {
+      background-color: #FFFFFF14;
+    }
+
+    &.trial {
+      background-color: #E7FFEB !important;
+    }
+
+    .night__mode &.trial *{
+      color: #258D50 !important;
+    }
+
     &.break {
       .day__lesson {
         &-time {
@@ -2693,7 +2918,7 @@ header {
 
 .sec-hidden-content h1 {
   text-align: center;
-  color: var(--blue);
+  color: var(--custom-black-text);
 }
 
 .sec-hidden-content.showing {
@@ -3381,7 +3606,8 @@ header {
   z-index: 100;
   background-color: var(--custom-white);
   width: 288px;
-  height: 938px;
+  height: 100%;
+  max-height: 938px;
 
   @media (max-width: 1200px) {
     display: none;
@@ -4095,7 +4321,7 @@ header {
       cursor: pointer;
     }
     .night__mode &-item {
-      background-color: #2d313b;
+      background-color: #2D313B !important;
     }
   }
 
@@ -5284,7 +5510,7 @@ header {
 
     .custom-datepicker {
       height: 36px;
-      max-width: 207px;
+      max-width: 215px;
       width: 100% !important;
     }
     &__subtitle {
@@ -5380,10 +5606,15 @@ header {
       display: flex;
       align-items: center;
       gap: 20px;
+
+      @media(max-width: 560px) {
+        flex-direction: column;
+        align-items: start;
+      }
     }
 
     .dp__main {
-      width: 207px !important;
+      width: 215px !important;
     }
   }
 
@@ -6036,5 +6267,20 @@ header {
 
   .modal-field + .modal-field {
     margin-top: 32px;
+  }
+}
+
+.v-group-details {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 28px;
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 12px;
   }
 }

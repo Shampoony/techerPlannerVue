@@ -1,42 +1,62 @@
 <template>
-  <v-modal :id="'lol'">
-    <div class="v-trial-modal modal-add">
-      <div class="modal-title">Добавление пробного занятия</div>
-      <input
-        class="styled-input"
-        type="text"
-        name=""
-        id=""
-        placeholder="Введите имя ученика"
-        v-model="student_name"
-      />
-      <div class="modal-row">
-        <input
-          id="pay"
-          type="checkbox"
-          class="custom-checkbox-input"
-          @change="togglePaymentInput"
-        />
-        <label for="pay" class="custom-checkbox-label">
-          <span class="custom-checkbox"></span>
-          <div class="v-calendar-menu__checkbox-subtitle">Платное занятие</div>
-        </label>
-        <div class="modal-row__block">
+  <v-custom-modal @submit="submitForm">
+    <template #modal>
+      <div class="v-trial-modal modal-add">
+        <div class="modal-title">Добавление пробного занятия</div>
+        <div class="modal-field col">
+          <label for="student_name" class="modal-field__title">Имя ученика</label>
           <input
-            class="styled-input"
-            type="number"
-            placeholder="1500"
-            :readonly="pay"
-            v-model="price"
+            class="custom-input"
+            type="text"
+            name=""
+            id="student_name"
+            placeholder="Введите имя ученика"
+            v-model="student_name"
           />
         </div>
+
+        <div class="modal-field v-trial-modal__field">
+
+          <div class="flex flex-col gap-4">
+            <div class="flex gap-3">
+
+                <div class="styled-checkbox">
+                  <input
+                    id="pay"
+                    type="checkbox"
+                    @change="togglePaymentInput"
+                  />
+                  <label for="pay"></label>
+                </div>
+
+              <label for="pay" class="custom-checkbox-label">
+                <div class="v-calendar-menu__checkbox-subtitle">Платное занятие</div>
+              </label>
+              </div>
+
+              <div class="v-trial-modal__row">
+                <div class="modal-field col">
+                  <label for="cost" class="modal-field__title">Стоимость занятий</label>
+
+                  <div class="flex gap-3">
+                    <input class="custom-input" placeholder="Сумма" type="number" id="cost">
+                    <v-styled-select
+                      :items="['₽ (рублей)']"
+                      />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        <v-form-calendar-info @form-submited="formSubmited" ref="lessonForm"/>
       </div>
-      <v-form-calendar-info @form-submited="formSubmited" />
-    </div>
-  </v-modal>
+    </template>
+  </v-custom-modal>
 </template>
 <script setup>
-import vModal from '../generalComponents/v-modal.vue'
+import vCustomModal from '../generalComponents/v-custom-modal.vue'
+import vStyledSelect from '../generalComponents/v-styled-select.vue'
 import vFormCalendarInfo from '../generalComponents/v-form-calendar-info.vue'
 
 import { ref } from 'vue'
@@ -46,6 +66,8 @@ const pay = ref(true)
 
 const price = ref()
 const student_name = ref()
+
+const lessonForm = ref(null)
 
 const formSubmited = (data) => {
   data['cost_lesson'] = price.value || 0
@@ -63,8 +85,12 @@ const formSubmited = (data) => {
       console.log('Создали')
     })
   } else {
-    alert('Выберите ученика!')
+    alert('Введите имя ученика!')
   }
+}
+
+const submitForm = () => {
+  lessonForm.value.submitForm()
 }
 
 const togglePaymentInput = () => {

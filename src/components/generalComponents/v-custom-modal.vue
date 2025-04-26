@@ -7,8 +7,12 @@
     <div @click.stop class="modal-inner">
       <div>
         <slot name="modal"></slot>
-        <div class="flex gap-3">
-          <button class="custom-btn white" @click="close">Отменить</button>
+
+        <div class="flex gap-3" v-show="!hideButtons">
+          <slot name="cancelButton">
+            <button class="custom-btn white" @click="close">Отменить</button>
+          </slot>
+
           <slot name="button">
             <button class="custom-btn blue" @click="submitForm">Cохранить</button>
           </slot>
@@ -34,6 +38,10 @@ const props = defineProps({
   id: {
     type: String,
   },
+  hideButtons: {
+    type: Boolean,
+    default: false,
+  }
 })
 
 const emit = defineEmits(['close', 'submit'])

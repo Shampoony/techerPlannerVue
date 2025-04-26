@@ -16,6 +16,7 @@ export const stableOrder = [
   'reminder_minutes',
   'break_minutes',
   'in_rule',
+  'time_zone_teacher'
 ]
 
 export const updatedStableOrder = [
@@ -81,7 +82,7 @@ export function getAccessToken() {
 
 export function formatDay(date) {
   if (!date) return ''
-  const formattedDate = format(date, 'd MMMM yyyy', { locale: ru })
+  const formattedDate = format(date, 'd.MM.yyyy')
 
   return formattedDate
 }
@@ -106,7 +107,9 @@ export function getMonthByIndex(monthIndex) {
 export function formatMonth(date) {
   const month = getMonthByIndex(date.getMonth())
   const year = date.getFullYear()
-  return `${month}, ${year}`
+
+  const currentYear = new Date().getFullYear()
+  return currentYear !== year ? `${month}, ${year}` : month
 }
 export function transformDate(input) {
   const output = input.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1T') + '00:00:00'
@@ -117,6 +120,26 @@ export function formatDate(date) {
   const d = new Date(date)
   return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
+
+export function formatDateRange (dates) {
+  if (!dates) return '';
+
+  const format = (date) => {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`;
+  };
+
+  if (Array.isArray(dates) && dates.length === 2) {
+    const [start, end] = dates;
+    if (start && end) {
+      return `${format(start)} - ${format(end)}`;
+    }
+  }
+
+  return '';
+};
 export function formatDateToStandart(date) {
   const day = String(date.getDate()).padStart(2, '0')
   const month = String(date.getMonth() + 1).padStart(2, '0') // Месяцы начинаются с 0
@@ -181,4 +204,21 @@ export function getColors() {
     blackText: nightMode ? '#fff' : '#344055',
     transperentBlackText: 'rgba(52, 64, 85, 0.56)',
   }
+}
+
+
+export function getDayOfWeek  (date, day) {
+
+  const [ month, year] = date.split('.');
+
+  const jsDate = new Date(`${year}-${month}-${day}`);
+
+  console.log(year, month, day)
+
+  const days = ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'];
+
+  const weekday = days[jsDate.getDay()];
+
+  return `${weekday}, ${day}`;
+
 }

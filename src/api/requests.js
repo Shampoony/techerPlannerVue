@@ -204,6 +204,22 @@ export async function deleteLessonProblem(problem_id) {
   }
 }
 
+export async function cancelLesson(lesson_data) {
+  try {
+    return await makeRequest(`/api/cancel-lesson`, 'POST', lesson_data)
+  } catch (error) {
+    console.error('Произошла ошибка при удалении проблемы', error)
+  }
+}
+
+export async function deleteRuleLessons(student_id)  {
+  try {
+    return await makeRequest(`/api/delete-student-rule-lessons/${student_id}`, 'DELETE')
+  } catch (error) {
+    console.error('Произошла ошибка при удалении уроков в правиле', error)
+  }
+}
+
 /* Домашние задания */
 
 export async function getLessonHomeWork(lesson_id) {
@@ -292,9 +308,9 @@ export async function setTeacherTasks(data) {
 export async function transferLesson(lesson_id, data, updateAfterTransfer = false) {
   try {
     const response = await makeRequest(`/api/lessons/${lesson_id}`, 'PUT', data)
-    if (updateAfterTransfer) {
+   /*  if (updateAfterTransfer) {
       router.go(0)
-    }
+    } */
     console.log('Запрос прошёл успешно')
     return response
   } catch (error) {

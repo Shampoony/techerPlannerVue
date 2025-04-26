@@ -604,6 +604,11 @@ video {
   position: sticky;
 }
 
+.my-6 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -624,6 +629,14 @@ video {
   margin-left: 1rem;
 }
 
+.mr-12 {
+  margin-right: 3rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
 .mt-10 {
   margin-top: 2.5rem;
 }
@@ -634,10 +647,6 @@ video {
 
 .mt-6 {
   margin-top: 1.5rem;
-}
-
-.mr-2 {
-  margin-right: 0.5rem;
 }
 
 .flex {
@@ -741,10 +750,6 @@ video {
   padding-bottom: 1.75rem;
 }
 
-.text-center {
-  text-align: center;
-}
-
 .text-base {
   font-size: 1rem;
   line-height: 1.5rem;
@@ -757,6 +762,14 @@ video {
 .text-black {
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity, 1));
+}
+
+.opacity-5 {
+  opacity: 0.05;
+}
+
+.opacity-50 {
+  opacity: 0.5;
 }
 
 .blur {

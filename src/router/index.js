@@ -27,6 +27,7 @@ const VStudentPage = () => import('@/components/students/studentPage/v-student-p
 
 /* Финансы */
 const vFinance = () => import('@/components/finance/v-finance.vue')
+const vGroupDetails = () => import('@/components/students/v-group-details.vue')
 const VHistoryOperations = () => import('@/components/finance/v-history-operations.vue')
 
 /* Новости */
@@ -94,8 +95,9 @@ const homeTeacherRoutes = [
 
 const studentsRoutes = [
   { path: '', name: 'my_students', component: vStudents },
-  { path: 'archive', name: 'archive_students', component: VStudentsArchive },
+  { path: 'group/:id', name: 'group', component: vGroupDetails },
   { path: 'student/:id', name: 'student', component: VStudentPage },
+  { path: 'archive', name: 'archive_students', component: VStudentsArchive },
 ]
 
 /* Финансы */

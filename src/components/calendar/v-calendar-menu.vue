@@ -1,29 +1,88 @@
 <template>
   <div class="v-calendar-menu">
+    <div class="v-calendar-menu__top">
+      <h1 class="text-title">Календарь</h1>
+      <div class="v-calendar-menu__buttons">
+        <div class="v-calendar-menu__button custom-btn white" @click="toggleModals('trial_lesson')">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9.99984 4.16663V15.8333M4.1665 9.99996H15.8332"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+
+          Пробное занятие
+        </div>
+        <div class="v-calendar-menu__button custom-btn blue" @click="toggleModals('lessons')">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9.99984 4.16663V15.8333M4.1665 9.99996H15.8332"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          Занятие
+        </div>
+      </div>
+    </div>
     <div class="v-calendar-menu__block">
       <div class="flex gap-2">
         <div class="v-calendar-menu__picker picker">
           <router-link
             :to="{ name: 'calendar-week' }"
             class="v-calendar-menu__picker-item picker__item"
-            :class="{ active: type === 'week' }"
-            @click="setViewType('week')"
+            :class="{ active: type === 'calendar-week' }"
+            @click="setViewType('calendar-week')"
             >Неделя</router-link
           >
           <router-link
             to="/calendar"
             class="v-calendar-menu__picker-item picker__item"
-            :class="{ active: type === 'month' }"
-            @click="setViewType('month')"
+            :class="{ active: type === 'home' }"
+            @click="setViewType('home')"
             >Месяц</router-link
           >
         </div>
 
         <div class="v-calendar-menu__select">
           <div class="v-calendar-menu__select-buttons">
+            <div class="v-calendar-menu__select-button" @click.prevent="prevAction">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 12 12"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9.20975 5.99989H2.42188M2.42188 5.99989L5.81581 9.39383M2.42188 5.99989L5.81581 2.60595"
+                  stroke="#717680"
+                  stroke-width="1.48444"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
             <div class="v-calendar-menu__select-button">
               <VueDatePicker
-                v-if="type === 'month'"
+                v-if="type === 'home'"
                 month-picker
                 :locale="'ru-ru'"
                 :auto-apply="true"
@@ -34,7 +93,7 @@
                 <template #clear-icon="{ clear }"> </template>
               </VueDatePicker>
               <VueDatePicker
-                v-if="type === 'week'"
+                v-if="type === 'calendar-week'"
                 week-picker
                 :format="formatWeek"
                 :locale="'ru-ru'"
@@ -45,49 +104,41 @@
                 <template #clear-icon="{ clear }"> </template>
               </VueDatePicker>
               <div class="v-calendar-menu__select-button-image">
-                <img class="day-el" src="../../assets/images/arrow-down.svg" alt="" />
-                <img class="night-el" src="../../assets/images/arrow-down-night.svg" alt="" />
+                <svg
+                  width="12"
+                  height="8"
+                  viewBox="0 0 12 8"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 1.5L6 6.5L11 1.5"
+                    stroke="#717680"
+                    stroke-width="1.66667"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
               </div>
             </div>
-            <div class="v-calendar-menu__select-button" @click.prevent="prevAction">
-              <svg
-                class="day-el"
-                width="6"
-                height="14"
-                viewBox="0 0 6 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <g transform="scale(-1,1) translate(-6,0)">
-                  <path d="M6 7L-6.52533e-07 13.9282L-4.68497e-08 0.0717966L6 7Z" fill="#202020" />
-                </g>
-              </svg>
-              <svg
-                class="night-el"
-                width="6"
-                height="14"
-                viewBox="0 0 6 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <g transform="scale(-1,1) translate(-6,0)">
-                  <path d="M6 7L-6.52533e-07 13.9282L-4.68497e-08 0.0717966L6 7Z" fill="#fff" />
-                </g>
-              </svg>
-            </div>
+
             <div class="v-calendar-menu__select-button" @click.prevent="nextAction">
               <svg
-                class="day-el"
-                width="6"
-                height="14"
-                viewBox="0 0 6 14"
+                class="rotate-180"
+                width="12"
+                height="12"
+                viewBox="0 0 12 12"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path d="M6 7L-6.52533e-07 13.9282L-4.68497e-08 0.0717966L6 7Z" fill="#202020" />
+                <path
+                  d="M9.20975 5.99989H2.42188M2.42188 5.99989L5.81581 9.39383M2.42188 5.99989L5.81581 2.60595"
+                  stroke="#717680"
+                  stroke-width="1.48444"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
               </svg>
-
-              <img src="../../assets/images/arrow-right-night.svg" class="night-el" alt="" />
             </div>
           </div>
         </div>
@@ -106,90 +157,18 @@
         </div>
       </div>
       <!-- /* toggleModals('trial_lesson') */ -->
-      <div class="v-calendar-menu__buttons flex">
-        <div class="v-calendar-menu__button trial-btn" @click="toggleModals('trial_lesson')">
-          <div class="button-plus">+</div>
-          Пробное занятие
-        </div>
-        <div class="v-calendar-menu__button blue-btn" @click="toggleModals('lessons')">
-          <div class="button-plus">+</div>
+      <div class="v-calendar-menu__meanings flex">
+        <div class="v-calendar-menu__meaning blue" @click="toggleModals('trial_lesson')">
+          <div></div>
           Занятие
+        </div>
+        <div class="v-calendar-menu__meaning green" @click="toggleModals('lessons')">
+          <div></div>
+          Пробное занятие
         </div>
       </div>
     </div>
     <div class="flex justify-between" v-if="isTablet.isMobile">
-      <div class="v-calendar-menu__select mob">
-        <div class="v-calendar-menu__select-buttons">
-          <div class="v-calendar-menu__select-button">
-            <VueDatePicker
-              v-if="type === 'month'"
-              month-picker
-              :locale="'ru-ru'"
-              :auto-apply="true"
-              :format="formatMonth"
-              v-model="monthInput"
-              @update:model-value="onMonthSelect"
-            >
-              <template #clear-icon="{ clear }"> </template>
-            </VueDatePicker>
-            <VueDatePicker
-              v-if="type === 'week'"
-              week-picker
-              :format="formatWeek"
-              :locale="'ru-ru'"
-              :auto-apply="true"
-              v-model="startDate"
-              @update:model-value="onWeekSelect"
-            >
-              <template #clear-icon="{ clear }"> </template>
-            </VueDatePicker>
-            <div class="v-calendar-menu__select-button-image">
-              <img class="day-el" src="../../assets/images/arrow-down.svg" alt="" />
-              <img class="night-el" src="../../assets/images/arrow-down-night.svg" alt="" />
-            </div>
-          </div>
-          <div class="v-calendar-menu__select-button" @click.prevent="prevAction">
-            <svg
-              class="day-el"
-              width="6"
-              height="14"
-              viewBox="0 0 6 14"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g transform="scale(-1,1) translate(-6,0)">
-                <path d="M6 7L-6.52533e-07 13.9282L-4.68497e-08 0.0717966L6 7Z" fill="#202020" />
-              </g>
-            </svg>
-            <svg
-              class="night-el"
-              width="6"
-              height="14"
-              viewBox="0 0 6 14"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g transform="scale(-1,1) translate(-6,0)">
-                <path d="M6 7L-6.52533e-07 13.9282L-4.68497e-08 0.0717966L6 7Z" fill="#fff" />
-              </g>
-            </svg>
-          </div>
-          <div class="v-calendar-menu__select-button" @click.prevent="nextAction">
-            <svg
-              class="day-el"
-              width="6"
-              height="14"
-              viewBox="0 0 6 14"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M6 7L-6.52533e-07 13.9282L-4.68497e-08 0.0717966L6 7Z" fill="#202020" />
-            </svg>
-
-            <img src="../../assets/images/arrow-right-night.svg" class="night-el" alt="" />
-          </div>
-        </div>
-      </div>
       <div class="v-calendar-menu__checkbox flex gap-2 mob" v-if="isShowedBreak">
         <input
           type="checkbox"
@@ -212,44 +191,41 @@
           <router-link
             :to="{ name: 'calendar-week' }"
             class="v-calendar-menu__picker-item picker__item"
-            :class="{ active: type === 'week' }"
-            @click="setViewType('week')"
+            :class="{ active: type === 'calendar-week' }"
+            @click="setViewType('calendar-week')"
             >Неделя</router-link
           >
           <router-link
             :to="{ name: 'home' }"
             class="v-calendar-menu__picker-item picker__item"
-            :class="{ active: type === 'month' }"
-            @click="setViewType('week')"
+            :class="{ active: type === 'home' }"
+            @click="setViewType('home')"
             >Месяц</router-link
           >
         </div>
       </div>
       <div class="v-calendar-menu__date flex items-center justify-center">
         <a class="v-calendar-menu__date-back" @click.prevent="prevAction">
-          <img src="../../assets/images/arrowRightCalendar.svg" class="day-el" alt="" />
-          <img src="../../assets/images/arrowRightCalendarNight.svg" class="night-el" alt="" />
+          <img src="/src/assets/images/arrow-right-finance.svg" alt="">
         </a>
         <h3 class="v-calendar-menu__date-text" v-if="type == 'week'">
           {{ weekStart }} - {{ weekEnd }}
         </h3>
-        <div v-if="type == 'month'">
-          <h3 class="v-calendar-menu__date-text">{{ selectedMonthName }}</h3>
-          <p class="v-calendar-menu__date-subtitle">{{ selectedYear }}</p>
+        <div v-if="type == 'home'">
+          <h3 class="v-calendar-menu__date-text">{{ selectedMonthName }} {{ selectedYear }}</h3>
         </div>
         <a class="v-calendar-menu__date-next" @click.prevent="nextAction">
-          <img src="../../assets/images/arrowRightCalendar.svg" class="day-el" alt="" />
-          <img src="../../assets/images/arrowRightCalendarNight.svg" class="night-el" alt="" />
+          <img src="/src/assets/images/arrow-right-finance.svg" alt="">
         </a>
       </div>
-      <div class="v-calendar-menu__buttons flex">
-        <div class="v-calendar-menu__button trial-btn" @click="toggleModals('trial_lesson')">
-          <div class="button-plus">+</div>
-          Пробное занятие
-        </div>
-        <div class="v-calendar-menu__button blue-btn" @click="toggleModals('lessons')">
-          <div class="button-plus">+</div>
+      <div class="v-calendar-menu__meanings flex">
+        <div class="v-calendar-menu__meaning blue" @click="toggleModals('trial_lesson')">
+          <div></div>
           Занятие
+        </div>
+        <div class="v-calendar-menu__meaning green" @click="toggleModals('lessons')">
+          <div></div>
+          Пробное занятие
         </div>
       </div>
     </div>
@@ -470,8 +446,9 @@ const checkIsModalFromUrl = () => {
 }
 
 const setViewType = (viewType) => {
-  console.log('Ллалав')
   localStorage.setItem('activePage', viewType)
+  console.log(viewType)
+  router.push({name: viewType})
 }
 
 const updateWeekFromUrl = () => {
@@ -494,11 +471,11 @@ const updateWeekFromUrl = () => {
   startDate.value = [formattedDate, endDate]
 }
 const nextAction = computed(() => {
-  return props.type === 'month' ? () => paginateMonth('next') : () => paginateWeek('next')
+  return props.type === 'home' ? () => paginateMonth('next') : () => paginateWeek('next')
 })
 
 const prevAction = computed(() => {
-  return props.type === 'month' ? () => paginateMonth('prev') : () => paginateWeek('prev')
+  return props.type === 'home' ? () => paginateMonth('prev') : () => paginateWeek('prev')
 })
 onMounted(() => {
   setDateFromUrl()

@@ -23,7 +23,7 @@
     <tbody class="v-students-table__body">
       <tr class="v-students-table__body-row" v-for="item in items" :key="item.id">
         <td v-for="col in columns" :key="col.key">
-          <router-link :to="{ name: 'student', params: { id: item.id } }">
+          <router-link :to="getPath(item)">
             <div
               class="v-students-table__body-item"
               :class="{ wrap: col.key === 'comment' }"
@@ -156,6 +156,10 @@ const handlePhoneClick = (phoneNumber) => {
   window.location.href = `tel:${phoneNumber}`
 }
 
+const getPath = (item) => {
+  const routeName = props.type === 'groups' ? 'group' : 'student'
+  return { name: routeName, params: { id: item.id } }
+}
 const deleteItem = (item) => {
   console.log(item)
   store.setDeletedStudent(item)

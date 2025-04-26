@@ -1,74 +1,56 @@
 <template>
-  <v-modal>
-    <div class="modal-transfer">
-      <h2 class="modal-title mb-4">Перенос занятия</h2>
-      <input
-        type="text"
-        class="styled-input text-center"
-        :value="props.lesson.student_name"
-        readonly
-      />
-      <div class="flex gap-4 modal-transfer__container">
-        <div class="modal-transfer__block">
-          <h3 class="text-subtitle">Перенести с</h3>
-          <input
-            type="text"
-            class="styled-input text-center"
-            :value="formatDay(props.lesson.conducted_date)"
-            readonly
-          />
-          <div class="flex gap-2">
-            <input
-              type="time"
-              class="styled-input text-center"
-              :value="props.lesson.start_time"
-              readonly
-            />
-            <input
-              type="time"
-              class="styled-input text-center"
-              :value="props.lesson.end_time"
-              readonly
-            />
+  <v-custom-modal @submit="submitForm">
+    <template #modal>
+      <div class="modal-transfer">
+        <h2 class="modal-title mb-4">Перенос занятия</h2>
+        <div class="flex gap-4 modal-transfer__container">
+
+          <div class="modal-transfer__block ">
+            <div class="modal-field col">
+              <h3 class="modal-field__title">Дата</h3>
+              <VueDatePicker
+                class="custom-datepicker"
+                :format="formatDay"
+                :locale="'ru-ru'"
+                v-model="changedData.date"
+                :auto-apply="true"
+                :position="'left'"
+              >
+                <template #clear-icon="{ clear }"> </template>
+              </VueDatePicker>
+            </div>
+
+            <div class="modal-field col">
+              <h3 class="modal-field__title">
+                Время
+              </h3>
+              <div class="flex gap-2">
+                <VueTimepicker
+                  @update:modelValue="handleTimeUpdate"
+                  v-model="changedData.time[1].start"
+                  :position="'top'"
+                  placeholder="--:--"
+                  :clearable="false"
+                />
+                <VueTimepicker
+                  v-model="changedData.time[1].end"
+                  placeholder="--:--"
+                  :clearable="false"
+                />
+              </div>
+            </div>
+
           </div>
         </div>
 
-        <div class="modal-transfer__block">
-          <h3 class="text-subtitle">на</h3>
-          <VueDatePicker
-            class="datepicker"
-            :format="formatDay"
-            :locale="'ru-ru'"
-            v-model="changedData.date"
-            :auto-apply="true"
-            :position="'left'"
-          >
-            <template #clear-icon="{ clear }"> </template>
-          </VueDatePicker>
-          <div class="flex gap-2">
-            <VueTimepicker
-              @update:modelValue="handleTimeUpdate"
-              v-model="changedData.time[1].start"
-              :position="'top'"
-              placeholder="--:--"
-              :clearable="false"
-            />
-            <VueTimepicker
-              v-model="changedData.time[1].start"
-              :placeholder="changedData.time[1].end"
-              :clearable="false"
-            />
-          </div>
-        </div>
       </div>
+    </template>
 
-      <button class="blue-btn" type="submit" @click.prevent="submitForm">Перенести</button>
-    </div>
-  </v-modal>
+  </v-custom-modal>
 </template>
 
 <script setup>
-import vModal from '../generalComponents/v-modal.vue'
+import vCustomModal from '../generalComponents/v-custom-modal.vue'
 
 /* datepicker */
 import '@vuepic/vue-datepicker/dist/main.css'
@@ -94,7 +76,7 @@ const props = defineProps({
 const changedData = ref({
   date: new Date(),
   time: {
-    1: { start: '', end: '--:--' },
+    1: { start: props.lesson.start_time, end: props.lesson.end_time},
   },
 })
 

@@ -1,21 +1,29 @@
 <template>
-  <v-modal>
-    <div class="modal-add">
-      <div class="modal-title">Редактирование занятия</div>
+  <v-custom-modal @submit="cancelFormSubmitted">
+    <template #modal>
+      <div class="modal-add v-change-modal">
+        <div class="modal-title">Редактирование занятия</div>
 
-      <input type="text" class="styled-input" :value="lesson.student_name" readonly />
-      <transition name="fade">
-        <div v-if="ruleData">
-          <v-stable-form :rule-data="ruleData" @form-submited="formSubmitted" />
-        </div>
-      </transition>
-    </div>
-  </v-modal>
+        <transition name="fade">
+          <div v-if="ruleData">
+            <v-stable-form :rule-data="ruleData" @form-submited="formSubmitted" ref="currentForm"/>
+          </div>
+        </transition>
+      </div>
+    </template>
+
+    <template #cancelButton>
+      <button class="custom-btn light-red" @click="() => toggleDeleteScheduleModal()">
+        Удалить расписание
+      </button>
+    </template>
+
+  </v-custom-modal>
 </template>
 
 <script setup>
-import vModal from '../generalComponents/v-modal.vue'
 import vStableForm from '../generalComponents/v-stable-form.vue'
+import vCustomModal from '../generalComponents/v-custom-modal.vue'
 
 import { defineProps, onMounted, ref } from 'vue'
 
@@ -31,7 +39,22 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['toggleLessonModals'])
+
+const currentForm = ref(null)
+
+const cancelFormSubmitted = () => {
+  console.log('')
+  currentForm.value.submitForm()
+}
+
+const toggleDeleteScheduleModal = () => {
+  console.log('Зашли в функцию в дочернем')
+  emit('toggleLessonModals', 'delete_schedule')
+}
+
 const formSubmitted = (requestBody) => {
+  console.log(requestBody)
   requestBody['student_id'] = props.lesson.student_id
   requestBody['lesson_id'] = props.lesson.id || props.lesson.lesson_id
   editRule(sortObject(requestBody, updatedStableOrder)).then(() => {
@@ -41,6 +64,7 @@ const formSubmitted = (requestBody) => {
 
 onMounted(() => {
   getRule(props.lesson.student_id).then((data) => {
+    console.log(data)
     ruleData.value = data
   })
   console.log('Выбранный урок - ', props.lesson)

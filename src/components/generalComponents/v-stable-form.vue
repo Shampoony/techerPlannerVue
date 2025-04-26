@@ -1,7 +1,6 @@
 <template>
   <div class="v-stable-form">
     <div class="periodicity">
-      <h2 class="periodicity__title title">Периодичность</h2>
       <ul class="periodicity__list">
         <li
           class="periodicity__list-item"
@@ -15,7 +14,7 @@
       </ul>
       <div class="periodicity__container">
         <div class="periodicity__row" v-for="item in periodicityStack" :key="item.id">
-          <h4 class="periodicity__row-title">{{ item.text }}</h4>
+          <h4 class="periodicity__row-title">{{ item.full_name }}</h4>
           <div class="time">
             <div class="time__block modal-row__block" v-if="timeInputs[item.id]">
               <VueTimepicker
@@ -35,11 +34,11 @@
         </div>
       </div>
     </div>
-    <div class="modal-row">
-      <div class="modal-row__title">Повторять до</div>
-      <div class="modal-row__block">
+    <div class="modal-field row">
+      <div class="modal-field__title mr-12">Повторять до</div>
+      <div class="modal-field__date">
         <VueDatePicker
-          class="datepicker"
+          class="custom-datepicker"
           :format="formatDay"
           :locale="'ru-ru'"
           v-model="repeatUntill"
@@ -49,9 +48,15 @@
         </VueDatePicker>
       </div>
     </div>
-    <div class="modal-row">
-      <div class="modal-row__title">Напоминание за, минут</div>
-      <div class="modal-row__block">
+  <div class="modal-field col" v-if="!props.ruleData">
+      <div class="flex items-center gap-3 my-6">
+        <div class="styled-checkbox">
+          <input id="remind" type="checkbox" />
+          <label for="remind"></label>
+        </div>
+        <label for="remind"> Напоминать о занятии </label>
+      </div>
+        <div class="custom-radio-container">
         <div class="custom-radio" v-for="value in [5, 10, 15]" :key="value">
           <input
             :id="'reminder-' + value"
@@ -62,27 +67,11 @@
             @click="toggleRadio('reminder', value)"
           />
 
-          <label :for="'reminder-' + value">{{ value }}</label>
+          <label :for="'reminder-' + value">за {{ value }} минут </label>
         </div>
       </div>
+
     </div>
-    <div class="modal-row">
-      <div class="modal-row__title">Перерыв после, минут</div>
-      <div class="modal-row__block">
-        <div class="custom-radio" v-for="value in [5, 10, 15]" :key="value">
-          <input
-            :id="'break-' + value"
-            type="radio"
-            name="break"
-            :value="value"
-            :checked="break_group === value"
-            @click="toggleRadio('break_group', value)"
-          />
-          <label :for="'break-' + value">{{ value }}</label>
-        </div>
-      </div>
-    </div>
-    <button class="blue-btn" type="button" @click.prevent="submitForm">Добавить</button>
   </div>
 </template>
 <script setup>
@@ -101,20 +90,20 @@ const emit = defineEmits(['formSubmited'])
 
 /* Переменные состояния */
 const periodicityStack = ref([]) // Стек выбранных дней
-const reminder = ref(null) // Напоминание за (минуты)
+const reminder = ref(5) // Напоминание за (минуты)
 const break_group = ref(null) // Перерыв после (минуты)
 const repeatUntill = ref(new Date()) // Дата окончания повторения
 
 const timeInputs = ref({}) // Время для каждого дня
 const periodicityDays = ref([
   // Дни недели
-  { id: 1, text: 'ПН', active: false, day_of_week: 1 },
-  { id: 2, text: 'ВТ', active: false, day_of_week: 2 },
-  { id: 3, text: 'СР', active: false, day_of_week: 3 },
-  { id: 4, text: 'ЧТ', active: false, day_of_week: 4 },
-  { id: 5, text: 'ПТ', active: false, day_of_week: 5 },
-  { id: 6, text: 'СБ', active: false, day_of_week: 6 },
-  { id: 7, text: 'ВС', active: false, day_of_week: 7 },
+  { id: 1, text: 'ПН', full_name: 'Понедельник', active: false, day_of_week: 1 },
+  { id: 2, text: 'ВТ', full_name: 'Вторник', active: false, day_of_week: 2 },
+  { id: 3, text: 'СР', full_name: 'Среда', active: false, day_of_week: 3 },
+  { id: 4, text: 'ЧТ', full_name: 'Четверг', active: false, day_of_week: 4 },
+  { id: 5, text: 'ПТ', full_name: 'Пятница', active: false, day_of_week: 5 },
+  { id: 6, text: 'СБ', full_name: 'Суббота', active: false, day_of_week: 6 },
+  { id: 7, text: 'ВС', full_name: 'Воскресенье', active: false, day_of_week: 7 },
 ])
 
 const stableForm = ref({}) // Данные формы для отправки
@@ -127,6 +116,7 @@ const props = defineProps({
 })
 
 const daysOfWeek = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
+const fullDaysOfWeek = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье']
 
 /* -------------------- Методы -------------------- */
 const saveRuleData = () => {
@@ -142,6 +132,7 @@ const saveRuleData = () => {
     const obj = {
       id: dayNum,
       text: daysOfWeek[dayNum - 1],
+      full_name: fullDaysOfWeek[dayNum - 1],
       active: true,
       dayOfWeek: dayNum,
     }
@@ -270,6 +261,10 @@ const handleTime = (modelValue, id) => {
   timeInputs.value[id].start = modelValue
   changeTime(id)
 }
+
+defineExpose({
+  submitForm
+})
 
 onMounted(() => {
   saveRuleData()

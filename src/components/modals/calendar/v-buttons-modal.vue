@@ -1,32 +1,34 @@
 <template>
-  <v-modal :id="'buttons-modal'">
-    <div class="v-buttons-modal">
-      <h2 class="modal-title">Занятие</h2>
-      <div class="v-buttons-modal__container">
-        <div class="v-buttons-modal__button white-btn" @click="toggleLessonModals('delete_lesson')">
-          Удалить
+  <v-custom-modal :hide-buttons="true">
+    <template #modal>
+      <div class="v-buttons-modal">
+        <h2 class="modal-title">{{ lesson.student_name }}</h2>
+        <div class="modal-subtitle">
+          {{ formattedDate }}
         </div>
-        <div
-          class="v-buttons-modal__button blue-btn"
-          @click="toggleLessonModals('change_lesson')"
-          v-if="!lesson.one_time && !lesson.trial"
-        >
-          Редактировать правило
-        </div>
-        <div
-          class="v-buttons-modal__button blue-btn"
-          @click="toggleLessonModals('transfer_lesson')"
-        >
-          Перенести
+        <div class="v-buttons-modal__container">
+          <div
+            class="v-buttons-modal__button custom-btn light-blue"
+            @click="toggleLessonModals('transfer_lesson')"
+          >
+            Перенести занятие
+          </div>
+          <div class="v-buttons-modal__button custom-btn light-red" @click="toggleLessonModals('delete_lesson')">
+            Отменить занятие
+          </div>
+          <div class="v-buttons-modal__schedule" v-show="!props.lesson.one_time"  @click="toggleLessonModals('change_lesson')">
+            Настройка расписания
+          </div>
         </div>
       </div>
-    </div>
-  </v-modal>
+    </template>
+
+  </v-custom-modal>
 </template>
 <script setup>
-import vModal from '../../generalComponents/v-modal.vue'
+import vCustomModal from '@/components/generalComponents/v-custom-modal.vue'
 
-import { defineEmits } from 'vue'
+import { defineEmits, onMounted, computed } from 'vue'
 
 const emit = defineEmits(['toggleLessonModals'])
 const props = defineProps({
@@ -36,7 +38,21 @@ const props = defineProps({
   },
 })
 
+
+const formattedDate = computed(()=>{
+  const date = new Date(props.lesson.conducted_date)
+  const options = { day: 'numeric', month: 'long',}
+  const newDate = date.toLocaleDateString('ru-RU', options)
+  const startTime = props.lesson.start_time.slice(0, 5)
+  const endTime = props.lesson.end_time.slice(0, 5)
+
+  return `${newDate} ${startTime} - ${endTime}`
+})
 const toggleLessonModals = (name) => {
   emit('toggleLessonModals', name)
 }
+
+onMounted(()=>{
+  console.log(props.lesson)
+})
 </script>

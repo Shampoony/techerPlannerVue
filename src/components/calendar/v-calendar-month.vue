@@ -1,92 +1,100 @@
 <template>
   <div class="wrapper">
-    <v-header />
-    <main>
+    <v-base>
       <section class="v-calendar-month" v-if="!isMobile">
-        <div class="v-calendar-month__container container">
-          <v-calendar-menu :type="'month'" @setMonth="setMonth" @paginateMonth="paginateMonth" />
-
-          <div
-            class="v-calendar-month__content scroll-container"
-            v-if="monthLessons.schedule && daysWeek"
-          >
-            <div class="sec-hidden-content showing" v-if="isMonthEmpty">
-              <h1 class="text-title text-blue">Еще не запланировано ни одного занятия!</h1>
-            </div>
-            <table class="v-calendar-month__table calendar" :class="{ blur: isMonthEmpty }">
-              <thead>
-                <tr class="calendar-header">
-                  <th class="calendar-header__item" v-for="day in daysWeek" :key="day.id">
-                    {{ day.days_week }}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  class="calendar-row"
-                  v-for="(week, weekIndex) of monthLessons.schedule"
-                  :key="weekIndex"
-                >
-                  <td
-                    class="calendar-row__item"
-                    v-for="i in 7"
-                    :key="i"
-                    @dragover.prevent
-                    @drop="(event) => handleDrop(event, i, weekIndex)"
-                  >
-                    <div class="calendar-row__item-container">
-                      <div class="calendar-row__item-content calendar-card" v-if="week[i]">
-                        <div class="calendar-card__num">{{ week[i].day }}</div>
-                        <div
-                          class="calendar-card__content"
-                          v-for="(lesson, lessonIndex) in week[i].lessons"
-                          :key="lesson.lesson_id"
-                          :class="{ completed: lesson.completed }"
-                          @click="() => toggleButtonsModal(lesson)"
-                          draggable="true"
-                          @dragstart="
-                            (event) => handleDragStart(event, lesson, weekIndex, i, lessonIndex)
-                          "
-                        >
-                          <div class="calendar-card__lesson" :class="{ trial: lesson.trial }">
-                            {{ lesson.start_time }} - {{ lesson.end_time }}
-                            {{ lesson.student_name }}
-                          </div>
-                          <div
-                            class="calendar-card__lesson break"
-                            v-if="
-                              monthLessons.breaks &&
-                              monthLessons.breaks[lesson.lesson_id] &&
-                              monthLessons.breaks[lesson.lesson_id].start_time !==
-                                monthLessons.breaks[lesson.lesson_id].end_time
-                            "
-                          >
-                            {{ monthLessons.breaks[lesson.lesson_id].start_time }} -
-                            {{ monthLessons.breaks[lesson.lesson_id].end_time }}
-                            {{ lesson.student_name }}
+        <div class="container">
+          <div class="v-calendar-month__container layout">
+            <v-calendar-menu :type="'home'" @setMonth="setMonth" @paginateMonth="paginateMonth" />
+            <div class="scroll-container" v-if="monthLessons.schedule && daysWeek">
+              <div class="v-calendar-month__content">
+                <div class="sec-hidden-content showing" v-if="isMonthEmpty">
+                  <h1 class="text-title">Еще не запланировано ни одного занятия!</h1>
+                </div>
+                <table class="v-calendar-month__table calendar" :class="{ blur: isMonthEmpty }">
+                  <thead>
+                    <tr class="calendar-header">
+                      <th v-for="day in daysWeek" :key="day.id">
+                        <div class="calendar-header__item">
+                          {{ day.days_week }}
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      class="calendar-row"
+                      v-for="(week, weekIndex) of monthLessons.schedule"
+                      :key="weekIndex"
+                    >
+                      <td
+                        class="calendar-row__item"
+                        v-for="i in 7"
+                        :key="i"
+                        @dragover.prevent
+                        @drop="(event) => handleDrop(event, i, weekIndex)"
+                      >
+                        <div class="calendar-row__item-container">
+                          <div class="calendar-row__item-content calendar-card" v-if="week[i]">
+                            <div class="calendar-card__num">{{ week[i].day }}</div>
+                            <div
+                              class="calendar-card__content"
+                              v-for="(lesson, lessonIndex) in week[i].lessons"
+                              :key="lesson.lesson_id"
+                              :class="{ completed: lesson.completed }"
+                              @click="() => toggleButtonsModal(lesson)"
+                              draggable="true"
+                              @dragstart="
+                                (event) => handleDragStart(event, lesson, weekIndex, i, lessonIndex)
+                              "
+                            >
+                              <div class="calendar-card__lesson" :class="{ trial: lesson.trial }">
+                                <p class="calendar-card__lesson-time">
+                                  {{ lesson.start_time }} - {{ lesson.end_time }}
+                                </p>
+                                <p class="calendar-card__lesson-name">
+                                  {{ lesson.student_name || 'Артём' }}
+                                </p>
+                              </div>
+                              <div
+                                class="calendar-card__lesson break"
+                                v-if="
+                                  monthLessons.breaks &&
+                                  monthLessons.breaks[lesson.lesson_id] &&
+                                  monthLessons.breaks[lesson.lesson_id].start_time !==
+                                    monthLessons.breaks[lesson.lesson_id].end_time
+                                "
+                              >
+                                {{ monthLessons.breaks[lesson.lesson_id].start_time }} -
+                                {{ monthLessons.breaks[lesson.lesson_id].end_time }}
+                                {{ lesson.student_name }}
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="loader-container" v-else>
-            <div class="loader"></div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="loader-container" v-else>
+              <div class="loader"></div>
+            </div>
           </div>
         </div>
       </section>
       <section class="v-calendar-month-mob mob-page" v-else>
         <div class="container">
-          <div class="v-calendar-month-mob__container">
-            <v-calendar-menu :type="'month'" @paginateMonth="paginateMonth" />
+          <div class="v-calendar-month-mob__container layout">
+            <v-calendar-menu :type="'home'" @paginateMonth="paginateMonth" />
             <table class="v-calendar-month-mob__table calendar">
               <thead>
                 <tr class="calendar-header">
-                  <th class="calendar-header__item" v-for="day in daysWeek" :key="day.id">
+                  <th v-for="day in daysWeek" :key="day.id">
+                    <div class="calendar-header__item">
                     {{ day.days_week }}
+                    </div>
                   </th>
                 </tr>
               </thead>
@@ -97,12 +105,14 @@
                   :key="weekIndex"
                 >
                   <td
-                    class="calendar-row__item"
-                    :class="{ active: week[i]?.day === activeDay }"
+
+
                     @click="toggleActiveDay(week[i]?.day)"
                     v-for="i in 7"
                     :key="i"
                   >
+                  <div    class="calendar-row__item"   :class="{ active: week[i]?.day === activeDay }">
+
                     <div class="calendar-row__item-content calendar-card" v-if="week[i]">
                       <div class="calendar-card__num">{{ week[i].day }}</div>
                       <div class="calendar-card__content">
@@ -118,6 +128,8 @@
                         ></div>
                       </div>
                     </div>
+                  </div>
+
                   </td>
                 </tr>
               </tbody>
@@ -125,26 +137,27 @@
           </div>
           <div class="v-calendar-month-mob__info lesson-info" v-if="activeDayLessons">
             <router-link
-              :to="{ name: 'calendar-day', query: { date: getDateOfDay(activeDayLessons.day) } }"
+              :to="{ name: 'calendar-day', query: { date: getDayOfDate(activeDayLessons.day) } }"
             >
               <div class="v-calendar-month-mob__day day">
                 <div class="day__header">
                   <p class="day__date">{{ getDateOfDay(activeDayLessons.day) }}</p>
-                  <img src="../../assets/images/arrowRightCalendar.svg" class="day-el" alt="" />
-                  <img
-                    src="../../assets/images/arrowRightCalendarNight.svg"
-                    class="night-el"
-                    alt=""
-                  />
+                    <svg class="opacity-50" width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.66663 11.3333L11.3333 4.66663M11.3333 4.66663H4.66663M11.3333 4.66663V11.3333" stroke="#717680" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+
+
                 </div>
                 <div
                   class="day__content"
                   v-for="lesson in activeDayLessons.lessons"
                   :key="lesson.id"
                 >
-                  <div class="day__lesson">
-                    <div class="day__lesson-time" :class="{ trial: lesson.trial }">
-                      <div class="day__lesson-circle"></div>
+                  <div class="day__lesson" :class="{ trial: lesson.trial }">
+                    <h4 class="day__lesson-name">
+                        Петров
+                      </h4>
+                    <div class="day__lesson-time" >
                       <p>{{ lesson.start_time }}</p>
                       <p>-</p>
                       <p>{{ lesson.end_time }}</p>
@@ -183,24 +196,23 @@
           </div>
         </div>
       </section>
-    </main>
-    <v-modals-container ref="modalsContainer" />
-
-    <v-footer />
+      <v-modals-container ref="modalsContainer" />
+    </v-base>
   </div>
 </template>
 
 <script setup>
+import vBase from '../v-base.vue'
 import vCalendarMenu from './v-calendar-menu.vue'
 import vFooter from '../generalComponents/v-footer.vue'
-import VHeader from '../generalComponents/v-header.vue'
 
 import vModalsContainer from '../generalComponents/v-modals-container.vue'
 
+import { getDayOfWeek } from '@/utils'
+import { useRoute, useRouter } from 'vue-router'
 import { useIsMobile } from '@/composables/useIsMobile'
 import { ref, onMounted, computed, useTemplateRef } from 'vue'
 import { getLessonsOnMonth, transferLesson } from '@/api/requests'
-import { useRoute, useRouter } from 'vue-router'
 
 /* Переменные */
 
@@ -255,10 +267,23 @@ const modalsContainer = useTemplateRef('modalsContainer')
 
 /* Методы */
 
-const getDateOfDay = (day) => {
-  const date = route.query['selected_date']
-  return `${String(day).padStart(2, 0)}.${date}`
+const getDayOfDate = (day) => {
+  const date = route.query['selected_date'];
+
+  return `${day.toString().padStart(2, '0')}.${date}`
 }
+
+const getDateOfDay = (day) => {
+  const date = route.query['selected_date'];
+  if(date) {
+    return getDayOfWeek(date, day)
+  }
+
+  return date
+
+}
+
+
 
 const toggleActiveDay = (day) => {
   activeDay.value = day
@@ -410,8 +435,7 @@ const isMonthEmpty = computed(() => {
 
 onMounted(() => {
   setLessonsOnDate()
-  localStorage.setItem('upd', 1)
-  localStorage.setItem('activePage', 'month')
+  localStorage.setItem('activePage', 'home')
   const today = new Date()
   activeDay.value = JSON.parse(today.getDate()) || []
 })

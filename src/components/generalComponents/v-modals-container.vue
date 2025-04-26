@@ -17,6 +17,7 @@
   <transition name="fade">
     <v-change-modal
       v-if="modals.change_lesson"
+     @toggleLessonModals="toggleLessonModals"
       @close="toggleLessonModals('change_lesson')"
       :lesson="pickedLesson"
     />
@@ -28,19 +29,26 @@
       :lesson="pickedLesson"
     />
   </transition>
+  <transition name="fade">
+    <v-delete-schedule-modal
+     v-if="modals.delete_schedule"
+     @close="toggleLessonModals('delete_schedule')"
+    :lesson="pickedLesson" />
+  </transition>
 </template>
 <script setup>
 import vChangeModal from '../modals/v-change-modal.vue'
 import vTransferModal from '../modals/v-transfer-modal.vue'
 import vButtonsModal from '../modals/calendar/v-buttons-modal.vue'
 import vDeleteLessonModal from '../modals/calendar/v-delete-lesson-modal.vue'
-
+import vDeleteScheduleModal from '../modals/v-delete-schedule-modal.vue'
 import { ref, defineExpose, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 
 const toggleLessonModals = (modalName, lesson = null) => {
+  console.log('Зашли в родительском')
   if (lesson) {
     pickedLesson.value = lesson
   }
@@ -52,6 +60,7 @@ const modals = ref({
   delete_lesson: false,
   transfer_lesson: false,
   change_lesson: false,
+  delete_schedule: false,
 })
 
 const pickedLesson = ref({})
@@ -59,5 +68,7 @@ defineExpose({
   toggleLessonModals,
 })
 
-onMounted(() => [])
+onMounted(() => {
+
+})
 </script>
