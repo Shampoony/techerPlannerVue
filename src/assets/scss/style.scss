@@ -3612,8 +3612,7 @@ header {
   z-index: 100;
   background-color: var(--custom-white);
   width: 288px;
-  height: 100%;
-  max-height: 938px;
+  height: 100vh;
 
   @media (max-width: 1200px) {
     display: none;
