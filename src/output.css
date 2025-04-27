@@ -742,10 +742,6 @@ video {
   border-width: 1px;
 }
 
-.pb-4 {
-  padding-bottom: 1rem;
-}
-
 .pb-7 {
   padding-bottom: 1.75rem;
 }
@@ -762,10 +758,6 @@ video {
 .text-black {
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity, 1));
-}
-
-.opacity-5 {
-  opacity: 0.05;
 }
 
 .opacity-50 {

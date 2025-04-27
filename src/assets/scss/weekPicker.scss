@@ -43,8 +43,13 @@
 .dp__range_end,
 .dp__range_start,
 .dp__active_date {
-  color: var(--white) !important;
-  background-color: var(--blue) !important;
+  color: var(--custom-blue) !important;
+  background-color: #F4F7FF !important;
+
+  .night__mode & {
+    background-color: #FFFFFF14 !important;
+    color: #fff !important;
+  }
 }
 
 .dp__input_icon {
@@ -52,7 +57,7 @@
 }
 
 .dp__today {
-  border-color: var(--blue) !important;
+  border-color: var(--custom-dark-white) !important;
 }
 
 .dp__range_between_week,

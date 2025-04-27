@@ -50,11 +50,16 @@
 }
 
 .dp__overlay_col .dp__overlay_cell_active {
-  background-color: var(--blue) !important;
-  color: var(--white) !important;
+  background-color: #F4F7FF !important;
+  color: var(--custom-blue) !important;
+}
+
+.night__mode .dp__overlay_col .dp__overlay_cell_active  {
+  background-color: #FFFFFF14 !important;
+  color: #fff !important;
 }
 .dp__overlay_container {
-  background-color: var(--custom-white) !important;
+  background-color: var(--custom-black) !important;
 }
 
 .dp__overlay_cell:hover {

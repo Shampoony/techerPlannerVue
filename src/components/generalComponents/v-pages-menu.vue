@@ -48,7 +48,9 @@
           </svg>
           Ученики</router-link
         >
-        <a href="/calendar" class="v-pages-menu__nav-link">
+        <router-link
+        :to="{name: 'home'}" class="v-pages-menu__nav-link"
+        :class="{ active: isActive(['home', , 'calendar-week']) }">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -64,8 +66,8 @@
               stroke-linejoin="round"
             />
           </svg>
-          Календарь</a
-        >
+          Календарь
+        </router-link>
         <router-link
           :to="{ name: 'finance' }"
           class="v-pages-menu__nav-link"
@@ -163,7 +165,10 @@
         >
           Ученики</router-link
         >
-        <router-link to="" class="v-pages-menu-mob__nav-link"> Календарь</router-link>
+        <router-link :to="{name: 'home'}" class="v-pages-menu-mob__nav-link"
+          :class="{ active: isActive(['home', , 'calendar-week']) }">
+          Календарь
+        </router-link>
         <router-link
           :to="{ name: 'finance' }"
           class="v-pages-menu-mob__nav-link"

@@ -84,7 +84,8 @@
               <VueDatePicker
                 v-if="type === 'home'"
                 month-picker
-                :locale="'ru-ru'"
+                month-name-format="long"
+                :locale="ru"
                 :auto-apply="true"
                 :format="formatMonth"
                 v-model="monthInput"
@@ -255,6 +256,7 @@ import {
 import '@vuepic/vue-datepicker/dist/main.css'
 import VueDatePicker from '@vuepic/vue-datepicker'
 
+import { ru } from 'date-fns/locale';
 import { useRoute, useRouter } from 'vue-router'
 import { ref, defineEmits, onMounted, computed, nextTick } from 'vue'
 

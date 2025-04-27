@@ -104,6 +104,7 @@ export function formatWeek(date) {
 export function getMonthByIndex(monthIndex) {
   return months[monthIndex]
 }
+
 export function formatMonth(date) {
   const month = getMonthByIndex(date.getMonth())
   const year = date.getFullYear()

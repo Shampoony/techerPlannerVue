@@ -1550,6 +1550,7 @@ header {
     &-subtitle {
       white-space: nowrap;
       width: auto !important;
+      color: var(--custom-black-text);
     }
     &.mob {
       display: none;
@@ -2028,11 +2029,16 @@ header {
       max-width: 62px;
       width: 100%;
       padding: 10px 5px;
-      border: 1px solid transparent !important;
+      border: 1px solid #F3F4F6 !important;
 
       @media (max-width: 480px) {
         height: auto !important;
       }
+    }
+
+    .night__mode &__item {
+      background-color: #3B414A !important;
+      border: 1px solid #FFFFFF14 !important;
     }
     &__item.active {
       background-color: #eaf0ff !important;
