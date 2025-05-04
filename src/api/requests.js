@@ -184,6 +184,7 @@ export async function deleteTeacherOperations(payment_id) {
 
 export async function setIncome(requestBody) {
   try {
+    router.go(0)
     return await makeRequest('/api/income', 'POST', requestBody)
   } catch (error) {
     console.error('Произошла ошибка при добавлении дохода учителя', error)
