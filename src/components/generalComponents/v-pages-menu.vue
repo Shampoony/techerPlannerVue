@@ -118,7 +118,7 @@
           <div class="v-pages-menu__button">
             <img src="/src/assets/images/left-menu/notification.svg" alt="" />
             Уведомления
-            <p class="v-pages-menu__notification">10</p>
+            <p class="v-pages-menu__notification notifications">10</p>
           </div>
           <div class="v-pages-menu__button">
             <img src="/src/assets/images/left-menu/chat.svg" alt="" />
