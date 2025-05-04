@@ -27,10 +27,10 @@ async function makeRequest(endpoint, method = 'GET', body = null) {
     if (!response.ok) {
       const errorCode = response.status
       if(response.status >= 500) {
-        if (import.meta.env.PROD) {
+       /*  if (import.meta.env.PROD) {
           router.push({name: 'error_500'})
           console.log('Перенаправление')
-        }
+        } */
       }
 
 
@@ -40,10 +40,10 @@ async function makeRequest(endpoint, method = 'GET', body = null) {
 
     return method === 'GET' ? await response.json() : response
   } catch (error) {
-    if (import.meta.env.PROD) {
+    /* if (import.meta.env.PROD) {
       router.push({name: 'error_500'})
       console.log('Перенаправление')
-    }
+    } */
     console.error(`Произошла ошибка при ${method}-запросе ${endpoint}:`)
 
     throw error
