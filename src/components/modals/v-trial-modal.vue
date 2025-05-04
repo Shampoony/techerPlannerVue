@@ -24,7 +24,7 @@
                   <input
                     id="pay"
                     type="checkbox"
-                    @change="togglePaymentInput"
+                    v-model="pay"
                   />
                   <label for="pay"></label>
                 </div>
@@ -34,7 +34,7 @@
               </label>
               </div>
 
-              <div class="v-trial-modal__row">
+              <div class="v-trial-modal__row" v-if="!pay">
                 <div class="modal-field col">
                   <label for="cost" class="modal-field__title">Стоимость занятий</label>
 
@@ -93,12 +93,5 @@ const submitForm = () => {
   lessonForm.value.submitForm()
 }
 
-const togglePaymentInput = () => {
-  pay.value = !pay.value
-}
+
 </script>
-<style scoped>
-.custom-checkbox {
-  background-color: var(--grey) !important;
-}
-</style>

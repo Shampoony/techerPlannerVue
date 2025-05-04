@@ -9,8 +9,11 @@ async function makeRequest(endpoint, method = 'GET', body = null) {
   try {
     const options = {
       method,
-      credentials: 'include', // Important for all requests
-      headers: {},
+      credentials: 'include',
+      headers: {
+        'Cache-Control': 'no-store', // <-- добавляем запрет кэширования прямо в запросе
+      },
+
     }
 
     if (body) {
@@ -20,18 +23,27 @@ async function makeRequest(endpoint, method = 'GET', body = null) {
     }
 
     const response = await fetch(`${domain}${endpoint}`, options)
-    if (response.status >= 500) {
-      router.push({ name: 'error_500' })
-    }
 
     if (!response.ok) {
       const errorCode = response.status
+      if(response.status >= 500) {
+        if (import.meta.env.PROD) {
+          router.push({name: 'error_500'})
+          console.log('Перенаправление')
+        }
+      }
+
+
       console.error(`API Error: ${errorCode}`)
       throw new Error(`Код ошибки при запросе: ${errorCode}`)
     }
 
     return method === 'GET' ? await response.json() : response
   } catch (error) {
+    if (import.meta.env.PROD) {
+      router.push({name: 'error_500'})
+      console.log('Перенаправление')
+    }
     console.error(`Произошла ошибка при ${method}-запросе ${endpoint}:`)
 
     throw error
@@ -44,6 +56,23 @@ async function makeGetRequest(endpoint) {
 }
 
 /*=================================================================== Ученики =============================================================== */
+
+export async function getStudentFutureLessons(student_id, page, page_size) {
+  try {
+    return await makeGetRequest(`/api/student-future-lessons?student_id=${student_id}&page=${page}&page_size=${page_size}`)
+  } catch(error) {
+    console.error('Произошла ошибка при получении будущих уркоов ученика', error)
+  }
+}
+
+
+export async function getStudentLastLessons(student_id, page, page_size) {
+  try {
+    return await makeGetRequest(`/api/student-last-lessons?student_id=${student_id}&page=${page}&page_size=${page_size}`)
+  } catch(error) {
+    console.error('Произошла ошибка при получении предыдущих уроков ученика', error)
+  }
+}
 
 export async function getStudentAnalytics(student_id) {
   try {
@@ -61,15 +90,49 @@ export async function getStudentById(student_id) {
   }
 }
 
-/*=================================================================== Учителя =============================================================== */
 
-export async function getEarningsForDay() {
+export async function getArchivedStudents() {
   try {
-    return await makeGetRequest(`/api/earned-for-today`)
+    return await makeGetRequest(`/api/all-students-archive-teachers`)
   } catch (error) {
-    console.error('Произошла ошибка при получении зарабтка учителя за день', error)
+    console.error('Произошла ошибка при получении учеников из архива', error)
   }
 }
+
+export async function getTypesConnect() {
+  try {
+    return await makeGetRequest('/api/type-connects')
+  } catch(error) {
+    console.error('Произошла ошибка при получении типов связи', error)
+  }
+}
+
+export async function toggleStudentArchive(student_id) {
+  try {
+    return await makeRequest(`/api/toggle-student-archive/${student_id}`, 'POST')
+  } catch (error) {
+    console.error('Произошла ошибка при добавлении/удалении ученика из архива', error)
+  }
+}
+
+export async function setStudentProfile(student_profile) {
+  try {
+    return await makeRequest('/api/student-create', 'PSOT', student_profile)
+  } catch (error) {
+    console.error('Произошла ошибка при соаздании профиля студента', error)
+  }
+}
+
+export async function setResult(request_body) {
+  try {
+    return await makeRequest(`/api/results`, 'POST', request_body)
+  } catch (error) {
+    console.error('Произошла ошибка при добавлении результата ученика', error)
+  }
+}
+
+
+/*=================================================================== Учителя =============================================================== */
 
 export async function getTeacherById(teacherId) {
   try {
@@ -84,6 +147,66 @@ export async function getMyInfo() {
     return await makeGetRequest('/api/get-me-info')
   } catch (error) {
     console.error('Произошла ошибка при получении информации об учителе', error)
+  }
+}
+
+export async function getTeacherOperations() {
+  try {
+    return await makeGetRequest('/api/operations')
+  }catch (error) {
+    console.error('Произошла ошибка при получении информации об операциях учителя', error)
+  }
+}
+
+export async function getTeacherExpenses () {
+  try {
+    return await makeGetRequest('/api/expenditures')
+  } catch(error) {
+    console.error('Произошла ошибка при получении расходов учителя', error)
+  }
+}
+
+export async function getTeacherIncome() {
+  try {
+    return await makeGetRequest('/api/incomes')
+  } catch(error) {
+    console.error('Произошла ошибка при получении доходов учителей', error)
+  }
+}
+
+export async function deleteTeacherOperations(payment_id) {
+  try {
+    return await makeRequest(`/api/payments/${payment_id}`, 'DELETE')
+  } catch (error) {
+    console.error('Произошла ошибка при получении информации об операциях учителя', error)
+  }
+}
+
+export async function setIncome(requestBody) {
+  try {
+    return await makeRequest('/api/income', 'POST', requestBody)
+  } catch (error) {
+    console.error('Произошла ошибка при добавлении дохода учителя', error)
+  }
+}
+
+export async function setExpense(requestBody) {
+  try {
+    return await makeRequest('/api/expenditures', 'POST', requestBody)
+  } catch(error) {
+    console.error('Произошла ошибка при добавлении расхода учителя', error)
+  }
+}
+
+export async function setPayment(requestBody) {
+  try {
+     const response = await makeRequest('/api/payments', 'POST', requestBody)
+      if(response.ok) {
+        router.go(0)
+      }
+      return response
+  } catch(error) {
+    console.error('Произошла ошибка при добавлении оплаты', error)
   }
 }
 
@@ -300,7 +423,7 @@ export async function getTeacherTasks() {
 
 export async function setTeacherTasks(data) {
   try {
-    makeRequest(`/api/teacher-tasks`, 'POST', data)
+    makeRequest(`/api/add-task-teacher`, 'POST', data)
   } catch (error) {
     console.error('Произошла ошибки при создании задач учителя', error)
   }
@@ -330,7 +453,7 @@ export async function setTopic(data) {
 
 export async function setOneTimeLesson(data) {
   try {
-    const requestData = data.requestBody || data
+    const requestData = data
     const response = await makeRequest('/api/lesson-one-time', 'POST', requestData)
     router.go(0)
     return response
@@ -367,5 +490,67 @@ export async function editRule(data) {
     return response
   } catch (error) {
     console.error('Произошла ошибки при переносе урока', error)
+  }
+}
+
+/*=================================================================== Финансы =============================================================== */
+
+export async function getEarningsForDay() {
+  try {
+    return await makeGetRequest(`/api/earned-for-today`)
+  } catch (error) {
+    console.error('Произошла ошибка при получении зарабтка учителя за день', error)
+  }
+}
+
+
+export async function getEarningsForPeriod(startDate, endDate) {
+  try {
+    return await makeGetRequest(`/api/earned-for-period?start_date=${startDate}&end_date=${endDate}`)
+  } catch (error) {
+    console.error('Произошла ошибка при получении зарабтка учителя за промежуток', error)
+  }
+}
+
+
+export async function getMonthlyEarnings(year) {
+  try {
+    return await makeGetRequest(`/api/monthly-earnings?year=${year}`)
+  } catch (error) {
+    console.error('Произошла ошибка при получении зарабтка учителя за год по месяцам', error)
+  }
+}
+
+
+export async function getEarningsForYear(year) {
+  try {
+    return await makeGetRequest(`/api/total-earnings?year=${year}`)
+  } catch (error) {
+    console.error('Произошла ошибка при получении зарабтка учителя за год', error)
+  }
+}
+
+export async function getDailyEarnings(startDate, endDate) {
+  try {
+    return await makeGetRequest(`/api/daily-earnings?startDate=${startDate}&endDate=${endDate}`)
+  } catch (error) {
+    console.error('Произошла ошибка при получении зарабтка учителя за промежуток по дням', error)
+  }
+}
+
+export async function getStudentsEarnings() {
+  try {
+    return await makeGetRequest(`/api/students-earnings`)
+  } catch (error) {
+    console.error('Произошла ошибка при получении зарабтка учителя поу ученикам', error)
+  }
+}
+
+
+export async function getStudentEarning (student_id, start_date, end_date) {
+  try {
+    return await makeGetRequest(`/api/student-earnings?student_id=${student_id}&start_date=${start_date}&end_date=${end_date}`)
+  } catch (error) {
+    console.error('Произошла ошибка при получении зарабтка учителя поу ученикам', error)
   }
 }

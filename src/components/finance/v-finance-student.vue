@@ -3,7 +3,7 @@
     <div class="v-finance-student__header">
       <div class="v-finance-student__header-block">
         <h2 class="text-section-title">Финансовый анализ ученика</h2>
-        <v-styled-select :items="myStudents" />
+        <v-styled-select :items="myStudents" @update:model-value="mainStudentSelected"/>
       </div>
 
         <VueDatePicker
@@ -23,58 +23,143 @@
       </div>
 
     <!-- Аналитика -->
-    <div class="v-finance-student__analysis">
-      <ul class="v-finance-student__list">
-        <li
-          class="v-finance-student__list-item finance-analytics-card"
-          v-for="i in 3"
-          :key="'plus' + i"
-        >
-          <div class="finance-analytics-card__img">
-            <img class="day-el" src="/src/assets/images/finance-plus.svg" alt="" />
-            <img class="night-el" src="/src/assets/images/finance-plus-night.svg" alt="" />
-          </div>
-          <div class="finance-analytics-card__info">
-            <p class="finance-analytics-card__subtitle">Заработано</p>
-            <div class="flex gap-3">
-              <h4 class="finance-analytics-card__price">240 000 ₽</h4>
-              <div class="status green">+20%</div>
+     <template v-if="mainStudentData">
+      <div class="v-finance-student__analysis" v-show="showAnalysis">
+        <ul class="v-finance-student__list">
+          <li class="v-finance-student__list-item finance-analytics-card">
+            <div class="finance-analytics-card__img">
+              <img class="day-el" src="/src/assets/images/finance-plus.svg" alt="" />
+              <img class="night-el" src="/src/assets/images/finance-plus-night.svg" alt="" />
             </div>
-          </div>
-        </li>
-      </ul>
-
-      <ul class="v-finance-student__list">
-        <li class="v-finance-student__list-item finance-analytics-card">
-          <div class="finance-analytics-card__img">
-            <img class="day-el" src="/src/assets/images/finance-minus.svg" alt="" />
-            <img class="night-el" src="/src/assets/images/finance-minus-night.svg" alt="" />
-          </div>
-          <div class="finance-analytics-card__info">
-            <p class="finance-analytics-card__subtitle">Заработано</p>
-            <div class="flex gap-3">
-              <h4 class="finance-analytics-card__price">240 000 ₽</h4>
-              <div class="status red">-50%</div>
+            <div class="finance-analytics-card__info">
+              <p class="finance-analytics-card__subtitle">Заработано</p>
+              <div class="flex gap-3">
+                <h4 class="finance-analytics-card__price">
+                  {{ mainStudentData?.earned_from_lessons?.toLocaleString('ru-RU') ?? '0' }} ₽
+                </h4>
+                <div class="status green">
+                  {{ formatPercentage(mainStudentData?.lessons_earnings_percentage_change) }}
+                </div>
+              </div>
             </div>
-          </div>
-        </li>
-      </ul>
-    </div>
+          </li>
 
-    <div class="v-finance-student__compare">
+          <li class="v-finance-student__list-item finance-analytics-card">
+            <div class="finance-analytics-card__img">
+              <img class="day-el" src="/src/assets/images/finance-plus.svg" alt="" />
+              <img class="night-el" src="/src/assets/images/finance-plus-night.svg" alt="" />
+            </div>
+            <div class="finance-analytics-card__info">
+              <p class="finance-analytics-card__subtitle">Запланировано занятий</p>
+              <div class="flex gap-3">
+                <h4 class="finance-analytics-card__price">
+                  {{ mainStudentData?.total_lessons ?? 0 }}
+                </h4>
+                <div class="status green">
+                  {{ formatPercentage(mainStudentData?.lessons_percentage_change) }}
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="v-finance-student__list-item finance-analytics-card">
+            <div class="finance-analytics-card__img">
+              <img class="day-el" src="/src/assets/images/finance-plus.svg" alt="" />
+              <img class="night-el" src="/src/assets/images/finance-plus-night.svg" alt="" />
+            </div>
+            <div class="finance-analytics-card__info">
+              <p class="finance-analytics-card__subtitle">LTV</p>
+              <div class="flex gap-3">
+                <h4 class="finance-analytics-card__price">
+                  {{ mainStudentData?.total_earned?.toLocaleString('ru-RU') ?? '0' }} ₽
+                </h4>
+                <div class="status green">
+                  {{ formatPercentage(mainStudentData?.percentage_change) }}
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <ul class="v-finance-student__list">
+          <li class="v-finance-student__list-item finance-analytics-card">
+            <div class="finance-analytics-card__img">
+              <img class="day-el" src="/src/assets/images/finance-minus.svg" alt="" />
+              <img class="night-el" src="/src/assets/images/finance-minus-night.svg" alt="" />
+            </div>
+            <div class="finance-analytics-card__info">
+              <p class="finance-analytics-card__subtitle">Отменённые занятия</p>
+              <div class="flex gap-3">
+                <h4 class="finance-analytics-card__price">
+                  {{ mainStudentData?.cancelled_count ?? 0 }}
+                </h4>
+                <div class="status red">
+                  {{ formatPercentage(mainStudentData?.cancelled_percentage_change) }}
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="v-finance-student__list-item finance-analytics-card">
+            <div class="finance-analytics-card__img">
+              <img class="day-el" src="/src/assets/images/finance-minus.svg" alt="" />
+              <img class="night-el" src="/src/assets/images/finance-minus-night.svg" alt="" />
+            </div>
+            <div class="finance-analytics-card__info">
+              <p class="finance-analytics-card__subtitle">Коэффициент отмен</p>
+              <div class="flex gap-3">
+                <h4 class="finance-analytics-card__price">
+                  {{ (mainStudentData?.cancelled_ratio ?? 0) + '%' }}
+                </h4>
+                <div class="status red">
+                  {{ formatPercentage(mainStudentData?.cancelled_ratio_percentage_change) }}
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="v-finance-student__list-item finance-analytics-card">
+            <div class="finance-analytics-card__img">
+              <img class="day-el" src="/src/assets/images/finance-minus.svg" alt="" />
+              <img class="night-el" src="/src/assets/images/finance-minus-night.svg" alt="" />
+            </div>
+            <div class="finance-analytics-card__info">
+              <p class="finance-analytics-card__subtitle">Упущенная выручка</p>
+              <div class="flex gap-3">
+                <h4 class="finance-analytics-card__price">
+                  {{ mainStudentData?.lost_earnings?.toLocaleString('ru-RU') ?? '0' }} ₽
+                </h4>
+                <div class="status red">
+                  {{ formatPercentage(mainStudentData?.lost_earnings_percentage_change) }}
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </template>
+
+
+
+
+
+    <div class="v-finance-student__compare" v-if="showAnalysis">
       <div class="v-finance-student__compare-block">
         <div class="v-finance-student__compare-subtitle">
           Выбрать ученика для сравнительного анализа
         </div>
-        <v-styled-select :items="myStudents" />
+        <v-styled-select v-if="comapredStudents" ref="comapredStudentsSelect" :items="comapredStudents" @update:model-value="comparedStudentSelected"/>
       </div>
-      <v-compare-chart />
+      <template v-if="comapredStudent !== 'Выберите ученика'">
+        <v-compare-chart :compared-chart-data="comparedChartData"  />
+      </template>
+
     </div>
   </div>
 </template>
 
 <script setup>
-import { formatDateRange } from '@/utils'
+import { formatDate, formatDateRange, formatDateToStandart, getCurrentMonthDates } from '@/utils'
 import { ref, onMounted, computed } from 'vue'
 import { useStudentsStore } from '@/stores/studentsStore'
 
@@ -82,21 +167,115 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import vCompareChart from './v-compare-chart.vue'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import vStyledSelect from '../generalComponents/v-styled-select.vue'
+import { getStudentEarning } from '@/api/requests'
 
 const store = useStudentsStore()
 
-const myStudents = computed(() => store.students)
+const myStudents = computed(() => {
+  return ['Выберите ученика', ...store.students]
+})
+
 
 onMounted(() => {
   store.getStudents()
 })
 
+const mainStudent = ref(null)
+const comapredStudent = ref(null)
+
+const mainStudentData = ref(null)
+
+const comapredStudentsSelect = ref(null)
+
+const comparedChartData = ref({})
+
 const date = ref(null)
 const selectFullMonth = ref(false)
 const selectedMonth = ref(new Date())
+const studentAnalysis = ref(null)
+
+const showAnalysis = computed(()=>{
+  return mainStudent.value !== 'Выберите ученика'
+})
+
+const comapredStudents = computed(() => {
+  if (mainStudent.value) {
+    const compared = []
+  store.students.forEach((student)=>{
+    console.log(mainStudent.value.id)
+    if(student.id != mainStudent.value.id) {
+      compared.push(student)
+    }
+  })
+  console.log(['Выберите ученика', ...compared])
+  return ['Выберите ученика', ...compared]
+} else {
+  console.log('mainStudent is not defined');
+
+}
+return []
+
+});
+
+const transFormDateToValid = (date) =>{
+  console.log( date.toISOString().split('T')[0])
+  return date.toISOString().split('T')[0]
+}
+
+const mainStudentSelected = async (student) => {
+  mainStudent.value = student
+  if(student.id) {
+    mainStudentData.value = await getStudentEarning(student.id, transFormDateToValid(date.value[0]), transFormDateToValid(date.value[1]))
+  }
+  if(comapredStudent.value) {
+    comapredStudent.value = 'Выберите ученика'
+    comapredStudentsSelect.value.selectSingle('Выберите ученика')
+  }
+}
+
+const comparedStudentSelected = async (student) => {
+  comapredStudent.value = student
+  if(student.id) {
+    const comparedStudentEarnings = await getStudentEarning(student.id,transFormDateToValid(date.value[0]), transFormDateToValid(date.value[1]))
+
+    comparedChartData.value = [
+      {label: mainStudent.value.student_name, data: transformStudentFinance(mainStudentData.value)},
+      {label: student.student_name, data: transformStudentFinance(comparedStudentEarnings)},
+    ]
+
+    console.log(comparedChartData.value)
+  }
+
+}
+
+function transformStudentFinance(data) {
+  const dataArray = [
+    data.total_lessons ?? 0,
+    data.cancelled_count ?? 0,
+     (data.cancelled_ratio ?? 0) * 100,
+    (data.lost_earnings ?? 0) ,
+    (data.earned_from_lessons ?? 0)
+]
+  return dataArray
+}
+
+
 
 function onMonthChange({ month, year }) {
   selectedMonth.value = new Date(year, month, 1)
+}
+
+
+function formatPercentage(value) {
+  if (value === 'N/A' || value == null) {
+    return '0%';
+  }
+  const number = parseFloat(value);
+  if (isNaN(number)) {
+    return '0%';
+  }
+  const sign = number > 0 ? '+' : (number < 0 ? '' : '');
+  return `${sign}${number}%`;
 }
 
 function handleMonthCheckbox() {
@@ -111,5 +290,11 @@ function handleMonthCheckbox() {
   }
 }
 
-onMounted(() => {})
+const loadData = async () => {
+  studentAnalysis.value = await getStudentEarning()
+}
+
+onMounted(() => {
+  date.value = getCurrentMonthDates()
+})
 </script>

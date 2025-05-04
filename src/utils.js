@@ -88,18 +88,26 @@ export function formatDay(date) {
 }
 
 export function formatWeek(date) {
-  if (!date) return ''
+  console.log(date)
+  if (!date) return '';
 
-  // Определяем начало и конец недели
-  const start = startOfWeek(date, { weekStartsOn: 1 }) // Неделя начинается с понедельника
-  const end = endOfWeek(date, { weekStartsOn: 1 })
+  const pad = (n) => n.toString().padStart(2, '0');
 
-  // Форматируем даты вручную
-  const startFormatted = format(start, 'd MMM', { locale: ru })
-  const endFormatted = format(end, 'd MMM', { locale: ru })
+  const day = date.getDay();
+  const diffToMonday = (day + 6) % 7; // Понедельник — 0
+  const start = new Date(date);
+  start.setDate(date.getDate() - diffToMonday);
 
-  return `${startFormatted} - ${endFormatted}`
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+
+  const startStr = `${pad(start.getDate())}.${pad(start.getMonth() + 1)}`;
+  const endStr = `${pad(end.getDate())}.${pad(end.getMonth() + 1)}`;
+  const year = end.getFullYear();
+
+  return `${startStr} - ${endStr} ${year}`;
 }
+
 
 export function getMonthByIndex(monthIndex) {
   return months[monthIndex]
@@ -121,6 +129,8 @@ export function formatDate(date) {
   const d = new Date(date)
   return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
+
+
 
 export function formatDateRange (dates) {
   if (!dates) return '';
@@ -207,6 +217,15 @@ export function getColors() {
   }
 }
 
+export function getCurrentMonthDates () {
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  const endFormatted = endOfMonth.toISOString().slice(0, 10);
+
+  return [startOfMonth, endOfMonth]
+}
+
 
 export function getDayOfWeek  (date, day) {
 
@@ -223,3 +242,10 @@ export function getDayOfWeek  (date, day) {
   return `${weekday}, ${day}`;
 
 }
+
+
+export function getStatusClass  (value)  {
+  if (value > 0) return 'green';
+  if (value < 0) return 'red';
+  return '';
+};

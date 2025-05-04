@@ -5,6 +5,7 @@
         <v-home-schedule />
         <v-home-earnings />
       </div>
+
       <v-home-tasks />
     </div>
   </div>

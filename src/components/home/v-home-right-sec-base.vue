@@ -4,7 +4,7 @@
       <h2 class="subtitle"><slot name="title"></slot></h2>
       <img :class="{ 'rotate-180': !isContent }" src="/src/assets/images/arrow-slim.svg" alt="" />
     </div>
-    <transition name="slide-fade">
+    <transition name="fade">
       <div class="home-right-sec__container" v-if="isContent">
         <slot name="container"></slot>
       </div>

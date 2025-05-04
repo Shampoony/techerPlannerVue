@@ -30,6 +30,9 @@ const vFinance = () => import('@/components/finance/v-finance.vue')
 const vGroupDetails = () => import('@/components/students/v-group-details.vue')
 const VHistoryOperations = () => import('@/components/finance/v-history-operations.vue')
 
+/* Личный кабинет учителя */
+const vCabinet = () => import( '@/components/teacherCabinet/v-cabinet.vue')
+
 /* Новости */
 const vNews = () => import('@/components/newsPage/v-news.vue')
 
@@ -165,6 +168,11 @@ const router = createRouter({
     {
       path: '/user/',
       children: userRoutes,
+    },
+    {
+      path: '/teacher-cabinet/',
+      name: 'teacher_cabinet',
+      component: vCabinet
     },
     {
       path: '/error/',

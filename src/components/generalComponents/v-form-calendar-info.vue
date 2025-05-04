@@ -62,7 +62,7 @@
       </div>
     </div>
     <div class="modal-field col">
-      <div class="flex items-center gap-3 my-6">
+      <div class="flex items-center gap-3 mt-6">
         <div class="styled-checkbox">
           <input id="remind" type="checkbox" v-model="lessonReminder"/>
           <label for="remind"></label>
@@ -137,7 +137,7 @@ const submitForm = () => {
   // Проверяем все ключевые значения на undefined или null
   const lessonData = {
     student_id: 0,
-    day_of_week_id: date.value ? date.value.getDay()  : null,
+    day_of_week_id: date.value ? date.value.getDay() + 1 : null,
     start_time: timeInputs.value[1].start + ':00.000Z',
     end_time: timeInputs.value[1].end + ':00.000Z',
     reminder_minutes: reminder.value || 0,

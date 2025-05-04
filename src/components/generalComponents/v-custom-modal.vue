@@ -4,11 +4,11 @@
     @click="close"
     :class="{ unActive: isSecondOrMoreModal && index + 1 == store.modals_count }"
   >
-    <div @click.stop class="modal-inner">
+    <div @click.stop class="modal-inner"  @keyup.esc="close">
       <div>
         <slot name="modal"></slot>
 
-        <div class="flex gap-3" v-show="!hideButtons">
+        <div class="flex gap-3 mt-6" v-show="!hideButtons">
           <slot name="cancelButton">
             <button class="custom-btn white" @click="close">Отменить</button>
           </slot>

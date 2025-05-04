@@ -276,20 +276,25 @@ const fetchLessonTopics = async () => {
 }
 
 const loadData = async () => {
+  console.log('Зашли в функцию')
   isLoading.value = true
   await loadCurrentLessons()
+  console.log('загрузили уроки')
   if (lessonId.value) {
     await Promise.all([fetchCurrentProblems(), fetchLessonTopics(), fetchPreviousProblems()])
   }
 
   isLoading.value = false
 }
-function connectWebSocket() {
+function  connectWebSocket() {
   ws = new WebSocket('wss://test-api.teacherplanner.ru/ws/lesson_notifications/')
 
   ws.onmessage = (event) => {
     if (event.data !== 'ping') {
       console.log('Новое сообщение:', event.data)
+    }
+    if(event.data === 'lesson_started') {
+      loadData()
     }
   }
 

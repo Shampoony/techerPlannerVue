@@ -188,10 +188,10 @@
   </div>
 
   <transition name="fade">
-    <v-trial-modal v-if="modals.trial" @close="() => toggleModal('trial')" />
+    <v-trial-modal v-if="modals.trial" @close="() => toggleModal('trial')" :class="{'modal-open': modals.trial}" />
   </transition>
   <transition name="fade">
-    <v-lesson-modal v-if="modals.lesson" @close="() => toggleModal('lesson')" />
+    <v-lesson-modal v-if="modals.lesson" @close="() => toggleModal('lesson')" :class="{'modal-open': modals.lesson}" />
   </transition>
 </template>
 <script setup>

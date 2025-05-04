@@ -2,7 +2,7 @@
   <v-base>
     <section class="v-students">
       <div class="container">
-        <div class="v-students__container layout" v-show="students.length">
+        <div class="v-students__container layout">
           <div class="v-students__header">
             <div class="v-students__header-block">
               <div class="flex gap-3 justify-between">
@@ -132,8 +132,8 @@
               </button>
             </div>
           </div>
-          <div class="scrolltable" v-show="isTable && students.length">
             <v-students-table
+              v-show="isTable && students.length"
               @student-selected="toggleEditMode"
               @edit-item="editItem"
               @toggle-modal="toggleModals"
@@ -141,7 +141,6 @@
               :items="itemsToDisplay"
               :type="studentsType"
             />
-          </div>
           <v-students-cards
             ref="studentsCards"
             v-show="isCards && students.length"
@@ -156,7 +155,7 @@
         </div>
         <div class="layout" v-show="!students.length && !isLoading">
           <div class="null-screen">
-            <h1>Ещё не добавлено ни одного занятия</h1>
+            <h1>Ещё не добавлено ни одного ученика</h1>
           </div>
         </div>
       </div>
@@ -214,6 +213,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { onMounted, ref, computed } from 'vue'
+import { useIsMobile } from '@/composables/useIsMobile'
 import { useStudentsStore } from '@/stores/studentsStore'
 
 import vBase from '../v-base.vue'
@@ -226,6 +226,9 @@ import vMassAddition from '../modals/students/v-mass-addition.vue'
 import vEditGroupModal from '../modals/students/v-edit-group-modal.vue'
 import vAddStudentsModal from '../modals/students/v-add-students-modal.vue'
 import vArchiveStudent from '../modals/students/v-archive-student-modal.vue'
+
+const isMobile = useIsMobile(480)
+
 const allCards = ref(false)
 
 const studentsCards = ref(null)
@@ -295,7 +298,12 @@ const groups = ref([
   },
 ])
 
-const students = ref(store.students)
+const students = computed(()=>{
+  if(!store.students.length) {
+    editMode.value = false
+  }
+  return store.students
+})
 
 const currentTitle = computed(() => {
   return currentType.value === 'students' ? 'Ученики' : 'Группы'
@@ -371,14 +379,7 @@ const deleteStudents = () => {
   modals.value.deleteModal = true
 }
 
-const loadData = async () => {
-  isLoading.value = true
-  await store.getStudents()
-  students.value = store.students
-  isLoading.value = false
-}
-
-onMounted(() => {
+const setMenuType = () => {
   const menu = localStorage.getItem('menu')
   const menuType = localStorage.getItem('menuType')
 
@@ -388,10 +389,25 @@ onMounted(() => {
   if (menu) {
     toggleMenu(menu)
   }
-
-  if (menuType) {
-    toggleMenuType(menuType)
+  if(!isMobile) {
+    if (menuType) {
+      toggleMenuType(menuType)
+    }
+  } else {
+    toggleMenu('cards')
   }
+
+}
+
+const loadData = async () => {
+  isLoading.value = true
+  await store.getStudents()
+  students.value = store.students
+  isLoading.value = false
+}
+
+onMounted(() => {
+  setMenuType()
   loadData()
 })
 </script>

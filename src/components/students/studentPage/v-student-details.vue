@@ -127,10 +127,16 @@
       </div>
       <div class="v-student-details__side-block">
         <h2 class="v-student-details__title text-title">Реферальная ссылка</h2>
-        <input type="text" value="https://www.primeradress.ru" class="custom-input" readonly />
+        <input type="text" :value="link" class="custom-input" readonly @click="copyLink"/>
         <p class="caption">
           Ученику необходимо зарегистрироваться по вашей ссылке для синхронизации аккаунтов
         </p>
+        <transition name="fade">
+          <div class="copy-window" v-show="copyWindowOpen">
+            Ссылка скопирована в буфер обмена
+          </div>
+        </transition>
+
       </div>
     </div>
   </div>
@@ -142,6 +148,10 @@ import { useStudentsStore } from '@/stores/studentsStore'
 import VStyledSelect from '@/components/generalComponents/v-styled-select.vue'
 
 const store = useStudentsStore()
+
+const link = ref('https://www.primeradress.ru')
+
+const copyWindowOpen = ref(false)
 
 const rateItems = store.rate
 const currencyItems = store.currency
@@ -172,6 +182,16 @@ const hasChanges = computed(() => {
 })
 const checkChanges = (value, key) => {
   editedStudent.value[key] = typeof value === 'object' ? value.text : value
+}
+
+const copyLink = () => {
+  navigator.clipboard.writeText(link.value).then(() => {
+    copyWindowOpen.value = true
+
+    setTimeout(() => {
+      copyWindowOpen.value = false
+    }, 3000)
+  })
 }
 
 onMounted(() => {})

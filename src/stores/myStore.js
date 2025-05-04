@@ -1,6 +1,6 @@
 // store/modalsStore.js
-import { getMyInfo } from '@/api/requests'
 import { defineStore } from 'pinia'
+import { getMyInfo } from '@/api/requests'
 
 export const useMyStore = defineStore('myStore', {
   state: () => ({
@@ -11,8 +11,8 @@ export const useMyStore = defineStore('myStore', {
   },
   actions: {
     async setMyInfo() {
-      console.log('Зашли')
       if (!Object.keys(this.info).length) {
+        console.log('Получаем инфо', this.info)
         this.info = await getMyInfo()
       }
     },

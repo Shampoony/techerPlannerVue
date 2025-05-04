@@ -1,5 +1,5 @@
 <template>
-  <v-custom-modal>
+  <v-custom-modal @submit="submitForm">
     <template #modal>
       <div class="v-pay-modal">
         <h2 class="modal-title">Добавление оплаты</h2>
@@ -25,10 +25,21 @@ import { useStudentsStore } from '@/stores/studentsStore'
 import vCustomModal from '../generalComponents/v-custom-modal.vue'
 
 const store = useStudentsStore()
+const emit = defineEmits(['set-payment'])
 
 const currency = store.selectedCurrency
 
 const formData = ref({
   price: '',
 })
+
+const submitForm = ()=>{
+  const requestBody = {
+    amount: formData.value.price,
+    discount: 0,
+    price: 0,
+  }
+
+  emit('set-payment', requestBody)
+}
 </script>

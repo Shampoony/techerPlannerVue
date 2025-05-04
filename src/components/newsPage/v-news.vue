@@ -32,6 +32,10 @@
                 </li>
               </ul>
             </div>
+
+            <div class="v-news__banner-image">
+              <img src="/src/assets/images/iphone.png" alt="">
+            </div>
           </div>
 
           <ul class="v-news__list">

@@ -1,6 +1,5 @@
 <template>
   <v-custom-modal ref="customModal">
-    dsds
     <template #modal>
       <div class="v-archive-modal">
         <h1 class="modal-title" v-html="formattedText"></h1>
@@ -11,7 +10,7 @@
               <input v-model="deleteInfo" type="checkbox" :id="'delete-info'" />
               <label :for="'delete-info'"></label>
             </div>
-            <label for="delete">Архивировать информацию о всех учениках выбранной группы</label>
+            <label for="delete-info">Архивировать информацию о всех учениках выбранной группы</label>
           </div>
         </div>
       </div>
@@ -26,6 +25,8 @@ import { ref, computed, watch } from 'vue'
 
 import vCustomModal from '@/components/generalComponents/v-custom-modal.vue'
 
+import { toggleStudentArchive } from '@/api/requests'
+import { useStudentsStore } from '@/stores/studentsStore'
 import { useSelectedStudentsStore } from '@/stores/selectedStudentsStore'
 
 const props = defineProps({
@@ -36,9 +37,11 @@ const props = defineProps({
   group_amount: Number,
 })
 
+
 const deleteInfo = ref(false)
 
 const store = useSelectedStudentsStore()
+const studentStore = useStudentsStore()
 
 const customModal = ref(null)
 
@@ -61,13 +64,13 @@ watch(
 const formattedText = computed(() => {
   let additionalyPhrase = ''
   if (store.student.length === 1 && props.type === 'students') {
-    additionalyPhrase += `<p> ученика (${store.student[0].name})?</p>`
+    additionalyPhrase += `<p> ученика (${store.student[0].student_name})?</p>`
   }
   if (store.student.length > 1 && props.type === 'students') {
     additionalyPhrase += `выбранных  <p> учеников (${store.student.length})?</p>`
   }
   if (props.type === 'groups' && store.student.length === 1) {
-    additionalyPhrase += `<p> группу (${store.student[0].name})?</p>`
+    additionalyPhrase += `<p> группу (${store.student[0].group_name})?</p>`
   }
   if (props.type === 'groups' && store.student.length > 1) {
     additionalyPhrase += `<p> группы (${store.student.length})?</p>`
@@ -76,7 +79,31 @@ const formattedText = computed(() => {
   return defaultPhrase.value + ' ' + additionalyPhrase
 })
 
-const submitForm = () => {
-  console.log(props.type)
+const submitForm = async () => {
+  const studentsToArchive = [...store.student]
+
+  try {
+    // Архивируем выбранных учеников
+    await Promise.all(studentsToArchive.map(student => toggleStudentArchive(student.id)))
+
+    // Если флаг deleteInfo активен — удалить из хранилища всех учеников группы
+    if (deleteInfo.value && props.type === 'groups') {
+      const groupId = props.group?.id
+      if (groupId) {
+        studentStore.students = studentStore.students.filter(student => student.group_id !== groupId)
+      }
+    } else {
+      // Иначе удалить из хранилища только архивированных учеников
+      const archivedIds = studentsToArchive.map(s => s.id)
+      console.log('Студенты полсе архивации - ', studentStore.students.filter(student => !archivedIds.includes(student.id)))
+      studentStore.students = studentStore.students.filter(student => !archivedIds.includes(student.id))
+    }
+
+    customModal.value.close()
+  } catch (error) {
+    console.error('Ошибка при архивировании:', error)
+    // Здесь можно добавить уведомление об ошибке
+  }
 }
+
 </script>

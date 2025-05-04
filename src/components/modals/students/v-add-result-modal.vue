@@ -6,7 +6,7 @@
         <form action="" class="modal-form">
           <div class="modal-field col">
             <p class="modal-field__title">Ученик</p>
-            <input type="text" class="custom-input student-input" value="Алексей" readonly />
+            <input type="text" class="custom-input student-input" :value="studentName" readonly />
           </div>
 
           <div class="modal-field col">
@@ -73,13 +73,16 @@
   </v-custom-modal>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { formatDate } from '@/utils'
+import { useCurrentStudentStore } from '@/stores/currentStudentStore'
 
 import vCustomModal from '@/components/generalComponents/v-custom-modal.vue'
 import vCustomTextarea from '@/components/generalComponents/v-custom-textarea.vue'
 import '@vuepic/vue-datepicker/dist/main.css'
 import VueDatePicker from '@vuepic/vue-datepicker'
+
+const currentStudentStore = useCurrentStudentStore()
 
 // Проп для включения режима readonly
 const props = defineProps({
@@ -87,6 +90,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+})
+
+const studentName = computed(()=>{
+  return currentStudentStore.student?.student_name
 })
 
 const isReadonly = props.readonly
@@ -100,5 +107,6 @@ const formData = ref({
 
 onMounted(() => {
   formData.value.date = new Date().toISOString().split('T')[0]
+  currentStudentStore.setStudentDetails()
 })
 </script>

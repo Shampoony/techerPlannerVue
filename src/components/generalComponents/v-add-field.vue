@@ -30,7 +30,7 @@
     <button class="add-field__button custom-btn light-blue" @click="toggleInputVisibility">
       Добавить
     </button>
-    <div class="add-field__field" v-if="isVisible">
+    <div class="add-field__field" v-show="isVisible">
       <form method="POST" @submit.prevent="submit">
         <div class="add-field__block">
           <input

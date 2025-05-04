@@ -76,6 +76,7 @@
       v-if="modals.pay"
       :class="{ 'modal-open': modals.pay }"
       @close="() => toggleModal('pay')"
+      @set-payment="setStudentPayment"
     />
   </transition>
   <transition name="fade">
@@ -110,7 +111,8 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import { ref, computed, onMounted } from 'vue'
-import { getStudentById } from '@/api/requests'
+import { getStudentById, setPayment } from '@/api/requests'
+import { useCurrentStudentStore } from '@/stores/currentStudentStore'
 
 import vBase from '@/components/v-base.vue'
 import vStudentDetails from './v-student-details.vue'
@@ -122,6 +124,7 @@ import vThemesModal from '@/components/modals/v-themes-modal.vue'
 import vHomeworkOpModal from '@/components/modals/v-homework-op-modal.vue'
 import vAddResultModal from '@/components/modals/students/v-add-result-modal.vue'
 
+const currentStudentStore = useCurrentStudentStore()
 const route = useRoute()
 
 const activeSec = ref(localStorage.getItem('activeSec') || 'Детали')
@@ -165,7 +168,16 @@ const loadData = async () => {
   student.value = await getStudentById(userId)
 }
 
+const setStudentPayment = async (requestBody) => {
+  const form = {
+    ...requestBody,
+    student_id: student.value.id,
+  }
+  await setPayment(form)
+}
+
 onMounted(() => {
   loadData()
+  currentStudentStore.setStudentId(route.params.id)
 })
 </script>

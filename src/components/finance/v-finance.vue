@@ -59,7 +59,7 @@
           </div>
         </div>
       </div>
-      <div class="v-finance__menu">
+      <div class="v-finance__menu" v-click-outside="() => buttonsActive = false">
         <button class="v-finance__plus custom-btn blue" @click="buttonsActive = !buttonsActive">
           <svg
             width="20"
@@ -123,10 +123,10 @@
     </div> -->
   </v-base>
   <transition name="fade">
-    <v-income-modal v-if="modals.income" @close="() => toggleModal('income')" />
+    <v-income-modal v-if="modals.income" @close="() => toggleModal('income')" :class="{'modal-open': modals.income}" />
   </transition>
   <transition name="fade">
-    <v-expense-modal v-if="modals.expense" @close="() => toggleModal('expense')" />
+    <v-expense-modal v-if="modals.expense" @close="() => toggleModal('expense')" :class="{'modal-open': modals.expense}" />
   </transition>
 </template>
 <script setup>
@@ -150,6 +150,7 @@ const modals = ref({
 })
 
 const toggleModal = (modal) => {
+  buttonsActive.value = false
   modals.value[modal] = !modals.value[modal]
 }
 </script>

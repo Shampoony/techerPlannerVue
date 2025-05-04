@@ -1,7 +1,7 @@
 // store/modalsStore.js
 import { defineStore } from 'pinia'
 import { useRoute } from 'vue-router'
-import { getAllStudents, getMyStudents, getStudentAnalytics } from '@/api/requests'
+import { getAllStudents, getMyStudents, getStudentAnalytics, getTypesConnect } from '@/api/requests'
 
 const route = useRoute()
 
@@ -84,10 +84,10 @@ export const useStudentsStore = defineStore('students', {
   getters: {},
   actions: {
     async getStudents() {
-      if (!this.students.length) {
+    /*   if (!this.students.length) { */
         const students = await getMyStudents()
         this.students = students
-      }
+    /*   } */
     },
     async setStudentAnalytics() {
       const route = useRoute()
@@ -96,5 +96,9 @@ export const useStudentsStore = defineStore('students', {
       if (studentId && this.studentAnalytics === null)
         this.studentAnalytics = await getStudentAnalytics(studentId)
     },
+    async setTypeConnects() {
+      this.typeConnect = await getTypesConnect()
+    }
   },
 })
+

@@ -78,7 +78,6 @@ const setActiveAdd = (name) => {
 
 const submitForm = () => {
   activeAdd.value === 'single' ? singleForm.value.submitForm() : stableForm.value.submitForm()
-
 }
 
 const submitStableForm = (stableForm) => {
@@ -105,8 +104,10 @@ const submitStableForm = (stableForm) => {
 }
 const submitSingleForm = (singleForm) => {
 
+  singleForm['cost_lesson_one_time']  =  0
   singleForm['trial'] = false
-  singleForm['time_zone_teacher'] = teacherTimeZone
+  singleForm['time_zone_teacher'] = teacherTimeZone.value
+
 
   if (student.value) {
     singleForm['student_id'] = student.value.id

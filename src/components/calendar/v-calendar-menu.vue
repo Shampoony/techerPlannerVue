@@ -83,6 +83,7 @@
             <div class="v-calendar-menu__select-button">
               <VueDatePicker
                 v-if="type === 'home'"
+                class="v-calendar-menu__select-month"
                 month-picker
                 month-name-format="long"
                 :locale="ru"
@@ -94,6 +95,7 @@
                 <template #clear-icon="{ clear }"> </template>
               </VueDatePicker>
               <VueDatePicker
+                class="v-calendar-menu__select-week"
                 v-if="type === 'calendar-week'"
                 week-picker
                 :format="formatWeek"
@@ -144,17 +146,14 @@
           </div>
         </div>
         <div class="v-calendar-menu__checkbox flex gap-2" v-if="isShowedBreak">
-          <input
-            type="checkbox"
-            class="custom-checkbox-input"
-            id="break"
-            @change="changeBreakMode"
-            v-model="showBreakInput"
-          />
-          <label for="break" class="custom-checkbox-label">
-            <span class="custom-checkbox"></span>
-            <div class="v-calendar-menu__checkbox-subtitle">Показывать перерыв между занятиями</div>
-          </label>
+          <div class="flex items-center gap-2">
+            <label class="switch">
+            <input id="break" type="checkbox"  @change="changeBreakMode" v-model="showBreakInput">
+              <span class="slider"></span>
+            </label>
+            <div class="v-calendar-menu__checkbox-subtitle">Показывать перерывы</div>
+          </div>
+
         </div>
       </div>
       <!-- /* toggleModals('trial_lesson') */ -->
@@ -167,21 +166,6 @@
           <div></div>
           Пробное занятие
         </div>
-      </div>
-    </div>
-    <div class="flex justify-between" v-if="isTablet.isMobile">
-      <div class="v-calendar-menu__checkbox flex gap-2 mob" v-if="isShowedBreak">
-        <input
-          type="checkbox"
-          class="custom-checkbox-input"
-          id="mob-break"
-          @change="emit('toggleBreakMode')"
-          v-model="showBreakInput"
-        />
-        <label for="mob-break" class="custom-checkbox-label">
-          <span class="custom-checkbox"></span>
-          <div class="v-calendar-menu__checkbox-subtitle">Показывать перерыв между занятиями</div>
-        </label>
       </div>
     </div>
   </div>

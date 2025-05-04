@@ -51,7 +51,7 @@
       </div>
 
       <div class="student-card__button">
-        <button class="custom-btn light-blue mt-10" v-if="isRepair">
+        <button class="custom-btn light-blue mt-10" v-if="isRepair" @click.prevent="emit('repair', student.id)">
           <svg
             width="20"
             height="20"
@@ -101,7 +101,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['selected', 'edit', 'delete'])
+const emit = defineEmits(['selected', 'edit', 'delete', 'repair'])
 
 const isSelected = ref(false)
 

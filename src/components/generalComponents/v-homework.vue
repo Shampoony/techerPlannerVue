@@ -42,6 +42,7 @@
           <div class="flex gap-3 items-center" v-if="!nextLesson">
             Дедлайн
             <VueDatePicker
+              class="custom-datepicker"
               v-model="deadline"
               :locale="'ru-ru'"
               :auto-apply="true"

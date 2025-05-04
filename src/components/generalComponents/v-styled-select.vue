@@ -12,8 +12,12 @@
           class="mr-2"
           v-if="props.studentIcon"
         />
-        <input class="" type="text" :value="displayValue" readonly v-if="!hasSvg" />
+        <div v-if="hasImage">
+          <img :src="imagegContent" alt="">
+        </div>
+        <input class="" type="text" :value="displayValue" readonly v-if="!hasSvg && !hasImage" />
         <span v-if="hasSvg" v-html="svgContent"></span>
+
       </div>
       <div class="v-styled-select__image" :class="imageClass" v-show="!isReadonly">
         <svg
@@ -168,6 +172,13 @@ const hasSvg = computed(() => {
   }
   return selectedValues.value.some((item) => item && item.svg)
 })
+const hasImage = computed(() => {
+  if (selectedValues.value.length === 0) {
+    return props.items.length > 0 && props.items[0].icon ? true : false
+  }
+  console.log(selectedValues.value)
+  return selectedValues.value.some((item) => item && item.icon)
+})
 // Получение содержимого SVG
 const svgContent = computed(() => {
   if (selectedValues.value.length === 0) {
@@ -175,6 +186,14 @@ const svgContent = computed(() => {
   }
   const svgItem = selectedValues.value.find((item) => item && item.svg)
   if (svgItem) return svgItem.svg
+  return ''
+})
+const imagegContent = computed(() => {
+  if (selectedValues.value.length === 0) {
+    return props.items.length > 0 && props.items[0].icon ? props.items[0].icon : ''
+  }
+  const imageItem = selectedValues.value.find((item) => item && item.icon)
+  if (imageItem) return imageItem.icon
   return ''
 })
 
@@ -314,5 +333,9 @@ watch(
     initializeSelectedValues()
   },
 )
+
+defineExpose({
+  selectSingle,
+})
 </script>
 <style scoped></style>

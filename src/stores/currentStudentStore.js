@@ -14,11 +14,13 @@ export const useCurrentStudentStore = defineStore('currentStudent', {
     async setStudentAnalytics() {
       if (this.studentId && this.studentAnalytics === null) {
         this.studentAnalytics = await getStudentAnalytics(this.studentId)
+        console.log('Делаем запрос', this.studentAnalytics)
       }
     },
     async setStudentDetails() {
+      console.log(this.studentId)
       if (this.student === null && this.studentId) {
-        // подгрузка деталей ученика
+        console.log('В условии')
         this.student = await getStudentById(this.studentId)
       }
     },

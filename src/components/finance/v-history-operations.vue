@@ -30,7 +30,7 @@
             </nav>
           </div>
           <div class="scrolltable">
-            <table class="v-history-operations__table styled-table">
+            <table class="v-history-operations__table styled-table" v-show="columns.length">
               <thead class="styled-table__head">
                 <tr>
                   <th><div class="styled-table__head-item">Имя ученика</div></th>
@@ -42,25 +42,24 @@
               <tbody class="styled-table__body">
                 <tr class="styled-table__body-row" v-for="operation in columns" :key="operation.id">
                   <td>
-                    <div class="styled-table__body-item">{{ operation.student_name }}</div>
+                    <div class="styled-table__body-item">{{ operation.student_name || 'Алексей'}}</div>
                   </td>
                   <td>
                     <div class="styled-table__body-item">
                       <div
                         class="status"
-                        :class="{ green: operation.sum > 0, red: operation.sum < 0 }"
+                        :class="getStatusClass(parseInt(operation.sum))"
                       >
-                        <template v-if="operation.sum > 0">+ </template>
-                        <template v-else>-</template>{{ operation.sum }} ₽
+                        {{ operation.sum }} ₽
                       </div>
                     </div>
                   </td>
                   <td>
-                    <div class="styled-table__body-item">{{ operation.date }}</div>
+                    <div class="styled-table__body-item">{{formatDate(operation.created_at) }}</div>
                   </td>
                   <td>
                     <div class="styled-table__body-item">
-                      <button class="custom-btn white">
+                      <button class="custom-btn white" @click="() => toggleModal('pkoModal')">
                         <svg
                           width="20"
                           height="20"
@@ -81,7 +80,7 @@
                       <img
                         src="/src/assets/images/trash.svg"
                         alt=""
-                        @click="() => toggleModal('deleteOperation')"
+                        @click="() => showDeleteOperationModal(operation.id)"
                       />
                     </div>
                   </td>
@@ -89,17 +88,16 @@
               </tbody>
             </table>
           </div>
-
-          <ul class="v-history-operations__list">
-            <li class="v-history-operations__lsit-item history-operation">
+          <ul class="v-history-operations__list" v-show="columns.length">
+            <li class="v-history-operations__lsit-item history-operation" v-for="operation in columns" :key="operation.id">
               <div class="history-operation__block">
                 <div class="history-operation__title">Алексей Иванов</div>
-                <span class="histoty-operation__date caption"> 14.03.2025 </span>
+                <span class="histoty-operation__date caption"> {{ formatDate(operation.created_at) }} </span>
               </div>
               <div class="history-operation__block">
-                <div class="history-operation__price">2000 ₽</div>
+                <div class="history-operation__price">{{ operation.sum }} ₽</div>
                 <div class="history-operation__buttons">
-                  <button class="custom-btn light-blue">
+                  <button class="custom-btn light-blue"  @click="() => toggleModal('pkoModal')">
                     <svg
                       width="20"
                       height="20"
@@ -119,7 +117,7 @@
                   </button>
                   <button
                     class="custom-btn light-red"
-                    @click="() => toggleModal('deleteOperation')"
+                    @click="() => showDeleteOperationModal(operation.id)"
                   >
                     <svg
                       width="20"
@@ -141,6 +139,10 @@
               </div>
             </li>
           </ul>
+
+          <div class="null-screen" v-show="!columns.length && !isLoading">
+            <h1>Нет операций по счёту</h1>
+          </div>
         </div>
       </div>
     </div>
@@ -148,43 +150,55 @@
 
   <transition name="fade">
     <v-delete-operation
+      @delete-operation="deleteOperation"
       v-if="modals.deleteOperation"
       @close="() => toggleModal('deleteOperation')"
     />
   </transition>
+  <transition name="fade">
+    <v-pko-modal
+      v-if="modals.pkoModal"
+      @close="() => toggleModal('pkoModal')"
+    />
+  </transition>
 </template>
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+
+import vPkoModal from '../modals/finance/v-pko-modal.vue'
 import vDeleteOperation from '../modals/finance/v-delete-operation.vue'
 
 import vBase from '../v-base.vue'
+import { useFinanceStore } from '@/stores/financeStore'
+import { isLastDayOfMonth } from 'date-fns'
+import { formatDate, getStatusClass } from '@/utils'
+import { deleteTeacherOperations } from '@/api/requests'
 
+const financeStore = useFinanceStore()
+
+const currentOperationId = ref()
 const currentState = ref('income')
 
-const operations = ref([
-  {
-    id: 1,
-    student_name: 'Алексей Иванов',
-    sum: 2000,
-    date: '14.03.2025',
-  },
-  {
-    id: 2,
-    student_name: 'Налог',
-    sum: -2000,
-    date: '14.03.2025',
-  },
-])
+const isLoading = ref(false)
+
+const income = computed(()=>{
+  return financeStore.income
+})
+
+const expenses = computed(()=>{
+  return financeStore.expenses
+})
 
 const modals = ref({
   deleteOperation: false,
+  pkoModal: false,
 })
 
 const columns = computed(() => {
   if (currentState.value === 'income') {
-    return operations.value.filter((operation) => operation.sum > 0)
+    return income.value
   }
-  return operations.value.filter((operation) => operation.sum < 0)
+  return expenses.value
 })
 
 const changeState = (state) => {
@@ -194,4 +208,25 @@ const changeState = (state) => {
 const toggleModal = (modal) => {
   modals.value[modal] = !modals.value[modal]
 }
+
+const showDeleteOperationModal = (operation_id) => {
+  toggleModal('deleteOperation')
+  currentOperationId.value = operation_id
+}
+
+const deleteOperation = async () => {
+  await deleteTeacherOperations(currentOperationId.value)
+}
+
+const loadData = async () => {
+  isLoading.value = true
+  await financeStore.fetchFinanceExpenses()
+  await financeStore.fetchFinanceIncome()
+  isLoading.value = false
+}
+
+onMounted(()=>{
+  loadData()
+})
+
 </script>

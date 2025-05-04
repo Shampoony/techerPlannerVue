@@ -1,9 +1,8 @@
 <template>
-  <div class="v-compare-chart" ref="container" @mousemove="handleMouseMove">
+  <div class="v-compare-chart" ref="container" @mousemove="handleMouseMove" v-if="chartReady">
     <div class="v-compare-chart__wrapper">
       <div class="v-compare-chart__container">
         <Bar :data="chartData" :options="chartOptions" />
-
         <transition name="fade">
           <div
             v-if="tooltip.visible"
@@ -25,9 +24,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import { Bar } from 'vue-chartjs'
-import { colors } from '@/charts/chartConfig'
 import { useGeneralStore } from '@/stores/generalStore'
 import {
   Chart as ChartJS,
@@ -38,20 +36,24 @@ import {
   CategoryScale,
   LinearScale,
 } from 'chart.js'
-import { generateCodeFrame } from 'vue/compiler-sfc'
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 const container = ref(null)
-
 const store = useGeneralStore()
 
-const nightMode = computed(() => {
-  return store.nightMode
+const props = defineProps({
+  comparedChartData: {
+    type: Array,
+    required: false,
+    default: () => [],
+  },
 })
+
+const nightMode = computed(() => store.nightMode)
+
 const labels = ref([
   'Прогнозируемое количество занятий',
-  'LTV',
   'Отмененные занятия',
   'Коэффициент отмен',
   'Упущенная выручка',
@@ -68,32 +70,91 @@ const tooltip = reactive({
 const mousePos = ref({ x: 0, y: 0 })
 
 const handleMouseMove = (event) => {
+  if (!container.value) return
   const rect = container.value.getBoundingClientRect()
   mousePos.value.x = event.clientX - rect.left
   mousePos.value.y = event.clientY - rect.top
 }
 
-const chartData = computed(() => ({
-  labels: ['', '', '', '', '', ''],
-  datasets: [
+// Проверка, чтобы график рисовался только если есть данные
+const chartReady = computed(() => {
+  return props.comparedChartData.length > 0
+})
+
+// Константа максимальной высоты для нормализации
+const MAX_BAR_HEIGHT = 100
+
+// Функция для нормализации данных по категориям
+const normalizeDataByCategoryGroups = (data) => {
+  if (!data || data.length < 2) return []
+
+  const result = [
+    { ...data[0], normalizedData: [] },
+    { ...data[1], normalizedData: [] }
+  ]
+
+  // Проходим по каждой категории (индексу данных)
+  for (let i = 0; i < data[0].data.length; i++) {
+    const value1 = data[0].data[i]
+    const value2 = data[1].data[i]
+
+    // Находим максимальное значение в текущей категории
+    const maxValue = Math.max(value1, value2)
+
+    if (maxValue === 0) {
+      // Если оба значения равны нулю, устанавливаем нормализованные значения в 0
+      result[0].normalizedData[i] = 0
+      result[1].normalizedData[i] = 0
+    } else {
+      // Нормализуем значения относительно максимума в категории
+      result[0].normalizedData[i] = (value1 / maxValue) * MAX_BAR_HEIGHT
+      result[1].normalizedData[i] = (value2 / maxValue) * MAX_BAR_HEIGHT
+    }
+
+    // Сохраняем оригинальные данные для отображения в подсказке
+    result[0].originalData = [...data[0].data]
+    result[1].originalData = [...data[1].data]
+  }
+
+  return result
+}
+
+const chartData = computed(() => {
+  if (!chartReady.value) {
+    return { labels: [], datasets: [] }
+  }
+
+  // Нормализуем данные для визуализации
+  const normalizedData = normalizeDataByCategoryGroups(props.comparedChartData)
+
+  const datasets = [
     {
-      label: 'Елизавета',
+      label: normalizedData[0].label,
       backgroundColor: !nightMode.value ? '#1D4ECC' : '#1F5EFF',
-      data: [80, 85, 75, 65, 85, 80],
+      data: normalizedData[0].normalizedData, // Используем нормализованные данные для отображения
       barPercentage: 0.3,
       categoryPercentage: 0.5,
       borderRadius: 10,
+      // Сохраняем оригинальные данные для подсказок
+      originalData: normalizedData[0].originalData
     },
     {
-      label: 'Алексей',
+      label: normalizedData[1].label,
       backgroundColor: !nightMode.value ? '#CCD8F8' : '#2D313B',
-      data: [45, 40, 50, 70, 40, 45],
+      data: normalizedData[1].normalizedData, // Используем нормализованные данные для отображения
       barPercentage: 0.3,
       categoryPercentage: 0.5,
       borderRadius: 10,
+      // Сохраняем оригинальные данные для подсказок
+      originalData: normalizedData[1].originalData
     },
-  ],
-}))
+  ]
+
+  return {
+    labels: ['', '', '', '', ''],
+    datasets: datasets,
+  }
+})
 
 const chartOptions = {
   responsive: true,
@@ -121,26 +182,36 @@ const chartOptions = {
           return
         }
 
-        const value = tooltipModel.body?.[0]?.lines?.[0] || ''
-        tooltip.value = value.split(': ')[1] || value
+        // Получаем индекс набора данных и индекс категории
+        const datasetIndex = tooltipModel.dataPoints[0].datasetIndex
+        const index = tooltipModel.dataPoints[0].dataIndex
 
-        // Используем реальные координаты курсора
+        // Получаем оригинальное значение вместо нормализованного
+        const originalValue = chartData.value.datasets[datasetIndex].originalData[index]
+        const datasetLabel = chartData.value.datasets[datasetIndex].label || ''
+
+        tooltip.value =  originalValue
         tooltip.x = mousePos.value.x
         tooltip.y = mousePos.value.y
         tooltip.visible = true
       },
-
       mode: 'nearest',
       intersect: true,
       callbacks: {
         title: function (context) {
           const index = context[0].dataIndex
-          return labels.value[index]
+          return labels.value[index] || ''
         },
         label: function (context) {
-          const datasetLabel = context.dataset.label || ''
-          const value = context.parsed.y
-          return `${datasetLabel}: ${value}`
+          // Этот коллбэк не используется, так как мы переопределили tooltip через external
+          const index = context.dataIndex
+
+          // Используем оригинальное значение для отображения
+          const originalValue = context.dataset.originalData ?
+            context.dataset.originalData[index] :
+            context.parsed.y
+
+          return originalValue
         },
       },
     },
@@ -178,7 +249,7 @@ const chartOptions = {
 }
 </script>
 
-<style>
+<style scoped>
 .v-compare-chart {
   position: relative;
   height: 350px;
@@ -201,7 +272,7 @@ const chartOptions = {
 
 .labels-container {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   width: 100%;
   margin-top: 5px;
   padding: 0 20px;
@@ -213,7 +284,6 @@ const chartOptions = {
   display: flex;
   justify-content: center;
   text-align: center;
-
   max-width: 16.66%;
 }
 
@@ -223,7 +293,6 @@ const chartOptions = {
   justify-content: center;
   min-height: 40px;
   line-height: 1.2;
-
   font-size: 13px;
   font-weight: 500;
 }
@@ -241,10 +310,6 @@ const chartOptions = {
   pointer-events: none;
   z-index: 10;
   transform: translate(-50%, -12px);
-
-  box-shadow: 0px 4px 6px -2px #0a0d1208;
-
-  box-shadow: 0px 12px 16px -4px #0a0d1214;
 }
 
 .tooltip-body {
