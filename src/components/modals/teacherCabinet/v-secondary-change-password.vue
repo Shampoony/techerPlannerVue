@@ -1,20 +1,20 @@
 <template>
   <v-custom-modal ref="customModal">
     <template #modal>
-      <div class="v-change-password">
+      <div class="v-secondary-change-password">
         <h2 class="modal-title">Смена пароля</h2>
 
         <form @submit.prevent>
-          <!-- Поле для текущего пароля (только в расширенном режиме) -->
-          <div v-if="secondaryMode" class="modal-field col">
-            <label for="currentPassword" class="modal-field__subtitle">Текущий пароль</label>
-            <div class="v-change-password__input" :class="{'password-hidden': hiddenInput[2]}" >
-              <div class="v-change-passowrd__input-images" @click="() => toggleHiddenInput(2)">
+          <div class="modal-field col">
+            <label for="newPassword" class="modal-field__subtitle">Текущий пароль</label>
+            <div class="v-change-password__input" :class="{'password-hidden': hiddenInput[0]}" >
+              <div class="v-change-passowrd__input-images" @click="() => toggleHiddenInput(0)">
                 <div class="v-change-password__input-image on">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M0.833252 9.99992C0.833252 9.99992 4.16658 3.33325 9.99992 3.33325C15.8333 3.33325 19.1666 9.99992 19.1666 9.99992C19.1666 9.99992 15.8333 16.6666 9.99992 16.6666C4.16658 16.6666 0.833252 9.99992 0.833252 9.99992Z" stroke="#717680" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M9.99992 12.4999C11.3806 12.4999 12.4999 11.3806 12.4999 9.99992C12.4999 8.61921 11.3806 7.49992 9.99992 7.49992C8.61921 7.49992 7.49992 8.61921 7.49992 9.99992C7.49992 11.3806 8.61921 12.4999 9.99992 12.4999Z" stroke="#717680" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
+
                 </div>
                 <div class="v-change-password__input-image off">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,19 +31,18 @@
               </div>
 
               <input
-                placeholder="Введите текущий пароль"
-                id="currentPassword"
+                placeholder="Придумайте пароль"
+                id="newPassword"
                 v-model="currentPassword"
                 :type="inputType(2)"
                 class="custom-input"
-                :class="{error: currentPasswordError && currentPassword.length}"
+                :class="{error: currentPasswordErrors && currentPassword.length}"
               />
             </div>
 
-            <div v-if="currentPasswordError && currentPassword.length" class="text-red">{{ currentPasswordError }}</div>
-          </div>
 
-          <!-- Поле для нового пароля (в обоих режимах) -->
+            <div v-if="currentPasswordeRRORS && currentPassword.length" class="text-red">{{ currentPasswordErrors }}</div>
+          </div>
           <div class="modal-field col">
             <label for="newPassword" class="modal-field__subtitle">Новый пароль</label>
             <div class="v-change-password__input" :class="{'password-hidden': hiddenInput[0]}" >
@@ -53,6 +52,7 @@
                   <path d="M0.833252 9.99992C0.833252 9.99992 4.16658 3.33325 9.99992 3.33325C15.8333 3.33325 19.1666 9.99992 19.1666 9.99992C19.1666 9.99992 15.8333 16.6666 9.99992 16.6666C4.16658 16.6666 0.833252 9.99992 0.833252 9.99992Z" stroke="#717680" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M9.99992 12.4999C11.3806 12.4999 12.4999 11.3806 12.4999 9.99992C12.4999 8.61921 11.3806 7.49992 9.99992 7.49992C8.61921 7.49992 7.49992 8.61921 7.49992 9.99992C7.49992 11.3806 8.61921 12.4999 9.99992 12.4999Z" stroke="#717680" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
+
                 </div>
                 <div class="v-change-password__input-image off">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -78,10 +78,10 @@
               />
             </div>
 
+
             <div v-if="firstPasswordError && newPassword.length" class="text-red">{{ firstPasswordError }}</div>
           </div>
 
-          <!-- Поле для повторения нового пароля (в обоих режимах) -->
           <div class="modal-field col password-field">
             <label for="newPassword2" class="modal-field__subtitle">Повторите новый пароль</label>
             <div class="v-change-password__input" :class="{'password-hidden': hiddenInput[1]}">
@@ -91,6 +91,7 @@
                   <path d="M0.833252 9.99992C0.833252 9.99992 4.16658 3.33325 9.99992 3.33325C15.8333 3.33325 19.1666 9.99992 19.1666 9.99992C19.1666 9.99992 15.8333 16.6666 9.99992 16.6666C4.16658 16.6666 0.833252 9.99992 0.833252 9.99992Z" stroke="#717680" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M9.99992 12.4999C11.3806 12.4999 12.4999 11.3806 12.4999 9.99992C12.4999 8.61921 11.3806 7.49992 9.99992 7.49992C8.61921 7.49992 7.49992 8.61921 7.49992 9.99992C7.49992 11.3806 8.61921 12.4999 9.99992 12.4999Z" stroke="#717680" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
+
                 </div>
                 <div class="v-change-password__input-image off">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -119,33 +120,21 @@
             <div v-if="passwordMatchError && newPassword2.length" class="text-red">{{ passwordMatchError }}</div>
           </div>
 
-          <a v-if="secondaryMode" href="" class="contact-link">Забыли пароль?</a>
+          <a href="" class="contact-link">Забыли пароль?</a>
         </form>
       </div>
     </template>
 
     <template #button>
-      <button
-        class="custom-btn blue"
-        :class="{unactive: firstPasswordError || passwordMatchError || (secondaryMode && currentPasswordError)}"
-        @click="handleSave"
-      >
+      <button class="custom-btn blue" :class="{unactive: firstPasswordError || passwordMatchError}" @click="handleSave">
         Сохранить
       </button>
     </template>
   </v-custom-modal>
 </template>
-
 <script setup>
 import { ref, computed } from 'vue'
 import vCustomModal from '@/components/generalComponents/v-custom-modal.vue'
-
-const props = defineProps({
-  secondaryMode: {
-    type: Boolean,
-    default: false
-  },
-})
 
 const emit = defineEmits(['toggle-modal'])
 const customModal = ref(null)
@@ -155,13 +144,9 @@ const newPassword = ref('')
 const newPassword2 = ref('')
 const wasSubmitted = ref(false)
 
-// Массив для состояния видимости полей ввода
-// В расширенном режиме используем 3 индекса (для 3 полей), в обычном - 2 индекса (для 2 полей)
-const hiddenInput = ref(props.secondaryMode ? [false, false, false] : [false, false])
+const hiddenInput = ref([false, false, false])
 
-const currentPasswordErrors = ref([])
-
-// Список всех ошибок для нового пароля
+// Список всех ошибок
 const passwordErrors = computed(() => {
   const errors = []
   const password = newPassword.value
@@ -184,29 +169,26 @@ const passwordErrors = computed(() => {
   if (/\s/.test(password)) {
     errors.push('Пробелы недопустимы')
   }
+  console.log('Проверяем пароль')
   return errors
 })
 
-// Выводим только первую ошибку для нового пароля
-const firstPasswordError = computed(() => passwordErrors.value[0])
-
-// Проверка текущего пароля (если в расширенном режиме)
-const currentPasswordError = computed(() => props.currentPasswordErrors)
+// Только первая ошибка
+const firstPasswordError = computed(() =>  passwordErrors.value[0])
 
 // Проверка совпадения паролей
 const passwordMatchError = computed(() =>
-  newPassword.value !== newPassword2.value
+ newPassword.value !== newPassword2.value
     ? 'Пароли не совпадают'
     : null
 )
 
-// Определение типа поля ввода (текст/пароль)
 const inputType = (input_index) => {
   return hiddenInput.value[input_index] ? 'password' : 'text'
 }
 
-// Переключение видимости пароля
 const toggleHiddenInput = (input_index) => {
+  console.log(input_index, hiddenInput.value[input_index])
   hiddenInput.value[input_index] = !hiddenInput.value[input_index]
 }
 
@@ -214,11 +196,8 @@ const toggleHiddenInput = (input_index) => {
 const handleSave = () => {
   wasSubmitted.value = true
 
-  // В расширенном режиме проверяем также текущий пароль
-  const isCurrentPasswordValid = !props.secondaryMode || !currentPasswordError.value;
-
-  if (!passwordErrors.value.length && !passwordMatchError.value && isCurrentPasswordValid) {
-    // Логика отправки формы
+  if (!passwordErrors.value.length && !passwordMatchError.value) {
+    // здесь логика отправки формы
     console.log('Пароль успешно сохранён')
 
     customModal.value.close()

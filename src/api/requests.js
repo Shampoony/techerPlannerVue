@@ -416,7 +416,7 @@ export async function deleteLessonById(lesson_id) {
 
 export async function getTeacherTasks() {
   try {
-    await makeRequest(`/api/teacher-tasks`, 'GET')
+    return await makeRequest(`/api/teacher-tasks`, 'GET')
   } catch (error) {
     console.error('Произошла ошибки при получении заданий учителя', error)
   }
@@ -455,8 +455,9 @@ export async function setTopic(data) {
 export async function setOneTimeLesson(data) {
   try {
     const requestData = data
+    console.log(requestData)
     const response = await makeRequest('/api/lesson-one-time', 'POST', requestData)
-    router.go(0)
+   /*  router.go(0) */
     return response
   } catch (error) {
     console.error('Произошла ошибки при добавлении одноразового урока', error)

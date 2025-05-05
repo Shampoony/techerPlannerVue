@@ -11,4 +11,5 @@ import VCalendarMonth from './v-calendar-month.vue'
 import { ref } from 'vue'
 
 const currenPage = ref(localStorage.getItem('activePage') || 'home')
+
 </script>

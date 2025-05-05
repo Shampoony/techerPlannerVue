@@ -293,9 +293,13 @@ function  connectWebSocket() {
     if (event.data !== 'ping') {
       console.log('Новое сообщение:', event.data)
     }
-    if(event.data === 'lesson_started') {
+    if(event.data.includes('lesson_started') || event.data.includes('lesson_ended')) {
       loadData()
     }
+  }
+
+  ws.onopen = () => {
+    console.log('Подключились к вебсокету')
   }
 
   ws.onclose = () => {

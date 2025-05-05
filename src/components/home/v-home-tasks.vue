@@ -27,7 +27,6 @@ const tasks = ref([])
 const newTask = ref(null)
 
 const addTask = (value) => {
-  console.log(value)
   if (value) {
     const data = { title: value }
     tasks.value.push(data)
@@ -38,6 +37,7 @@ const addTask = (value) => {
 
 const fetchTeacherTasks = async () => {
   const response = await getTeacherTasks()
+  console.log(response)
   tasks.value = response || []
 }
 

@@ -26,8 +26,14 @@
   <transition name="fade">
     <v-delete-cabinet v-if="modals.deleteCabinet" @close="toggleModal('deleteCabinet')"/>
   </transition>
+  <!-- <transition name="fade">
+    <v-change-password v-if="modals.changePassword" @close="toggleModal('changePassword')" @toggle-modal="toggleModal"/>
+  </transition> -->
   <transition name="fade">
-    <v-change-password v-if="modals.changePassword" @close="toggleModal('changePassword')" />
+    <v-change-password v-if="modals.changePassword" @close="toggleModal('changePassword')" @toggle-modal="toggleModal" :secondary-mode="true"/>
+  </transition>
+  <transition name="fade">
+    <v-password-saved v-if="modals.passwordSaved" @close="toggleModal('passwordSaved')" />
   </transition>
 </template>
 <script setup>
@@ -38,6 +44,7 @@ import vProfileInfo from './v-profile-info.vue';
 import vProfileInfoRight from './v-profile-info-right.vue';
 
 import vDeleteCabinet from '../modals/teacherCabinet/v-delete-cabinet.vue';
+import vPasswordSaved from '../modals/teacherCabinet/v-password-saved.vue';
 import vChangePassword from '../modals/teacherCabinet/v-change-password.vue';
 
 const activeSection = ref('info')
@@ -45,6 +52,7 @@ const activeSection = ref('info')
 const modals = ref({
   deleteCabinet: false,
   changePassword: false,
+  passwordSaved: false,
 })
 
 const setActiveSection = (section) => {

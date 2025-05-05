@@ -6626,5 +6626,55 @@ input:checked + .slider::before {
 
 
 .v-change-password {
+  &__input {
+    position: relative;
+    display: flex;
+    
+    transition: .2s ease-in;
+    input {
+      width: 100%;
+      padding-left: 42px;
+    }
+    &-image {
+      position: absolute;
+      top: 50%;
+      left: 14px;
+
+      transform: translateY(-50%);
+
+    }
+
+    &-image.off {
+      display: none;
+    }
+
+    &.password-hidden &-image.off{
+      display: block;
+    }
+
+    &.password-hidden &-image.on {
+      display: none;
+    }
+  }
+
+  .contact-link {
+    display: block;
+    text-align: center;
+
+    margin-top: 22px;
+  }
    
+}
+
+.v-password-saved {
+  &__image {
+    display: flex;
+    justify-content: center;
+
+    margin-bottom: 22px;
+  }
+
+  .modal-title {
+    font-weight: 600;
+  }
 }

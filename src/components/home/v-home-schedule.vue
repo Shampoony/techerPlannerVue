@@ -4,7 +4,7 @@
       <template #title>Расписание занятий</template>
       <template #container>
         <div class="v-home-schedule__progress progress-bar">
-          <div class="progress-bar__completed" style="width: 50%"></div>
+          <div class="progress-bar__completed" :style="{'width': barWidth}"></div>
         </div>
         <p class="caption">
           {{ todayLessons.completed_lessons }}/{{ todayLessons.total_lessons }} занятий проведены
@@ -118,7 +118,7 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { getTodayLessons } from '@/api/requests'
 
 import vHomeRightSecBase from './v-home-right-sec-base.vue'
@@ -129,6 +129,14 @@ const loadData = async () => {
   const lessons = await getTodayLessons()
   todayLessons.value = lessons || []
 }
+
+const barWidth = computed(()=>{
+  const width = Math.floor(todayLessons.value.completed_lessons / todayLessons.value.total_lessons) * 100
+  if(!width) {
+    return '0%'
+  }
+  return `${width}%`
+})
 
 onMounted(() => {
   loadData()
