@@ -1933,11 +1933,17 @@ input:checked + .slider::before {
   &__content {
     position: relative;
     overflow-x: auto;
+    height: 100%;
   }
+
+  &__container {
+    height: 100%;
+  }
+
   &__table {
     border-collapse: collapse;
     border: none;
-
+    table-layout: auto;
   }
   .calendar {
     &-row {
@@ -1948,6 +1954,7 @@ input:checked + .slider::before {
       width: clamp(8.75rem, 4.583rem + 8.68vw, 15rem) !important;
       min-height: 176px;
       min-width: 180px;
+      vertical-align: top;
     }
   }
   .calendar-card {
