@@ -15,18 +15,19 @@
             />
             <span v-if="isGroupNameInvalid" class="error-text"> Название группы обязательно </span>
           </div>
-          <ul class="v-group-modal__list">
+          <ul class="v-group-modal__list mt-5">
             <li class="v-group-modal__list-item" v-for="student in students" :key="student.id">
               <div class="styled-checkbox">
                 <input
                   type="checkbox"
                   v-model="selectedStudents[student.id]"
                   :id="'student-' + student.id"
+                  checked
                 />
                 <label :for="'student-' + student.id"></label>
               </div>
               <label class="white-bg" :for="'student-' + student.id">
-                {{ student.name }}
+                {{ student.student_name }}
               </label>
             </li>
           </ul>
@@ -38,18 +39,23 @@
 
 <script setup>
 import { onMounted, ref, computed } from 'vue'
+import { useSelectedStudentsStore } from '@/stores/selectedStudentsStore'
+
 import vCustomModal from '@/components/generalComponents/v-custom-modal.vue'
 
 const props = defineProps({
-  students: {
-    type: Array,
-    required: true,
-  },
+
 })
+
+const store = useSelectedStudentsStore()
 
 const formData = ref({ group_name: '' })
 const selectedStudents = ref({})
 const isSubmitted = ref(false)
+
+const students = computed(()=>{
+  return store.student
+})
 
 const isGroupNameInvalid = computed(() => isSubmitted.value && !formData.value.group_name)
 
@@ -75,7 +81,7 @@ const submitForm = () => {
 }
 
 onMounted(() => {
-  props.students.forEach((student) => {
+  students.value.forEach((student) => {
     selectedStudents.value[student.id] = true
   })
 })

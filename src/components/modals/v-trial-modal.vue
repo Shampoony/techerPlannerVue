@@ -34,13 +34,14 @@
               </label>
               </div>
 
-              <div class="v-trial-modal__row" v-if="!pay">
+              <div class="v-trial-modal__row" v-if="pay">
                 <div class="modal-field col">
                   <label for="cost" class="modal-field__title">Стоимость занятий</label>
 
                   <div class="flex gap-3">
                     <input class="custom-input" placeholder="Сумма" type="number" id="cost">
                     <v-styled-select
+                    class="w-full"
                       :items="['₽ (рублей)']"
                       />
                   </div>
@@ -62,7 +63,7 @@ import vFormCalendarInfo from '../generalComponents/v-form-calendar-info.vue'
 import { ref } from 'vue'
 import { setOneTimeLesson, setTrialLesson } from '@/api/requests'
 
-const pay = ref(true)
+const pay = ref(false)
 
 const price = ref()
 const student_name = ref()

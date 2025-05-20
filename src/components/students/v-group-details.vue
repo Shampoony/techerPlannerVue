@@ -4,7 +4,7 @@
       <div class="container">
         <div class="v-group-details__container layout">
           <div class="route">
-            <router-link :to="{ name: 'my_students' }"> Ученики </router-link>
+            <router-link :to="{ name: 'my_students' }"> Группы </router-link>
             <div>/</div>
             <div>Группа "ЕГЭ"</div>
           </div>

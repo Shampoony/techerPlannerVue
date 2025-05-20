@@ -3,7 +3,7 @@
     <div class="v-student-analytics__container">
       <div class="v-student-analytics__prev">
         <div class="flex justify-between">
-          <h1 class="text-title">Задания</h1>
+          <h1 class="custom-title">Занятия</h1>
 
           <div class="flex gap-3">
             <img

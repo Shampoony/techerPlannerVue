@@ -5,7 +5,7 @@
         <tr>
           <th v-for="col in columns" :key="col.key">
             <div class="v-students-table__head-item">
-              <div v-if="col.key === 'name' || col.key === 'title' || col.key === 'student_name'" class="styled-checkbox">
+              <div v-if="col.key === 'group_name' || col.key === 'title' || col.key === 'student_name'" class="styled-checkbox">
                 <input
                   type="checkbox"
                   id="all-field"
@@ -16,7 +16,6 @@
               </div>
 
               {{ col.label }}
-              <img v-if="col.sortable" src="/src/assets/images/arrow-long-down.svg" alt="" />
             </div>
           </th>
           <th>
@@ -112,21 +111,21 @@ const selectedStudents = ref({})
 const columns = computed(() => {
   if (props.type === 'students') {
     return [
-      { key: 'student_name', label: 'Имя', sortable: true },
-      { key: 'contact', label: 'Способ связи', sortable: false },
-      { key: 'rate', label: 'Ставка', sortable: true },
-      { key: 'balance', label: 'Средств на счёте', sortable: true },
-      { key: 'homework_status', label: 'Дз', sortable: false },
-      { key: 'comment', label: 'Комментарий', sortable: false, wrap: true },
+      { key: 'student_name', label: 'Имя' },
+      { key: 'contact', label: 'Способ связи' },
+      { key: 'rate', label: 'Ставка' },
+      { key: 'balance', label: 'Средств на счёте' },
+      { key: 'homework_status', label: 'Дз' },
+      { key: 'comment', label: 'Комментарий', wrap: true },
     ]
   } else if (props.type === 'groups') {
     return [
-      { key: 'name', label: 'Название', sortable: true },
-      { key: 'students_count', label: 'Количество учеников', sortable: true },
-      { key: 'rate', label: 'Ставка', sortable: true },
-      { key: 'balance', label: 'Баланс', sortable: true },
-      { key: 'homework_status', label: 'Дз', sortable: false },
-      { key: 'comment', label: 'Комментарий', sortable: false, wrap: true },
+      { key: 'group_name', label: 'Название' },
+      { key: 'students_count', label: 'Количество учеников' },
+      { key: 'rate', label: 'Ставка' },
+      { key: 'balance', label: 'Баланс' },
+      { key: 'homework_status', label: 'Дз' },
+      { key: 'comment', label: 'Комментарий', wrap: true },
     ]
   }
   return []
@@ -169,8 +168,8 @@ const getPath = (item) => {
   const routeName = props.type === 'groups' ? 'group' : 'student'
   return { name: routeName, params: { id: item.id } }
 }
+
 const deleteItem = (item) => {
-  console.log(item)
   store.setDeletedStudent(item)
   emit('toggle-modal', 'deleteModal')
 }

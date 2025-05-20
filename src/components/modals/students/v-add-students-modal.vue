@@ -43,6 +43,10 @@
         </form>
       </div>
     </template>
+    <template #button>
+      <button class="custom-btn blue" :class="{unactive: !formValid}"  @click="submitForm">Сохранить</button>
+      {{ formValid }}
+    </template>
   </v-custom-modal>
 </template>
 
@@ -63,17 +67,17 @@ const currencyItems = store.currency
 const timeZoneItems = store.timeZone
 
 const formData = ref({
-  student_id: 0,
+  student_id: null,
   type_connect_id: 0,
-  student_name: '',
-  phone_number: '',
+  student_name: null,
+  phone_number: null,
   parent_name: '',
   parent_phone_number: '',
-  source: '',
-  currency_id: 0,
-  rate: 0,
-  timezone_id: 0,
-  commission: 0,
+  source: null,
+  currency_id: 1,
+  rate: null,
+  timezone_id: 1,
+  commission: null,
   goal: '',
   balance: 0,
   subscription_lessons: 0,
@@ -85,6 +89,32 @@ const formData = ref({
   cost_lesson_one_time: 0,
   time_rate: 0
 })
+
+const requiredFields = [
+  'student_name',
+  'phone_number',
+  'type_connect_id',
+  'currency_id',
+  'rate',
+  'timezone_id'
+]
+
+const formValid = computed(() => {
+  const isValid = requiredFields.every(field => {
+    const value = formData.value[field];
+
+    // Для ID-полей 0 - валидное значение
+    if (field.endsWith('_id')) {
+      return value !== null && value !== undefined;
+    }
+
+    // Для остальных - не null/undefined и не пустая строка
+    return value !== null && value !== undefined && value !== '';
+  });
+
+  console.log('Form validation result:', isValid);
+  return isValid;
+});
 
 const submitForm = () => {
   console.log('Submitted data:', JSON.stringify(formData.value, null, 2))

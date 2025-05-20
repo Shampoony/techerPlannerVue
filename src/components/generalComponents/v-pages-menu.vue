@@ -131,7 +131,7 @@
         </div>
 
         <div class="v-pages-menu__buttons flex-col">
-          <div class="blue-btn custom" @click="toggleModal('lesson')">
+          <div class="custom-btn blue" @click="toggleModal('lesson')">
             <div>
               <img src="/src/assets/images/white-plus.svg" alt="" />
             </div>

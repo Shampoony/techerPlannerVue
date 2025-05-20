@@ -1,7 +1,7 @@
 <template>
   <div class="v-student-details">
     <div class="v-student-details__info">
-      <h2 class="v-student-details__title text-title">Детали об ученике</h2>
+      <h2 class="v-student-details__title custom-title">Детали об ученике</h2>
       <div class="v-student-details__form">
         <div class="v-student-details__info-column">
           <div class="v-student-details__info-field">
@@ -14,37 +14,7 @@
               placeholder="Имя ученика"
             />
           </div>
-          <div class="v-student-details__info-field">
-            <p class="v-student-details__info-subtitle">Номер телефона</p>
-            <input
-              type="text"
-              class="custom-input"
-              v-model="editedStudent.phone_number"
-              @input="checkChanges"
-              placeholder="Номер телефона"
-            />
-          </div>
-          <div class="v-student-details__info-field">
-            <p class="v-student-details__info-subtitle">Имя родителя</p>
-            <input
-              type="text"
-              class="custom-input"
-              v-model="editedStudent.parent_name"
-              @input="checkChanges"
-              placeholder="Имя родителя"
-            />
-          </div>
-          <div class="v-student-details__info-field">
-            <p class="v-student-details__info-subtitle">Номер родителей</p>
-            <input
-              type="text"
-              class="custom-input"
-              v-model="editedStudent.parent_phone_number"
-              @input="checkChanges"
-              placeholder="Номер родителей"
-            />
-          </div>
-          <div class="v-student-details__info-field">
+            <div class="v-student-details__info-field">
             <p class="v-student-details__info-subtitle">Источник</p>
             <input
               type="text"
@@ -54,9 +24,7 @@
               placeholder="Источник"
             />
           </div>
-        </div>
-        <div class="v-student-details__info-column">
-          <div class="v-student-details__info-field">
+           <div class="v-student-details__info-field">
             <p class="v-student-details__info-subtitle">Цель занятий</p>
             <input
               type="text"
@@ -66,6 +34,19 @@
               placeholder="Цель занятий"
             />
           </div>
+           <div class="v-student-details__info-field">
+            <p class="v-student-details__info-subtitle">Комиссия</p>
+            <input
+              type="text"
+              class="custom-input"
+              v-model="editedStudent.comission"
+              @input="checkChanges"
+              placeholder="Комиссия"
+            />
+          </div>
+
+        </div>
+        <div class="v-student-details__info-column">
           <div class="v-student-details__info-field">
             <p class="v-student-details__info-subtitle">Способ связи</p>
             <div class="v-student-details__info-type-connect">
@@ -102,6 +83,13 @@
               />
             </div>
           </div>
+          <div class="v-student-details__info-field">
+            <v-styled-select
+                :items="timeZoneItems"
+                :default-value="editedStudent.timeZone"
+                @update:modelValue="(value) => checkChanges(value, 'timezone')"
+              />
+          </div>
         </div>
       </div>
       <div class="v-student-details__info-field">
@@ -121,12 +109,12 @@
     </div>
     <div class="v-student-details__side">
       <div class="v-student-details__side-block">
-        <h2 class="v-student-details__title text-title">Средств на счёте</h2>
-        <input type="text" value="6 000 ₽" class="custom-input red" readonly />
+        <h2 class="v-student-details__title custom-title">Средств на счёте</h2>
+        <input type="text" value="-6 000 ₽" class="custom-input red" readonly />
         <p class="caption">При ставке 2 000 ₽ хватит на 3 занятия</p>
       </div>
       <div class="v-student-details__side-block">
-        <h2 class="v-student-details__title text-title">Реферальная ссылка</h2>
+        <h2 class="v-student-details__title custom-title">Реферальная ссылка</h2>
         <input type="text" :value="link" class="custom-input" readonly @click="copyLink"/>
         <p class="caption">
           Ученику необходимо зарегистрироваться по вашей ссылке для синхронизации аккаунтов
@@ -153,9 +141,21 @@ const link = ref('https://www.primeradress.ru')
 
 const copyWindowOpen = ref(false)
 
-const rateItems = store.rate
-const currencyItems = store.currency
-const typeConnectItems = store.typeConnect
+const rateItems = computed(()=>{
+  return store.rate
+})
+
+const currencyItems = computed(()=>{
+  return store.currency
+})
+
+const timeZoneItems = computed(()=>{
+  return store.timeZone
+})
+
+const typeConnectItems = computed(()=>{
+  return store.typeConnect
+})
 
 const props = defineProps({
   student: Object,

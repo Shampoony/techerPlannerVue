@@ -1,19 +1,23 @@
-// store/modalsStore.js
 import { defineStore } from 'pinia'
 
 export const useModalsStore = defineStore('modals', {
   state: () => ({
-    modals: [],
+    modals: []
   }),
   getters: {
-    modals_count: (state) => state.modals.length,
+    modals_count(state) {
+      return state.modals.length
+    },
   },
   actions: {
-    increment() {
-      this.modals.push(true)
+    increment(id) {
+      this.modals.push(id)
     },
-    decrement() {
-      this.modals.pop()
+    decrement(id) {
+      this.modals = this.modals.filter(modalId => modalId !== id)
     },
-  },
+    isFirstModal(id) {
+      return this.modals[0] === id
+    }
+  }
 })

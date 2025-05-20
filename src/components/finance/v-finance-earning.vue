@@ -431,7 +431,7 @@ const updateDatasetForPeriod = () => {
         {
           ...chartData.value.datasets[0],
           data: filtered.data,
-          barPercentage: 0.4,
+          barPercentage: 0.35,
           categoryPercentage: 0.4,
         },
       ],
@@ -545,7 +545,7 @@ const onSelectChartType = (value) => {
         datasets: [
           {
             ...chartData.value.datasets[0],
-            barPercentage: 0.4,
+            barPercentage: 0.35,
             categoryPercentage: 0.4,
             data: filteredMonths.data,
           },

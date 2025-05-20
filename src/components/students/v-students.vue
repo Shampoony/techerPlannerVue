@@ -41,7 +41,7 @@
                       </defs>
                     </svg>
 
-                    <span> Массовове добавление учеников </span>
+                    <span> Массововое добавление учеников </span>
                   </button>
                   <button
                     class="v-students__header-button custom-btn blue"
@@ -115,7 +115,7 @@
                 />
                 <label class="white-bg" for="select-all"></label>
               </div>
-              <label for="select-all" class="subtitle">Выбреть все</label>
+              <label for="select-all" class="subtitle">Выбрать все</label>
             </div>
             <div class="v-students__menu-block">
               <button class="custom-btn blue" @click="toggleGroupModal" v-show="isStudents">
@@ -278,7 +278,7 @@ const modals = ref({
 const groups = ref([
   {
     id: 1,
-    name: 'ЕГЭ',
+    group_name: 'ЕГЭ',
     students_count: 10,
     rate: '2000 ₽ / 1,5 часа',
     balance: 1200,
@@ -288,7 +288,7 @@ const groups = ref([
   },
   {
     id: 2,
-    name: 'ОГЭ',
+    group_name: 'ОГЭ',
     students_count: 10,
     rate: '2000 ₽ / 1,5 часа',
     balance: 1200,
@@ -336,6 +336,7 @@ const allCardsSelected = () => {
 const toggleMenu = (menu) => {
   isTable.value = menu === 'table'
   isCards.value = menu === 'cards'
+  console.log(menu)
   localStorage.setItem('menu', menu)
 }
 
@@ -389,7 +390,8 @@ const setMenuType = () => {
   if (menu) {
     toggleMenu(menu)
   }
-  if(!isMobile) {
+  console.log(isMobile.isMobile.value)
+  if(!isMobile.isMobile.value) {
     if (menuType) {
       toggleMenuType(menuType)
     }

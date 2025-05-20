@@ -1,10 +1,11 @@
 <template>
   <div
+    ref="observerTarget"
     class="modal-overlay custom"
     @click="close"
-    :class="{ unActive: isSecondOrMoreModal && index + 1 == store.modals_count }"
+    :class="{ unActive: !isFirstModal }"
   >
-    <div @click.stop class="modal-inner"  @keyup.esc="close">
+    <div @click.stop class="modal-inner" @keyup.esc="close">
       <div>
         <slot name="modal"></slot>
 
@@ -14,7 +15,7 @@
           </slot>
 
           <slot name="button">
-            <button class="custom-btn blue" @click="submitForm">Cохранить</button>
+            <button class="custom-btn blue" @click="submitForm">Сохранить</button>
           </slot>
         </div>
       </div>
@@ -23,20 +24,18 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, onMounted, computed, onUnmounted } from 'vue'
+import { ref, computed, defineProps, defineEmits, onMounted, onUnmounted } from 'vue'
 import { useModalsStore } from '@/stores/modalsStore'
 
 const store = useModalsStore()
-
-const index = store.modals_count
+const observerTarget = ref(null)
+let observer = null
+let wasVisible = false
 
 const props = defineProps({
-  show: {
-    type: Boolean,
-    default: null,
-  },
   id: {
     type: String,
+    required: true
   },
   hideButtons: {
     type: Boolean,
@@ -46,12 +45,12 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'submit'])
 
-// Вычисляем, является ли эта модалка второй или последующей
-const isSecondOrMoreModal = computed(() => store.modals_count > 1)
+const isFirstModal = computed(() => store.isFirstModal(props.id))
 
 const close = () => {
   emit('close', props.id)
-  store.decrement()
+  store.decrement(props.id)
+  console.log('Закрыли', props.id, store.modals)
 }
 
 const submitForm = () => {
@@ -63,12 +62,34 @@ defineExpose({
   submitForm,
 })
 
+const observeVisibility = (entries) => {
+  entries.forEach(entry => {
+    const isVisible = entry.isIntersecting
+
+    if (isVisible && !wasVisible) {
+      store.increment(props.id)
+      console.log('Открыли', props.id, store.modals)
+      wasVisible = true
+    } else if (!isVisible && wasVisible) {
+      store.decrement(props.id)
+      console.log('Закрыли', props.id, store.modals)
+      wasVisible = false
+    }
+  })
+}
+
 onMounted(() => {
-  store.increment()
+  observer = new IntersectionObserver(observeVisibility, { threshold: 0.1 })
+  if (observerTarget.value) {
+    observer.observe(observerTarget.value)
+  }
 })
 
 onUnmounted(() => {
-  store.decrement()
+  if (observerTarget.value && observer) {
+    observer.unobserve(observerTarget.value)
+  }
+  store.decrement(props.id) // защита от внезапного размонтирования
 })
 </script>
 

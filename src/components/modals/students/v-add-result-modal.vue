@@ -43,18 +43,26 @@
             />
           </div>
 
-          <div class="modal-field flex gap-3 items-center">
-            <div class="styled-checkbox">
-              <input
-                type="checkbox"
-                v-model="formData.exams"
-                id="exams"
-                :checked="formData.exams"
-                :disabled="isReadonly"
-              />
-              <label for="exams"></label>
+          <div class="modal-field flex justify-between">
+            <div class="flex gap-3 items-center">
+              <div class="styled-checkbox">
+                <input
+                  type="checkbox"
+                  v-model="formData.exams"
+                  id="exams"
+                  :checked="formData.exams"
+                  :disabled="isReadonly"
+                />
+                <label for="exams"></label>
+              </div>
+              <label for="exams" class="modal-field__title">ОГЭ/ЕГЭ</label>
             </div>
-            <label for="exams" class="modal-field__title">ОГЭ/ЕГЭ</label>
+            <div class="flex gap-3 items-center ">
+              <p class="modal-field__title">
+                Оценка
+              </p>
+              <v-styled-select :items="[1, 2, 3, 4, 5]" class="select-mark"/>
+            </div>
           </div>
 
           <div class="modal-field row" v-show="formData.exams">
@@ -77,8 +85,11 @@ import { ref, onMounted, computed } from 'vue'
 import { formatDate } from '@/utils'
 import { useCurrentStudentStore } from '@/stores/currentStudentStore'
 
+import vStyledSelect from '@/components/generalComponents/v-styled-select.vue'
+
 import vCustomModal from '@/components/generalComponents/v-custom-modal.vue'
 import vCustomTextarea from '@/components/generalComponents/v-custom-textarea.vue'
+
 import '@vuepic/vue-datepicker/dist/main.css'
 import VueDatePicker from '@vuepic/vue-datepicker'
 

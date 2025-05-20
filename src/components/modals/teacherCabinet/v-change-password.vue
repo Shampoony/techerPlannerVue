@@ -119,7 +119,7 @@
             <div v-if="passwordMatchError && newPassword2.length" class="text-red">{{ passwordMatchError }}</div>
           </div>
 
-          <a v-if="secondaryMode" href="" class="contact-link">Забыли пароль?</a>
+          <a v-if="secondaryMode" href="" @click.prevent="() => toggleModal('repairPassword')" class="contact-link">Забыли пароль?</a>
         </form>
       </div>
     </template>
@@ -203,6 +203,10 @@ const passwordMatchError = computed(() =>
 // Определение типа поля ввода (текст/пароль)
 const inputType = (input_index) => {
   return hiddenInput.value[input_index] ? 'password' : 'text'
+}
+
+const toggleModal = (modal) => {
+  emit('toggle-modal', modal)
 }
 
 // Переключение видимости пароля

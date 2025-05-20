@@ -14,26 +14,35 @@
               Подписка
             </div>
           </nav>
-          <div class="v-cabinet__block">
+          <div class="v-cabinet__block" v-show="activeSection === 'info'">
             <v-profile-info/>
             <v-profile-info-right :email="'Username@mail.ru'" @toggle-modal="toggleModal"/>
           </div>
-
+          <div class="v-cabinet__block" v-show="activeSection === 'subscribe'">
+            <v-subscription />
+          </div>
         </div>
       </div>
     </div>
   </v-base>
   <transition name="fade">
-    <v-delete-cabinet v-if="modals.deleteCabinet" @close="toggleModal('deleteCabinet')"/>
+    <v-delete-cabinet v-show="modals.deleteCabinet" @close="toggleModal('deleteCabinet')" :class="{'modal-open': modals.deleteCabinet}"/>
   </transition>
   <!-- <transition name="fade">
     <v-change-password v-if="modals.changePassword" @close="toggleModal('changePassword')" @toggle-modal="toggleModal"/>
   </transition> -->
   <transition name="fade">
-    <v-change-password v-if="modals.changePassword" @close="toggleModal('changePassword')" @toggle-modal="toggleModal" :secondary-mode="true"/>
+    <v-change-password v-show="modals.changePassword" @close="toggleModal('changePassword')" @toggle-modal="toggleModal" :secondary-mode="true" :class="{'modal-open': modals.changePassword}"/>
+  </transition>
+
+  <transition name="fade">
+    <v-repair-password v-show="modals.repairPassword" @close="toggleModal('repairPassword')" @toggle-modal="toggleModal" :class="{'modal-open': modals.repairPassword}"/>
   </transition>
   <transition name="fade">
-    <v-password-saved v-if="modals.passwordSaved" @close="toggleModal('passwordSaved')" />
+    <v-change-email v-show="modals.changeEmail" @close="toggleModal('changeEmail')" :class="{'modal-open': modals.changeEmail}" @toggle-modal="toggleModal"/>
+  </transition>
+   <transition name="fade">
+    <v-password-saved v-show="modals.passwordSaved" @close="toggleModal('passwordSaved')" :class="{'modal-open': modals.passwordSaved}" />
   </transition>
 </template>
 <script setup>
@@ -41,11 +50,14 @@ import { ref } from 'vue';
 
 import vBase from '../v-base.vue';
 import vProfileInfo from './v-profile-info.vue';
+import vSubscription from './v-subscription.vue';
 import vProfileInfoRight from './v-profile-info-right.vue';
 
+import vChangeEmail from '../modals/teacherCabinet/v-change-email.vue';
 import vDeleteCabinet from '../modals/teacherCabinet/v-delete-cabinet.vue';
 import vPasswordSaved from '../modals/teacherCabinet/v-password-saved.vue';
 import vChangePassword from '../modals/teacherCabinet/v-change-password.vue';
+import vRepairPassword from '../modals/teacherCabinet/v-repair-password.vue';
 
 const activeSection = ref('info')
 
@@ -53,6 +65,8 @@ const modals = ref({
   deleteCabinet: false,
   changePassword: false,
   passwordSaved: false,
+  repairPassword: false,
+  changeEmail: false,
 })
 
 const setActiveSection = (section) => {

@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="{ name: 'student', params: { id: student.id } }">
+  <router-link :to="getPath(item)">
     <div class="student-card">
       <div class="student-card__header">
         <div class="flex gap-4" @click.stop>
@@ -7,17 +7,17 @@
             <input
               v-model="isSelected"
               type="checkbox"
-              :id="'student' + student.id"
+              :id="'student' + item.id"
               @change="$emit('selected', isSelected)"
             />
-            <label :for="'student' + student.id"></label>
+            <label :for="'student' + item.id"></label>
           </div>
-          <p class="subtitle">{{ student.student_name }}</p>
+          <p class="subtitle">{{ item.student_name || item.group_name}}</p>
         </div>
         <div class="flex gap-4" v-if="!isRepair">
           <button
             class="student-card__header-button"
-            @click.prevent.stop="$emit('edit', student.id)"
+            @click.prevent.stop="$emit('edit', item.id)"
           >
             <img src="/src/assets/images/edit.svg" alt="Редактировать" />
           </button>
@@ -51,7 +51,7 @@
       </div>
 
       <div class="student-card__button">
-        <button class="custom-btn light-blue mt-10" v-if="isRepair" @click.prevent="emit('repair', student.id)">
+        <button class="custom-btn light-blue mt-10" v-if="isRepair" @click.prevent="emit('repair', item.id)">
           <svg
             width="20"
             height="20"
@@ -87,7 +87,7 @@ import { ref, computed } from 'vue'
 import { getHomeworkClass } from '@/utils'
 
 const props = defineProps({
-  student: {
+  item: {
     type: Object,
     required: true,
   },
@@ -100,6 +100,12 @@ const props = defineProps({
     default: () => false,
   },
 })
+
+
+const getPath = (item) => {
+  const routeName = item.group_name ? 'group' : 'student'
+  return { name: routeName, params: { id: item.id } }
+}
 
 const emit = defineEmits(['selected', 'edit', 'delete', 'repair'])
 
@@ -117,24 +123,24 @@ const studentInfoItems = computed(() => {
   return [
     {
       title: 'Способ связи',
-      value: props.student.contact,
+      value: props.item.contact,
       icon: new URL('/src/assets/images/telegram.svg', import.meta.url).href,
     },
     {
       title: 'Ставка',
-      value: props.student.rate,
+      value: props.item.rate,
     },
     {
       title: 'Средств на счёте',
-      value: props.student.balance,
+      value: props.item.balance,
     },
     {
       title: 'Дз',
-      value: props.student.homework_status,
+      value: props.item.homework_status,
     },
     {
       title: 'Комментарий',
-      value: props.student.comment,
+      value: props.item.comment,
     },
   ]
 })

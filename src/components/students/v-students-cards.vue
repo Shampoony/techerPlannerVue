@@ -4,7 +4,7 @@
       <li class="v-students-cards__list-item" v-for="(item, index) in items" :key="item.id">
         <v-student-card
           ref="studentCardsRef"
-          :student="item"
+          :item="item"
           :info-items="infoItems(index)"
           @selected="handleStudentSelection(item, $event)"
           @edit="handleEditStudent"

@@ -26,7 +26,7 @@
             :class="getStatusClass(periodData.percentage_change_earnings)"
             v-if="periodData.percentage_change_earnings"
           >
-            {{ periodData.percentage_change_earnings }} %
+            {{ periodData.percentage_change_earnings }}
           </span>
         </div>
       </li>
@@ -42,7 +42,7 @@
             :class="getStatusClass(periodData.percentage_change_average_earnings)"
             v-if="periodData.percentage_change_average_earnings"
           >
-            {{ periodData.percentage_change_average_earnings }} %
+            {{ periodData.percentage_change_average_earnings }}
           </span>
         </div>
       </li>
@@ -54,7 +54,7 @@
         <div class="finance-card__bottom" v-if="periodData">
           <div class="finance-card__value">{{ periodData.total_hours }}</div>
           <span class="status" :class="getStatusClass(periodData.percentage_change_hours)">
-            {{ periodData.percentage_change_hours }} %
+            {{ periodData.percentage_change_hours }}
           </span>
         </div>
       </li>

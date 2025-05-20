@@ -21,12 +21,12 @@
         </li>
       </ul>
 
-      <div v-show="!operations.length">
+      <div class="subtitle" v-show="!operations.length">
         У вас нет операций по счёту
       </div>
 
       <router-link
-      v-show="operations.length"
+        v-show="operations && operations.length"
         :to="{ name: 'history_operations' }"
         class="v-finance-operations__link contact-link"
       >
@@ -45,7 +45,7 @@ import { useFinanceStore } from '@/stores/financeStore';
 const financeStore = useFinanceStore()
 
 const operations = computed(()=>{
-  return financeStore.operations
+  return financeStore.operations.slice(0, 6)
 })
 
 

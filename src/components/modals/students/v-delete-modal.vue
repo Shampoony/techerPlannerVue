@@ -5,7 +5,7 @@
         <h1 class="modal-title" v-html="formattedText"></h1>
         <div class="caption">Информация о учениках будет удалена безвозратно.</div>
         <div class="v-delete-modal__rule">
-          <div class="flex gap-3">
+          <div class="flex gap-3" v-if="group">
             <div class="styled-checkbox">
               <input v-model="deleteInfo" type="checkbox" :id="'delete-info'" />
               <label :for="'delete-info'"></label>
@@ -29,7 +29,7 @@ import { useSelectedStudentsStore } from '@/stores/selectedStudentsStore'
 
 const props = defineProps({
   group: Object,
-  student: Number,
+  student: Array,
   type: String,
   student_amount: Number,
   group_amount: Number,
@@ -39,15 +39,20 @@ const deleteInfo = ref(false)
 
 const store = useSelectedStudentsStore()
 
+const currentStudent = computed(()=>{
+  console.log(store.student)
+  return store.student
+})
+
 const customModal = ref(null)
 
 const defaultPhrase = ref('Вы уверены, что хотите удалить')
 
 const currentAmount = computed(() => {
   /*  return props.student_amount || props.group_amount ? 'singular' : 'plural' */
-  if (store.student.length > 1) {
+  if (currentStudent.value.length > 1) {
     return 'plural'
-  } else if (store.student.length === 1) {
+  } else if (currentStudent.value.length === 1) {
     return 'singular'
   } else {
     return 'none'
@@ -71,17 +76,17 @@ watch(
 const formattedText = computed(() => {
   let additionalyPhrase = ''
 
-  if (store.student.length === 1 && props.type === 'students') {
-    additionalyPhrase += `ученика <p> (${store.student[0].name})?</p>`
+  if (currentStudent.value.length === 1 && props.type === 'students') {
+    additionalyPhrase += `ученика <p> (${currentStudent.value[0].student_name})?</p>`
   }
-  if (store.student.length > 1 && props.type === 'students') {
-    additionalyPhrase += `выбранных учеников <p>(${store.student.length})?</p>`
+  if (currentStudent.value.length > 1 && props.type === 'students') {
+    additionalyPhrase += `выбранных учеников <p>(${currentStudent.value.length})?</p>`
   }
-  if (props.type === 'groups' && store.student.length === 1) {
-    additionalyPhrase += `группу <p>(${store.student[0].name})?</p>`
+  if (props.type === 'groups' && currentStudent.value.length === 1) {
+    additionalyPhrase += `группу <p>(${currentStudent.value[0].student_name})?</p>`
   }
-  if (props.type === 'groups' && store.student.length > 1) {
-    additionalyPhrase += `группы <p>(${store.student.length})?</p>`
+  if (props.type === 'groups' && currentStudent.value.length > 1) {
+    additionalyPhrase += `группы <p>(${currentStudent.value.length})?</p>`
   }
 
   return defaultPhrase.value + ' ' + additionalyPhrase

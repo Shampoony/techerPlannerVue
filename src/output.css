@@ -698,8 +698,20 @@ video {
   display: grid;
 }
 
+.hidden {
+  display: none;
+}
+
 .h-full {
   height: 100%;
+}
+
+.w-60 {
+  width: 15rem;
+}
+
+.w-full {
+  width: 100%;
 }
 
 .rotate-180 {
@@ -785,6 +797,14 @@ video {
 
 .pb-7 {
   padding-bottom: 1.75rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
 }
 
 .text-base {

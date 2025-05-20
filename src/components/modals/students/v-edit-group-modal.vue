@@ -13,7 +13,7 @@
               :key="student.id"
             >
               <div class="styled-checkbox">
-                <input type="text" :id="'student-' + student.id" />
+                <input type="checkbox" :id="'student-' + student.id" checked/>
                 <label :for="'student-' + student.id"></label>
               </div>
               <label :for="'student-' + student.id">{{ student.name }}</label>
@@ -43,9 +43,14 @@ const selectedStudentsStore = useSelectedStudentsStore()
 
 const students = computed(() => {
   return studentsStore.students.map((student) => {
-    return { id: student.id, text: student.name }
+    return { id: student.id, text: student.student_name }
   })
 })
+
+const checkboxStudents = ref({
+
+})
+
 const selectedStudents = computed(() => selectedStudentsStore.selected_group?.students || [])
 
 onMounted(() => {

@@ -245,7 +245,7 @@ export function getDayOfWeek  (date, day) {
 
 
 export function getStatusClass  (value)  {
-  if (value > 0) return 'green';
-  if (value < 0) return 'red';
+  if (parseInt(value) > 0) return 'green';
+  if (parseInt(value) < 0) return 'red';
   return '';
 };
