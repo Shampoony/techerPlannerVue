@@ -27,13 +27,13 @@
     </button>
 
     <div ref="dropdownMenu" :class="['v-user-drop__menu', menuPosition]" v-if="isDropdownopen">
-      <a class="v-user-drop__menu-item" href="">
+      <router-link class="v-user-drop__menu-item" :to="{name: 'teacher_cabinet'}">
         <span class="icon">
           <img src="../../assets/images/user.svg" alt="" class="day-el" />
           <img src="../../assets/images/user-night.svg" alt="" class="night-el" />
         </span>
         <span class="text" v-if="userInfo">{{ userInfo.name }}</span>
-      </a>
+      </router-link>
 
       <a class="v-user-drop__menu-item" href="subscribe.html">
         <span class="icon">
